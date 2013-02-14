@@ -2,7 +2,7 @@ package ashley.core;
 
 import java.util.BitSet;
 
-import com.badlogic.gdx.utils.ObjectMap;
+import ashley.utils.ObjectMap;
 
 public class Family {
 	private static ObjectMap<String, Family> families = new ObjectMap<String, Family>();

@@ -1,6 +1,6 @@
 package ashley.signals;
 
-import com.badlogic.gdx.utils.Array;
+import ashley.utils.Array;
 
 public class Signal<T> {
 	private Array<Listener<T>> listeners;

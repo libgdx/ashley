@@ -3,8 +3,7 @@ package ashley.core;
 import java.util.BitSet;
 
 import ashley.signals.Signal;
-
-import com.badlogic.gdx.utils.ObjectMap;
+import ashley.utils.ObjectMap;
 
 public class Entity {
 	private ObjectMap<Class<? extends Component>, Component> components;

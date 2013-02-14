@@ -5,8 +5,7 @@ import ashley.core.Engine;
 import ashley.core.Entity;
 import ashley.core.EntitySystem;
 import ashley.core.Family;
-
-import com.badlogic.gdx.utils.Array;
+import ashley.utils.Array;
 
 public class BasicTest {
 	public static void main(String[] args){

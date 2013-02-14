@@ -2,11 +2,10 @@ package ashley.core;
 
 import ashley.signals.Listener;
 import ashley.signals.Signal;
-
-import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.ObjectMap;
-import com.badlogic.gdx.utils.ObjectMap.Entries;
-import com.badlogic.gdx.utils.ObjectMap.Entry;
+import ashley.utils.Array;
+import ashley.utils.ObjectMap;
+import ashley.utils.ObjectMap.Entries;
+import ashley.utils.ObjectMap.Entry;
 
 public class Engine {
 	private Array<Entity> entities;

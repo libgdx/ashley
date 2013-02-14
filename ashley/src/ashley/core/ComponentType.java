@@ -1,6 +1,6 @@
 package ashley.core;
 
-import com.badlogic.gdx.utils.ObjectMap;
+import ashley.utils.ObjectMap;
 
 public class ComponentType {
 	private static int typeIndex = 0;
