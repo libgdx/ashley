@@ -8,19 +8,33 @@ import ashley.core.Family;
 import ashley.utils.Array;
 
 public class BasicTest {
+	
 	public static void main(String[] args){
 		Engine engine = new Engine();
 		
-		engine.addSystem(new PositionSystem());
+		MovementSystem movementSystem = new MovementSystem();
+		PositionSystem positionSystem = new PositionSystem();
 		
-		for(int i=0; i<10000; i++){
+		engine.addSystem(movementSystem);
+		engine.addSystem(positionSystem);
+		
+		for(int i=0; i<10; i++){
 			Entity entity = new Entity();
 			entity.add(new PositionComponent(10, 0));
+			if(i > 5)
+				entity.add(new MovementComponent(10, 2));
+			
 			engine.addEntity(entity);
 		}
 		
-		for(int i=0; i<1000; i++){
+		log("MovementSystem has: " + movementSystem.entities.size + " entities.");
+		log("PositionSystem has: " + positionSystem.entities.size + " entities.");
+		
+		for(int i=0; i<10; i++){
 			engine.update(0.25f);
+			
+			if(i > 5)
+				engine.removeSystem(movementSystem);
 		}
 	}
 	
@@ -33,21 +47,54 @@ public class BasicTest {
 		float x, y;
 	}
 	
+	public static class MovementComponent extends Component {
+		public MovementComponent(float velocityX, float velocityY){
+			this.velocityX = velocityX;
+			this.velocityY = velocityY;
+		}
+		
+		float velocityX, velocityY;
+	}
+	
 	public static class PositionSystem extends EntitySystem {
-		private Array<Entity> entities;
+		public Array<Entity> entities;
 
 		@Override
 		public void addedToEngine(Engine engine) {
 			entities = engine.getEntitiesFor(Family.getFamilyFor(PositionComponent.class));
+			log("PositionSystem added to engine.");
+		}
+	}
+	
+	public static class MovementSystem extends EntitySystem {
+		public Array<Entity> entities;
+
+		@Override
+		public void addedToEngine(Engine engine) {
+			entities = engine.getEntitiesFor(Family.getFamilyFor(PositionComponent.class, MovementComponent.class));
+			log("MovementSystem added to engine.");
+		}
+
+		@Override
+		public void removedFromEngine(Engine engine) {
+			log("MovementSystem removed from engine.");
 		}
 
 		@Override
 		public void update(float deltaTime) {
 			for(Entity e:entities){
 				PositionComponent p = e.getComponent(PositionComponent.class);
+				MovementComponent m = e.getComponent(MovementComponent.class);
 				
-				p.x += 1 * deltaTime;
+				p.x += m.velocityX * deltaTime;
+				p.y += m.velocityY * deltaTime;
 			}
+			
+			log(entities.size + " Entities updated in MovementSystem.");
 		}
+	}
+	
+	public static void log(String string){
+		System.out.println(string);
 	}
 }

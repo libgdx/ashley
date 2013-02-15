@@ -69,14 +69,12 @@ public class Engine {
 	
 	public void addSystem(EntitySystem system){
 		systems.add(system);
-		
 		system.addedToEngine(this);
 	}
 	
 	public void removeSystem(EntitySystem system){
-		systems.removeValue(system, true);
-		
-		system.removedFromEngine(this);
+		if(systems.removeValue(system, true))
+			system.removedFromEngine(this);
 	}
 	
 	public Array<Entity> getEntitiesFor(Family family){

@@ -7,11 +7,9 @@ public class ComponentType {
 	private static ObjectMap<Class<? extends Component>, ComponentType> componentTypes = new ObjectMap<Class<? extends Component>, ComponentType>();
 	
 	private final int index;
-	private final Class<? extends Component> type;
 	
-	public ComponentType(Class<? extends Component> type){
+	public ComponentType(){
 		index = typeIndex++;
-		this.type = type;
 	}
 	
 	public int getIndex(){
@@ -22,7 +20,7 @@ public class ComponentType {
         ComponentType type = componentTypes.get(c);
 
         if (type == null) {
-        	type = new ComponentType(c);
+        	type = new ComponentType();
 	    	componentTypes.put(c, type);
         }
 
