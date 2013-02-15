@@ -64,6 +64,12 @@ public class BasicTest {
 			entities = engine.getEntitiesFor(Family.getFamilyFor(PositionComponent.class));
 			log("PositionSystem added to engine.");
 		}
+
+		@Override
+		public void removedFromEngine(Engine engine) {
+			log("PositionSystem removed from engine.");
+			entities = null;
+		}
 	}
 	
 	public static class MovementSystem extends EntitySystem {
@@ -78,6 +84,7 @@ public class BasicTest {
 		@Override
 		public void removedFromEngine(Engine engine) {
 			log("MovementSystem removed from engine.");
+			entities = null;
 		}
 
 		@Override
