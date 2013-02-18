@@ -21,6 +21,8 @@ public class Entity {
 	private BitSet componentBits;
 	/** A bitset describing all the systems this entity was matched with. */
 	private BitSet familyBits;
+	/** A flag that can be used to bit mask this entity. Up to the user to manage. */
+	public int flags;
 	
 	/** Will dispatch an event when a component is added. */
 	public Signal<Entity> componentAdded;
