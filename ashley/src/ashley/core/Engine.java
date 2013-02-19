@@ -1,5 +1,7 @@
 package ashley.core;
 
+import java.util.Comparator;
+
 import ashley.signals.Listener;
 import ashley.signals.Signal;
 import ashley.utils.Array;
@@ -21,6 +23,8 @@ import ashley.utils.ObjectMap.Entry;
  * @author Stefan Bachmann
  */
 public class Engine {
+	private static SystemComparator comparator = new SystemComparator();
+	
 	/** An unordered array that holds all entities in the Engine */
 	private Array<Entity> entities;
 	/** An ordered list of EntitySystem */
@@ -100,6 +104,8 @@ public class Engine {
 	public void addSystem(EntitySystem system){
 		systems.add(system);
 		system.addedToEngine(this);
+		
+		systems.sort(comparator);
 	}
 	
 	/**
@@ -171,6 +177,13 @@ public class Engine {
 	public void update(float deltaTime){
 		for(int i=0; i<systems.size; i++){
 			systems.get(i).update(deltaTime);
+		}
+	}
+	
+	private static class SystemComparator implements Comparator<EntitySystem>{
+		@Override
+		public int compare(EntitySystem a, EntitySystem b) {
+			return a.priority > b.priority ? 1 : (a.priority == b.priority) ? 0 : -1;
 		}
 	}
 }

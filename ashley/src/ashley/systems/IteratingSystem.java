@@ -24,6 +24,18 @@ public abstract class IteratingSystem extends EntitySystem {
 	 * @param family The family of entities iterated over in this System
 	 */
 	public IteratingSystem(Family family){
+		this(family, 0);
+	}
+	
+	/**
+	 * Instantiates a system that will iterate over the entities described by the Family, with a 
+	 * specific priority.
+	 * @param family The family of entities iterated over in this System
+	 * @param priority The priority to execute this system with (lower means higher priority)
+	 */
+	public IteratingSystem(Family family, int priority){
+		super(priority);
+		
 		this.family = family;
 	}
 		

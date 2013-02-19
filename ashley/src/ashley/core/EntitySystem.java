@@ -7,6 +7,23 @@ package ashley.core;
  * @author Stefan Bachmann
  */
 public class EntitySystem {
+	/** Use this to set the priority of the system. Lower means it'll get executed first. */
+	public int priority;
+	
+	/**
+	 * Default constructor that will initialise an EntitySystem with priority 0.
+	 */
+	public EntitySystem(){
+		this(0);
+	}
+	
+	/**
+	 * Intiliasies the EntitySystem with the priority specified
+	 * @param priority The priority to execute this system with (lower means higher priority)
+	 */
+	public EntitySystem(int priority){
+		this.priority = priority;
+	}
 	
 	/**
 	 * Called when this EntitySystem is added to an Engine
