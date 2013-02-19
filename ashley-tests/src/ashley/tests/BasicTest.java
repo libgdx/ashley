@@ -1,10 +1,11 @@
 package ashley.tests;
 
-import ashley.core.Component;
 import ashley.core.Engine;
 import ashley.core.Entity;
 import ashley.core.EntitySystem;
 import ashley.core.Family;
+import ashley.tests.components.MovementComponent;
+import ashley.tests.components.PositionComponent;
 import ashley.utils.Array;
 
 public class BasicTest {
@@ -36,24 +37,6 @@ public class BasicTest {
 			if(i > 5)
 				engine.removeSystem(movementSystem);
 		}
-	}
-	
-	public static class PositionComponent extends Component {
-		public PositionComponent(float x, float y){
-			this.x = x;
-			this.y = y;
-		}
-		
-		float x, y;
-	}
-	
-	public static class MovementComponent extends Component {
-		public MovementComponent(float velocityX, float velocityY){
-			this.velocityX = velocityX;
-			this.velocityY = velocityY;
-		}
-		
-		float velocityX, velocityY;
 	}
 	
 	public static class PositionSystem extends EntitySystem {

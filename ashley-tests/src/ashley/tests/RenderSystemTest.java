@@ -2,8 +2,10 @@ package ashley.tests;
 
 import ashley.core.Engine;
 import ashley.core.Entity;
+import ashley.tests.components.MovementComponent;
 import ashley.tests.components.PositionComponent;
 import ashley.tests.components.VisualComponent;
+import ashley.tests.systems.MovementSystem;
 import ashley.tests.systems.RenderSystem;
 
 import com.badlogic.gdx.ApplicationAdapter;
@@ -40,6 +42,7 @@ public class RenderSystemTest {
 			
 			engine = new Engine();
 			engine.addSystem(new RenderSystem(camera));
+			engine.addSystem(new MovementSystem());
 			
 			Entity crate = new Entity();
 			crate.add(new PositionComponent(50, 50));
@@ -52,6 +55,7 @@ public class RenderSystemTest {
 			for(int i=0; i<100; i++){
 				Entity coin = new Entity();
 				coin.add(new PositionComponent(MathUtils.random(640), MathUtils.random(480)));
+				coin.add(new MovementComponent(10.0f, 10.0f));
 				coin.add(new VisualComponent(coinRegion));
 				engine.addEntity(coin);
 			}
