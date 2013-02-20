@@ -17,6 +17,7 @@ import ashley.utils.ObjectMap;
 public class Entity {
 	private static int nextIndex;
 	
+	/** Unique entity index for fast retrieval */
 	private int index;
 	
 	/** The hashmap that holds all the components hashed via their class type */
@@ -102,6 +103,9 @@ public class Entity {
 		return familyBits;
 	}
 	
+	/**
+	 * Returns this entity's unique index
+	 */
 	public int getIndex(){
 		return index;
 	}

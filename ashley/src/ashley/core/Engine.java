@@ -28,7 +28,7 @@ public class Engine {
 	
 	/** An unordered array that holds all entities in the Engine */
 	private Array<Entity> entities;
-	/** An ordered list of EntitySystem */
+	/** An unordered list of EntitySystem */
 	private Array<EntitySystem> systems;
 	/** A hashmap that organises all entities into family buckets */
 	private ObjectMap<Family, IntMap<Entity>> families;
@@ -39,7 +39,7 @@ public class Engine {
 	private final Listener<Entity> componentRemoved;
 	
 	public Engine(){
-		entities = new Array<Entity>(true, 16);
+		entities = new Array<Entity>();
 		systems = new Array<EntitySystem>();
 		families = new ObjectMap<Family, IntMap<Entity>>();
 		
@@ -121,9 +121,9 @@ public class Engine {
 	}
 	
 	/**
-	 * Returns an Array of entities for the specified Family. Will return the same instance every time.
+	 * Returns an IntMap of entities for the specified Family. Will return the same instance every time.
 	 * @param family The Family
-	 * @return An Array of Entities
+	 * @return An IntMap of Entities
 	 */
 	public IntMap<Entity> getEntitiesFor(Family family){
 		IntMap<Entity> entities = families.get(family, null);
