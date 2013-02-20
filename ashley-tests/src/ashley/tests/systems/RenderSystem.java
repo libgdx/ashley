@@ -6,13 +6,14 @@ import ashley.core.EntitySystem;
 import ashley.core.Family;
 import ashley.tests.components.PositionComponent;
 import ashley.tests.components.VisualComponent;
-import ashley.utils.Array;
+import ashley.utils.IntMap;
+import ashley.utils.IntMap.Keys;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class RenderSystem extends EntitySystem {
-	private Array<Entity> entities;
+	private IntMap<Entity> entities;
 	
 	private SpriteBatch batch;
 	private OrthographicCamera camera;
@@ -43,7 +44,10 @@ public class RenderSystem extends EntitySystem {
 		batch.begin();
 		batch.setProjectionMatrix(camera.combined);
 		
-		for(Entity e:entities){
+		Keys keys = entities.keys();
+
+		while(keys.hasNext){
+			Entity e = entities.get(keys.next());
 			position = e.getComponent(PositionComponent.class);
 			visual = e.getComponent(VisualComponent.class);
 			

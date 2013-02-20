@@ -15,6 +15,10 @@ import ashley.utils.ObjectMap;
  * @author Stefan Bachmann
  */
 public class Entity {
+	private static int nextIndex;
+	
+	private int index;
+	
 	/** The hashmap that holds all the components hashed via their class type */
 	private ObjectMap<Class<? extends Component>, Component> components;
 	/** A bitset describing all the components in this entity. For quick matching. */
@@ -36,6 +40,8 @@ public class Entity {
 		components = new ObjectMap<Class<? extends Component>, Component>();
 		componentBits = new BitSet();
 		familyBits = new BitSet();
+		
+		index = nextIndex++;
 		
 		componentAdded = new Signal<>();
 		componentRemoved = new Signal<>();
@@ -94,5 +100,9 @@ public class Entity {
 	 */
 	public BitSet getFamilyBits(){
 		return familyBits;
+	}
+	
+	public int getIndex(){
+		return index;
 	}
 }

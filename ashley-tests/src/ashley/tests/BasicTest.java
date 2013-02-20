@@ -6,7 +6,8 @@ import ashley.core.EntitySystem;
 import ashley.core.Family;
 import ashley.tests.components.MovementComponent;
 import ashley.tests.components.PositionComponent;
-import ashley.utils.Array;
+import ashley.utils.IntMap;
+import ashley.utils.IntMap.Keys;
 
 public class BasicTest {
 	
@@ -40,7 +41,7 @@ public class BasicTest {
 	}
 	
 	public static class PositionSystem extends EntitySystem {
-		public Array<Entity> entities;
+		public IntMap<Entity> entities;
 
 		@Override
 		public void addedToEngine(Engine engine) {
@@ -56,7 +57,7 @@ public class BasicTest {
 	}
 	
 	public static class MovementSystem extends EntitySystem {
-		public Array<Entity> entities;
+		public IntMap<Entity> entities;
 
 		@Override
 		public void addedToEngine(Engine engine) {
@@ -72,7 +73,11 @@ public class BasicTest {
 
 		@Override
 		public void update(float deltaTime) {
-			for(Entity e:entities){
+			Keys keys = entities.keys();
+
+			while(keys.hasNext){
+				Entity e = entities.get(keys.next());
+				
 				PositionComponent p = e.getComponent(PositionComponent.class);
 				MovementComponent m = e.getComponent(MovementComponent.class);
 				

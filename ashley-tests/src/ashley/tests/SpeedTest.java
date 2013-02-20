@@ -9,7 +9,7 @@ import ashley.tests.utils.Timer;
 import ashley.utils.Array;
 
 public class SpeedTest {
-	public static int NUMBER_ENTITIES = 10000;
+	public static int NUMBER_ENTITIES = 100000;
 	
 	public static void main(String[] args){
 		Timer timer = new Timer();
@@ -28,9 +28,11 @@ public class SpeedTest {
 		
 		for(int i=0; i<NUMBER_ENTITIES; i++){
 			Entity entity = new Entity();
-			engine.addEntity(entity);
+			
 			entity.add(new MovementComponent(10, 10));
 			entity.add(new PositionComponent(0, 0));
+			
+			engine.addEntity(entity);
 			
 			entities.add(entity);
 		}
@@ -45,6 +47,22 @@ public class SpeedTest {
 		}
 		
 		System.out.println("Component removed time: " + timer.stop("componentRemoved") + "ms");
+		
+		/** Adding components */
+		timer.start("componentAdded");
+		
+		for(Entity e:entities){
+			e.add(new PositionComponent(0, 0));
+		}
+		
+		System.out.println("Component added time: " + timer.stop("componentAdded") + "ms");
+		
+		/** System processing */
+		timer.start("systemProcessing");
+		
+		engine.update(0);
+		
+		System.out.println("System processing times " + timer.stop("systemProcessing") + "ms");
 		
 		/** Removing entities */
 		timer.start("entitiesRemoved");
