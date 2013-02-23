@@ -5,6 +5,9 @@
 *.mdb
 # per project ignores, it's cumbersome, but reduces the risk of missing something
 
+.metadata/
+.settings/
+
 # target directories:
 /ashley/bin
 /ashley-tests/bin

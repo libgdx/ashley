@@ -53,17 +53,33 @@ public abstract class IteratingSystem extends EntitySystem {
 	@Override
 	public void update(float deltaTime) {
 		Keys keys = entities.keys();
-		
+
+		beforeUpdate(deltaTime);
 		while(keys.hasNext){
 			processEntity(entities.get(keys.next()), deltaTime);
 		}
+		afterUpdate(deltaTime);
 	}
 
 	/**
 	 * This method is called on every entity on every update call of the EntitySystem. Override this to implement
 	 * your system's specific processeing.
 	 * @param entity The current Entity being processed
-	 * @param deltaTime The delta time between the last and current frame
+	 * @param deltaTime The delta time between the last and current update
 	 */
 	public abstract void processEntity(Entity entity, float deltaTime);
+
+	/**
+	 * Called before the entities are processed
+	 * @param deltaTime The delta time between the last and current update
+	 */
+	public void beforeUpdate(float deltaTime) {
+	}
+	
+	/**
+	 * Called after the entities are processed
+	 * @param deltaTime The delta time between the last and current update
+	 */
+	public void afterUpdate(float deltaTime) {
+	}
 }
