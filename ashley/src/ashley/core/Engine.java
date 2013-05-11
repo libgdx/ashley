@@ -156,6 +156,10 @@ public class Engine {
 		return families.get(family);
 	}
 	
+	/**
+	 * @param componentType type of the component to create
+	 * @return obtains an available pooled component of the required type
+	 */
 	public <T extends Component> T createComponent(Class<T> componentType) {
 		return componentPools.obtain(componentType);
 	}
