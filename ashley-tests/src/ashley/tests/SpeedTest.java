@@ -27,7 +27,7 @@ public class SpeedTest {
 		entities.ensureCapacity(NUMBER_ENTITIES);
 		
 		for(int i=0; i<NUMBER_ENTITIES; i++){
-			Entity entity = new Entity();
+			Entity entity = engine.createEntity();
 			
 			entity.add(new MovementComponent(10, 10));
 			entity.add(new PositionComponent(0, 0));

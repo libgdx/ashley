@@ -21,7 +21,7 @@ public class BasicTest {
 		engine.addSystem(positionSystem);
 		
 		for(int i=0; i<10; i++){
-			Entity entity = new Entity();
+			Entity entity = engine.createEntity();
 			entity.add(new PositionComponent(10, 0));
 			if(i > 5)
 				entity.add(new MovementComponent(10, 2));

@@ -44,7 +44,7 @@ public class RenderSystemTest {
 			engine.addSystem(new RenderSystem(camera));
 			engine.addSystem(new MovementSystem());
 			
-			Entity crate = new Entity();
+			Entity crate = engine.createEntity();
 			crate.add(new PositionComponent(50, 50));
 			crate.add(new VisualComponent(new TextureRegion(crateTexture)));
 
@@ -53,7 +53,7 @@ public class RenderSystemTest {
 			TextureRegion coinRegion = new TextureRegion(coinTexture);
 			
 			for(int i=0; i<100; i++){
-				Entity coin = new Entity();
+				Entity coin = engine.createEntity();
 				coin.add(new PositionComponent(MathUtils.random(640), MathUtils.random(480)));
 				coin.add(new MovementComponent(10.0f, 10.0f));
 				coin.add(new VisualComponent(coinRegion));
