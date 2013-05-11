@@ -9,6 +9,7 @@ import ashley.utils.IntMap;
 import ashley.utils.ObjectMap;
 import ashley.utils.ObjectMap.Entries;
 import ashley.utils.ObjectMap.Entry;
+import ashley.utils.Pools;
 
 /**
  * The Engine class is the heart of the Entity framework. It is responsible for keeping track of entities and
@@ -32,6 +33,9 @@ public class Engine {
 	private Array<EntitySystem> systems;
 	/** A hashmap that organises all entities into family buckets */
 	private ObjectMap<Family, IntMap<Entity>> families;
+	
+	/** A collection of pools to support component pooling */
+	private static Pools componentPools = new Pools();
 	
 	/** A listener for the Engine that's called everytime a component is added. */
 	private final Listener<Entity> componentAdded;
@@ -138,6 +142,10 @@ public class Engine {
 		return families.get(family);
 	}
 	
+	public <T extends Component> T createComponent(Class<T> componentType) {
+		return componentPools.obtain(componentType);
+	}
+	
 	/**
 	 * Internal listener for when a Component is added to an entity
 	 * @param entity The Entity that had a component added to
@@ -181,6 +189,10 @@ public class Engine {
 		for(int i=0; i<systems.size; i++){
 			systems.get(i).update(deltaTime);
 		}
+	}
+	
+	static void freeComponent(Component component) {
+		componentPools.free(component);
 	}
 	
 	private static class SystemComparator implements Comparator<EntitySystem>{
