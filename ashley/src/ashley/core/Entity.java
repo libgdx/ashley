@@ -1,9 +1,11 @@
 package ashley.core;
 
 import java.util.BitSet;
+import java.util.Iterator;
 
 import ashley.signals.Signal;
 import ashley.utils.ObjectMap;
+import ashley.utils.Pool.Poolable;
 
 /**
  * Entities are simple containers. They can hold components that give them "data". The component's data
@@ -14,7 +16,7 @@ import ashley.utils.ObjectMap;
  * 
  * @author Stefan Bachmann
  */
-public class Entity {
+public class Entity implements Poolable {
 	private static int nextIndex;
 	
 	/** Unique entity index for fast retrieval */
@@ -37,10 +39,11 @@ public class Entity {
 	/**
 	 * Creates an empty Entity.
 	 */
-	public Entity(){
+	Entity(){
 		components = new ObjectMap<Class<? extends Component>, Component>();
 		componentBits = new BitSet();
 		familyBits = new BitSet();
+		flags = 0;
 		
 		index = nextIndex++;
 		
@@ -66,20 +69,44 @@ public class Entity {
 	 * Removes the component of the specified type. Since there is only ever one component of one type, we
 	 * don't need an instance reference.
 	 * @param componentType The Component to remove
-	 * @return The removed component, or null if the Entity did no contain such a component
 	 */
-	public Component remove(Class<? extends Component> componentType){
+	public void remove(Class<? extends Component> componentType){
 		Component removeComponent = components.get(componentType, null);
 		
 		if(removeComponent != null){
-			Engine.freeComponent(removeComponent);
-			
 			componentBits.clear(ComponentType.getIndexFor(componentType));
 			
 			componentRemoved.dispatch(this);
+			
+			components.remove(componentType);
+			
+			Engine.freeComponent(removeComponent);
+		}
+	}
+	
+	/**
+	 * Removes all the entity components
+	 */
+	public void removeAll() {
+		Iterator<Class<? extends Component>> it = components.keys().iterator();
+		
+		while (it.hasNext()) {
+			Class<? extends Component> componentType = it.next();
+			
+			Component removeComponent = components.get(componentType, null);
+			
+			if(removeComponent != null){
+				componentBits.clear(ComponentType.getIndexFor(componentType));
+				
+				componentRemoved.dispatch(this);
+				
+				components.remove(componentType);
+				
+				Engine.freeComponent(removeComponent);
+			}
 		}
 		
-		return removeComponent;
+		components.clear();
 	}
 	
 	/**
@@ -110,5 +137,11 @@ public class Entity {
 	 */
 	public int getIndex(){
 		return index;
+	}
+
+	@Override
+	public void reset() {
+		flags = 0;
+		removeAll();
 	}
 }

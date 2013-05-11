@@ -10,6 +10,7 @@ import ashley.utils.ObjectMap;
 import ashley.utils.ObjectMap.Entries;
 import ashley.utils.ObjectMap.Entry;
 import ashley.utils.Pools;
+import ashley.utils.ReflectionPool;
 
 /**
  * The Engine class is the heart of the Entity framework. It is responsible for keeping track of entities and
@@ -33,6 +34,8 @@ public class Engine {
 	private Array<EntitySystem> systems;
 	/** A hashmap that organises all entities into family buckets */
 	private ObjectMap<Family, IntMap<Entity>> families;
+	/** An entity pool to avoid constant memory allocation and GC activity */
+	private ReflectionPool<Entity> entityPool;
 	
 	/** A collection of pools to support component pooling */
 	private static Pools componentPools = new Pools();
@@ -46,6 +49,7 @@ public class Engine {
 		entities = new Array<Entity>();
 		systems = new Array<EntitySystem>();
 		families = new ObjectMap<Family, IntMap<Entity>>();
+		entityPool = new ReflectionPool<Entity>(Entity.class);
 		
 		componentAdded = new Listener<Entity>(){
 			@Override
@@ -60,6 +64,14 @@ public class Engine {
 				componentRemoved(object);
 			} 
 		};
+	}
+	
+	/**
+	 * Retrieves an available entity from the pool
+	 * @param new entity
+	 */
+	public Entity createEntity() {
+		return entityPool.obtain();
 	}
 	
 	/**
@@ -102,6 +114,8 @@ public class Engine {
 		
 		entity.componentAdded.remove(componentAdded);
 		entity.componentRemoved.remove(componentRemoved);
+		
+		entityPool.free(entity);
 	}
 	
 	/**
