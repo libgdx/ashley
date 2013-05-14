@@ -44,8 +44,8 @@ public class Entity {
 		
 		index = nextIndex++;
 		
-		componentAdded = new Signal<>();
-		componentRemoved = new Signal<>();
+		componentAdded = new Signal<Entity>();
+		componentRemoved = new Signal<Entity>();
 	}
 	
 	/**
