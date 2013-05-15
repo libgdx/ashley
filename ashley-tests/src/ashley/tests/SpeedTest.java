@@ -1,7 +1,7 @@
 package ashley.tests;
 
-import ashley.core.Engine;
 import ashley.core.Entity;
+import ashley.core.PooledEngine;
 import ashley.tests.components.MovementComponent;
 import ashley.tests.components.PositionComponent;
 import ashley.tests.systems.MovementSystem;
@@ -15,7 +15,7 @@ public class SpeedTest {
 		Timer timer = new Timer();
 		Array<Entity> entities = new Array<>();
 		
-		Engine engine = new Engine();
+		PooledEngine engine = new PooledEngine();
 		
 		engine.addSystem(new MovementSystem());
 		

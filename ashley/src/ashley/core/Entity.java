@@ -1,11 +1,10 @@
 package ashley.core;
 
 import java.util.BitSet;
-import java.util.Iterator;
 
 import ashley.signals.Signal;
 import ashley.utils.ObjectMap;
-import ashley.utils.Pool.Poolable;
+import ashley.utils.ObjectMap.Keys;
 
 /**
  * Entities are simple containers. They can hold components that give them "data". The component's data
@@ -16,7 +15,7 @@ import ashley.utils.Pool.Poolable;
  * 
  * @author Stefan Bachmann
  */
-public class Entity implements Poolable {
+public class Entity {
 	private static int nextIndex;
 	
 	/** Unique entity index for fast retrieval */
@@ -39,7 +38,7 @@ public class Entity implements Poolable {
 	/**
 	 * Creates an empty Entity.
 	 */
-	Entity(){
+	public Entity(){
 		components = new ObjectMap<Class<? extends Component>, Component>();
 		componentBits = new BitSet();
 		familyBits = new BitSet();
@@ -69,8 +68,9 @@ public class Entity implements Poolable {
 	 * Removes the component of the specified type. Since there is only ever one component of one type, we
 	 * don't need an instance reference.
 	 * @param componentType The Component to remove
+	 * @return The removed component, or null if the Entity did no contain such a component
 	 */
-	public void remove(Class<? extends Component> componentType){
+	public Component remove(Class<? extends Component> componentType){
 		Component removeComponent = components.get(componentType, null);
 		
 		if(removeComponent != null){
@@ -79,34 +79,21 @@ public class Entity implements Poolable {
 			componentRemoved.dispatch(this);
 			
 			components.remove(componentType);
-			
-			Engine.freeComponent(removeComponent);
 		}
+		
+		return removeComponent;
 	}
 	
 	/**
 	 * Removes all the entity components
 	 */
 	public void removeAll() {
-		Iterator<Class<? extends Component>> it = components.keys().iterator();
+		Keys<Class<? extends Component>> keys = components.keys();
 		
-		while (it.hasNext()) {
-			Class<? extends Component> componentType = it.next();
-			
-			Component removeComponent = components.get(componentType, null);
-			
-			if(removeComponent != null){
-				componentBits.clear(ComponentType.getIndexFor(componentType));
-				
-				componentRemoved.dispatch(this);
-				
-				components.remove(componentType);
-				
-				Engine.freeComponent(removeComponent);
-			}
+		while (keys.hasNext()) {
+			remove(keys.next());
+			keys = components.keys();
 		}
-		
-		components.clear();
 	}
 	
 	/**
@@ -137,11 +124,5 @@ public class Entity implements Poolable {
 	 */
 	public int getIndex(){
 		return index;
-	}
-
-	@Override
-	public void reset() {
-		flags = 0;
-		removeAll();
 	}
 }

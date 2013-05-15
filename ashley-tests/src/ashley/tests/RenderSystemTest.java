@@ -1,7 +1,7 @@
 package ashley.tests;
 
-import ashley.core.Engine;
 import ashley.core.Entity;
+import ashley.core.PooledEngine;
 import ashley.tests.components.MovementComponent;
 import ashley.tests.components.PositionComponent;
 import ashley.tests.components.VisualComponent;
@@ -29,7 +29,7 @@ public class RenderSystemTest {
 	}
 	
 	public static class MainClass extends ApplicationAdapter {
-		Engine engine;
+		PooledEngine engine;
 		
 		@Override
 		public void create() {
@@ -40,7 +40,7 @@ public class RenderSystemTest {
 			Texture crateTexture = new Texture("assets/crate.png");
 			Texture coinTexture = new Texture("assets/coin.png");
 			
-			engine = new Engine();
+			engine = new PooledEngine();
 			engine.addSystem(new RenderSystem(camera));
 			engine.addSystem(new MovementSystem());
 			
