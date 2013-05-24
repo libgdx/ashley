@@ -106,6 +106,15 @@ public class Entity {
 	}
 	
 	/**
+	 * Quick way of checking whether an entity has a component or not
+	 * @param componentType The Component class to check
+	 * @return True if the entity has a Component of that class, False if it doesn't 
+	 */
+	public boolean hasComponent(Class<? extends Component> componentType) {
+		return componentBits.get(ComponentType.getIndexFor(componentType));
+	}
+	
+	/**
 	 * Returns this Entity's component bits, describing all the components it contains
 	 */
 	public BitSet getComponentBits(){
