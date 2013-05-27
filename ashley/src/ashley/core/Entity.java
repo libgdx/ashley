@@ -72,6 +72,8 @@ public class Entity {
 		Component removeComponent = components.get(componentType, null);
 		
 		if(removeComponent != null){
+			components.remove(componentType);
+
 			componentBits.clear(ComponentType.getIndexFor(componentType));
 			
 			componentRemoved.dispatch(this);

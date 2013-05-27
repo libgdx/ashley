@@ -167,7 +167,7 @@ public class Engine {
 			if(entity.getFamilyBits().get(entry.key.getFamilyIndex())){
 				if(!entry.key.matches(entity)){
 					entry.value.remove(entity.getIndex());
-					entity.getFamilyBits().set(entry.key.getFamilyIndex());
+					entity.getFamilyBits().clear(entry.key.getFamilyIndex());
 				}
 			}
 		}
