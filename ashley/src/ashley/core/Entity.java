@@ -4,6 +4,7 @@ import java.util.BitSet;
 
 import ashley.signals.Signal;
 import ashley.utils.ObjectMap;
+import ashley.utils.ObjectMap.Keys;
 
 /**
  * Entities are simple containers. They can hold components that give them "data". The component's data
@@ -41,6 +42,7 @@ public class Entity {
 		components = new ObjectMap<Class<? extends Component>, Component>();
 		componentBits = new BitSet();
 		familyBits = new BitSet();
+		flags = 0;
 		
 		index = nextIndex++;
 		
@@ -77,9 +79,23 @@ public class Entity {
 			componentBits.clear(ComponentType.getIndexFor(componentType));
 			
 			componentRemoved.dispatch(this);
+			
+			components.remove(componentType);
 		}
 		
 		return removeComponent;
+	}
+	
+	/**
+	 * Removes all the entity components
+	 */
+	public void removeAll() {
+		Keys<Class<? extends Component>> keys = components.keys();
+		
+		while (keys.hasNext()) {
+			remove(keys.next());
+			keys = components.keys();
+		}
 	}
 	
 	/**
@@ -89,6 +105,15 @@ public class Entity {
 	 */
 	public <T extends Component> T getComponent(Class<T> componentType){
 		return componentType.cast(components.get(componentType));
+	}
+	
+	/**
+	 * Quick way of checking whether an entity has a component or not
+	 * @param componentType The Component class to check
+	 * @return True if the entity has a Component of that class, False if it doesn't 
+	 */
+	public boolean hasComponent(Class<? extends Component> componentType) {
+		return componentBits.get(ComponentType.getIndexFor(componentType));
 	}
 	
 	/**

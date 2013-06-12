@@ -30,6 +30,8 @@ public class Engine {
 	private Array<Entity> entities;
 	/** An unordered list of EntitySystem */
 	private Array<EntitySystem> systems;
+	/** A hashmap that organises EntitySystems by class for easy retrieval */
+	private ObjectMap<Class<?>, EntitySystem> systemsByClass;
 	/** A hashmap that organises all entities into family buckets */
 	private ObjectMap<Family, IntMap<Entity>> families;
 	
@@ -41,6 +43,7 @@ public class Engine {
 	public Engine(){
 		entities = new Array<Entity>();
 		systems = new Array<EntitySystem>();
+		systemsByClass = new ObjectMap<Class<?>, EntitySystem>();
 		families = new ObjectMap<Family, IntMap<Entity>>();
 		
 		componentAdded = new Listener<Entity>(){
@@ -105,10 +108,15 @@ public class Engine {
 	 * @param system The system to add
 	 */
 	public void addSystem(EntitySystem system){
-		systems.add(system);
-		system.addedToEngine(this);
+		Class<? extends EntitySystem> systemType = system.getClass();
 		
-		systems.sort(comparator);
+		if (!systemsByClass.containsKey(systemType)) {
+			systems.add(system);
+			systemsByClass.put(systemType, system);
+			system.addedToEngine(this);
+			
+			systems.sort(comparator);
+		}
 	}
 	
 	/**
@@ -118,6 +126,15 @@ public class Engine {
 	public void removeSystem(EntitySystem system){
 		if(systems.removeValue(system, true))
 			system.removedFromEngine(this);
+	}
+	
+	/**
+	 * Quick entity system retrieval
+	 * @param systemType The EntitySystem class to retrieve
+	 * @return The Entity System
+	 */
+	public <T extends EntitySystem> T getSystem(Class<T> systemType) {
+		return systemType.cast(systemsByClass.get(systemType));
 	}
 	
 	/**
