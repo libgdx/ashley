@@ -4,6 +4,7 @@ import ashley.core.Engine;
 import ashley.core.Entity;
 import ashley.core.EntitySystem;
 import ashley.core.Family;
+import ashley.core.PooledEngine;
 import ashley.tests.components.MovementComponent;
 import ashley.tests.components.PositionComponent;
 import ashley.utils.IntMap;
@@ -12,7 +13,7 @@ import ashley.utils.IntMap.Keys;
 public class BasicTest {
 	
 	public static void main(String[] args){
-		Engine engine = new Engine();
+		PooledEngine engine = new PooledEngine();
 		
 		MovementSystem movementSystem = new MovementSystem();
 		PositionSystem positionSystem = new PositionSystem();
@@ -21,7 +22,7 @@ public class BasicTest {
 		engine.addSystem(positionSystem);
 		
 		for(int i=0; i<10; i++){
-			Entity entity = new Entity();
+			Entity entity = engine.createEntity();
 			entity.add(new PositionComponent(10, 0));
 			if(i > 5)
 				entity.add(new MovementComponent(10, 2));
