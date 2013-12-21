@@ -6,7 +6,7 @@ A tiny entity framework written in Java. It's inspired by frameworks like
 entity framework  without the use of black-magic and thus making the API easy
 and transparent to use.
 
-Licensed under the Apache 2.0
+Licensed under Apache 2.0
 
 ## Examples
 
