@@ -2,6 +2,7 @@ package ashley.tests;
 
 import ashley.core.Engine;
 import ashley.core.Entity;
+import ashley.core.EntityListener;
 import ashley.core.EntitySystem;
 import ashley.core.Family;
 import ashley.core.PooledEngine;
@@ -21,6 +22,9 @@ public class BasicTest {
 		engine.addSystem(movementSystem);
 		engine.addSystem(positionSystem);
 		
+		Listener listener = new Listener();
+		engine.addEntityListener(listener);
+		
 		for(int i=0; i<10; i++){
 			Entity entity = engine.createEntity();
 			entity.add(new PositionComponent(10, 0));
@@ -39,6 +43,8 @@ public class BasicTest {
 			if(i > 5)
 				engine.removeSystem(movementSystem);
 		}
+		
+		engine.removeEntityListener(listener);
 	}
 	
 	public static class PositionSystem extends EntitySystem {
@@ -87,6 +93,19 @@ public class BasicTest {
 			}
 			
 			log(entities.size + " Entities updated in MovementSystem.");
+		}
+	}
+	
+	public static class Listener implements EntityListener {
+
+		@Override
+		public void entityAdded(Entity entity) {
+			log("Entity added " + entity);
+		}
+
+		@Override
+		public void entityRemoved(Entity entity) {
+			log("Entity removed " + entity);
 		}
 	}
 	
