@@ -67,9 +67,7 @@ public class SpeedTest {
 		/** Removing entities */
 		timer.start("entitiesRemoved");
 		
-		for(Entity e:entities){
-			engine.removeEntity(e);
-		}
+		engine.removeAllEntities();
 		
 		System.out.println("Entity removed time: " + timer.stop("entitiesRemoved") + "ms");
 	}

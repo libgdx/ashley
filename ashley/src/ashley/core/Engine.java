@@ -104,6 +104,15 @@ public class Engine {
 	}
 	
 	/**
+	 * Removes all entities registered with this Engine
+	 */
+	public void removeAllEntities() {
+		while(entities.size > 0) {
+			removeEntity(entities.first());
+		}
+	}
+	
+	/**
 	 * Add the EntitySystem to this Engine
 	 * @param system The system to add
 	 */
