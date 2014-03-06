@@ -3,6 +3,8 @@ package ashley.core;
 import java.util.BitSet;
 
 import ashley.signals.Signal;
+import ashley.utils.Array;
+import ashley.utils.ImmutableArray;
 import ashley.utils.ObjectMap;
 import ashley.utils.ObjectMap.Keys;
 
@@ -23,6 +25,8 @@ public class Entity {
 	
 	/** The hashmap that holds all the components hashed via their class type */
 	private ObjectMap<Class<? extends Component>, Component> components;
+	/** An auxiliary array for quick access to all the components of an entity */
+	private Array<Component> componentsArray;
 	/** A bitset describing all the components in this entity. For quick matching. */
 	private BitSet componentBits;
 	/** A bitset describing all the systems this entity was matched with. */
@@ -40,6 +44,7 @@ public class Entity {
 	 */
 	public Entity(){
 		components = new ObjectMap<Class<? extends Component>, Component>();
+		componentsArray = new Array<Component>();
 		componentBits = new BitSet();
 		familyBits = new BitSet();
 		flags = 0;
@@ -56,7 +61,17 @@ public class Entity {
 	 * @return The entity for easy chaining
 	 */
 	public Entity add(Component component){
+		Class<? extends Component> componentClass = component.getClass();
+		
+		for (int i = 0; i < componentsArray.size; ++i) {
+			if (componentsArray.get(i).getClass() == componentClass) {
+				componentsArray.removeIndex(i);
+				break;
+			}
+		}
+		
 		components.put(component.getClass(), component);
+		componentsArray.add(component);
 		
 		componentBits.set(ComponentType.getIndexFor(component.getClass()));
 		
@@ -75,7 +90,9 @@ public class Entity {
 		
 		if(removeComponent != null){
 			components.remove(componentType);
-
+			
+			componentsArray.removeValue(removeComponent, true);
+			
 			componentBits.clear(ComponentType.getIndexFor(componentType));
 			
 			componentRemoved.dispatch(this);
@@ -117,21 +134,28 @@ public class Entity {
 	}
 	
 	/**
-	 * Returns this Entity's component bits, describing all the components it contains
+	 * @return this Entity's component bits, describing all the components it contains
 	 */
 	public BitSet getComponentBits(){
 		return componentBits;
 	}
 	
 	/**
-	 * Returns this Entity's family bits, describing all the systems it currently is being processed with
+	 * @return immutable array with all the entity components
+	 */
+	public ImmutableArray<Component> getComponents() {
+		return componentsArray;
+	}
+	
+	/**
+	 * @return this Entity's family bits, describing all the systems it currently is being processed with
 	 */
 	public BitSet getFamilyBits(){
 		return familyBits;
 	}
 	
 	/**
-	 * Returns this entity's unique index
+	 * @return this entity's unique index
 	 */
 	public int getIndex(){
 		return index;
