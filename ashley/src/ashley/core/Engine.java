@@ -34,6 +34,12 @@ public class Engine {
 	private ObjectMap<Class<?>, EntitySystem> systemsByClass;
 	/** A hashmap that organises all entities into family buckets */
 	private ObjectMap<Family, IntMap<Entity>> families;
+	/** A collection of entity added/removed event listeners */
+	private Array<EntityListener> listeners;
+	/** EntityListeners that await removal */
+	private Array<EntityListener> removalPendingListeners;
+	/** Whether or not the entity listeners are being notified of an event */
+	private boolean notifying;
 	
 	/** A listener for the Engine that's called everytime a component is added. */
 	private final Listener<Entity> componentAdded;
@@ -45,6 +51,9 @@ public class Engine {
 		systems = new Array<EntitySystem>();
 		systemsByClass = new ObjectMap<Class<?>, EntitySystem>();
 		families = new ObjectMap<Family, IntMap<Entity>>();
+		listeners = new Array<EntityListener>();
+		removalPendingListeners = new Array<EntityListener>();
+		notifying = false;
 		
 		componentAdded = new Listener<Entity>(){
 			@Override
@@ -79,6 +88,13 @@ public class Engine {
 		
 		entity.componentAdded.add(componentAdded);
 		entity.componentRemoved.add(componentRemoved);
+		
+		notifying = true;
+		for (EntityListener listener : listeners) {
+			listener.entityAdded(entity);
+		}
+		notifying = false;
+		removePendingListeners();
 	}
 	
 	/**
@@ -101,6 +117,13 @@ public class Engine {
 		
 		entity.componentAdded.remove(componentAdded);
 		entity.componentRemoved.remove(componentRemoved);
+		
+		notifying = true;
+		for (EntityListener listener : listeners) {
+			listener.entityRemoved(entity);
+		}
+		notifying = false;
+		removePendingListeners();
 	}
 	
 	/**
@@ -165,6 +188,29 @@ public class Engine {
 	}
 	
 	/**
+	 * Adds entity listener
+	 *  
+	 * @param listener listener to be added
+	 */
+	public void addEntityListener(EntityListener listener) {
+		listeners.add(listener);
+	}
+	
+	/**
+	 * Removes entity listener 
+	 * 
+	 * @param listener listener to be removed
+	 */
+	public void removeEntityListener(EntityListener listener) {
+		if (notifying) {
+			removalPendingListeners.add(listener);
+		}
+		else {
+			listeners.removeValue(listener, true);
+		}
+	}
+	
+	/**
 	 * Internal listener for when a Component is added to an entity
 	 * @param entity The Entity that had a component added to
 	 */
@@ -197,6 +243,17 @@ public class Engine {
 				}
 			}
 		}
+	}
+	
+	/**
+	 * Removes pending listeners
+	 */
+	private void removePendingListeners() {
+		for (EntityListener listener : removalPendingListeners) {
+			listeners.removeValue(listener, true);
+		}
+		
+		removalPendingListeners.clear();
 	}
 	
 	/**
