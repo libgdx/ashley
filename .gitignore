@@ -8,5 +8,6 @@
 # target directories:
 .idea/
 *.iml
+out/
 /ashley/bin
 /ashley-tests/bin
