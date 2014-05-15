@@ -6,5 +6,8 @@
 # per project ignores, it's cumbersome, but reduces the risk of missing something
 
 # target directories:
+.idea/
+*.iml
+out/
 /ashley/bin
 /ashley-tests/bin
