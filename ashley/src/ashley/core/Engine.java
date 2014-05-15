@@ -262,7 +262,9 @@ public class Engine {
 	 */
 	public void update(float deltaTime){
 		for(int i=0; i<systems.size; i++){
-			systems.get(i).update(deltaTime);
+            if (systems.get(i).checkProcessing()) {
+                systems.get(i).update(deltaTime);
+            }
 		}
 	}
 	
