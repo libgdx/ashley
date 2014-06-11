@@ -48,4 +48,12 @@ public class EntitySystem {
 	public void update(float deltaTime){
 		
 	}
+
+    /**
+     *
+     * @return true if the system should be processed, false if not.
+     */
+    public boolean checkProcessing() {
+        return true;
+    }
 }
