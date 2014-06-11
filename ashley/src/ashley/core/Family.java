@@ -16,11 +16,8 @@ import ashley.utils.ObjectMap;
  * @author Stefan Bachmann
  */
 public class Family {
-//	/** The hashmap holding all families */
-//	private static ObjectMap<String, Family> families = new ObjectMap<String, Family>();
-	
-	private static ObjectMap<String, Family> familiesByAllBits = new ObjectMap<String, Family>();
-	private static ObjectMap<String, Family> familiesByOneBits = new ObjectMap<String, Family>();
+	private static final ObjectMap<String, Family> familiesByAllBits = new ObjectMap<String, Family>();
+	private static final ObjectMap<String, Family> familiesByOneBits = new ObjectMap<String, Family>();
 	
 	private static int familyIndex = 0;
 	
@@ -41,10 +38,7 @@ public class Family {
 	}
 	
 	private Family(){
-		this.allBits = new BitSet();
-		this.oneBits = new BitSet();
-		this.excludeBits = new BitSet();
-		this.index = familyIndex++;
+		this(new BitSet(), new BitSet(), new BitSet());
 	}
 	
 	/**
