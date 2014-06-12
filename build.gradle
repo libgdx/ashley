@@ -24,7 +24,7 @@ project(":ashley-tests") {
     apply plugin: "java"
 
     ext {
-        gdxVersion = '1.0.0'
+        gdxVersion = '1.1.0'
     }
 
     dependencies {
