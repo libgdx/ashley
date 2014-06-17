@@ -28,7 +28,7 @@ project(":ashley-tests") {
     }
 
     dependencies {
-        compile project(":ashley")
+        compile project(":core")
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
