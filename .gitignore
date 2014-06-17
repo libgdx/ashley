@@ -5,9 +5,31 @@
 *.mdb
 # per project ignores, it's cumbersome, but reduces the risk of missing something
 
-# target directories:
+# Gradle
+.gradle
+build/
+dist/
+
+# Intellij
 .idea/
+*.ipr
+*.iws
 *.iml
 out/
-/ashley/bin
-/ashley-tests/bin
+com_crashlytics_export_strings.xml
+
+# Eclipse
+.classpath
+.project
+.metadata
+**/bin/
+tmp/
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.settings/
+.loadpath
+.externalToolBuilders/
+*.launch
