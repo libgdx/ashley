@@ -16,11 +16,13 @@ allprojects {
     }
 }
 
-project(":ashley") {
+ext.projectGroup = "ashley"
+
+project(":core") {
     apply plugin: "java"
 }
 
-project(":ashley-tests") {
+project(":tests") {
     apply plugin: "java"
 
     ext {
