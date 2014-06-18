@@ -1,0 +1,42 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        mavenLocal()
+    }
+}
+
+allprojects {
+    apply plugin: "eclipse"
+    apply plugin: "idea"
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+    }
+}
+
+ext.projectGroup = "ashley"
+
+project(":core") {
+    apply plugin: "java"
+}
+
+project(":tests") {
+    apply plugin: "java"
+
+    ext {
+        gdxVersion = '1.1.0'
+    }
+
+    dependencies {
+        compile project(":core")
+        compile "com.badlogicgames.gdx:gdx:$gdxVersion"
+        compile "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
+        compile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+    }
+}
+
+tasks.eclipse.doLast {
+    delete ".project"
+}
