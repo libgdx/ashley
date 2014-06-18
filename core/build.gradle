@@ -7,6 +7,10 @@ sourceSets.main.java.srcDirs = [ "src/" ]
 archivesBaseName = 'ashley'
 version = '1.0-SNAPSHOT'
 
+javadoc {
+	title = 'Ashley Entity System API'
+}
+
 eclipse.project {
     name = projectGroup + "-core"
 }
