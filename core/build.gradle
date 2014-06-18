@@ -4,6 +4,9 @@ sourceCompatibility = 1.6
 
 sourceSets.main.java.srcDirs = [ "src/" ]
 
+archivesBaseName = 'ashley'
+version = '1.0-SNAPSHOT'
+
 eclipse.project {
     name = projectGroup + "-core"
 }
