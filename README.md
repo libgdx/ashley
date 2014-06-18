@@ -8,6 +8,17 @@ and transparent to use.
 
 Licensed under Apache 2.0
 
+## Usage
+
+We are currently in the process of making the project available from Maven Central. In the meantime, if you wish you use Ashley, follow these steps.
+
+1. Install [Gradle](http://www.gradle.org/downloads)
+2. Check out the Git repository
+3. Import the `core` project. It works with Eclipse, Intellij, Netbeans or the command line.
+4. Now you can either:
+  * Run the `jar` task to generate `ashley/core/build/libs/ashley-version.jar`
+  * Add the `core` project as a dependency to yours
+
 ## Examples
 
 There are some examples that are located in the
