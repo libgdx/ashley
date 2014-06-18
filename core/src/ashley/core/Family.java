@@ -8,9 +8,9 @@ import ashley.utils.ObjectMap;
  * A family represents a group of components. It is used to describe what entities a system
  * should process. 
  * 
- * Example: Family.getFamilyFor(PositionComponent.class, VelocityComponent.class)
+ * Example: {@code Family.getFamilyFor(PositionComponent.class, VelocityComponent.class)}
  * 
- * Families can't be instantiate directly but must be accessed via Family.getFamilyFor(), this is
+ * Families can't be instantiate directly but must be accessed via {@code Family.getFamilyFor()}, this is
  * to avoid duplicate families that describe the same components.
  * 
  * @author Stefan Bachmann

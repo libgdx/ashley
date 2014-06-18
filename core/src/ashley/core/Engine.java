@@ -12,14 +12,16 @@ import ashley.utils.ObjectMap.Entry;
 
 /**
  * The Engine class is the heart of the Entity framework. It is responsible for keeping track of entities and
- * managing EntitySystems. The Engine should be updated every tick via the update() method.
+ * managing EntitySystems. The Engine should be updated every tick via the {@link #update(float)} method.
  * 
  * With the Engine you can:
  * 
- * - Add/Remove Entities
- * - Add/Remove EntitySystems
- * - Obtain a list of entities for a specific Family
- * - Update the main loop
+ * <ul>
+ * <li>Add/Remove Entities</li>
+ * <li>Add/Remove EntitySystems</li>
+ * <li>Obtain a list of entities for a specific Family</li>
+ * <li>Update the main loop</li>
+ * </ul>
  * 
  * @author Stefan Bachmann
  */

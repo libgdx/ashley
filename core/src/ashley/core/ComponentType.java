@@ -3,11 +3,11 @@ package ashley.core;
 import ashley.utils.ObjectMap;
 
 /**
- * A ComponentType is used to uniquely identify a Component sub-class by assigning them an index. This is used
+ * A {@link ComponentType} is used to uniquely identify a Component sub-class by assigning them an index. This is used
  * for various creating bit masks for fast comparison. See {@link Family} and {@link Entity}.
  * 
- * You cannot instantiate a ComponentType. They can only be accessed via ComponentType.getIndexFor(ComponentClass). Each
- * component class will always return the same instance of ComponentType.
+ * You cannot instantiate a {@link ComponentType}. They can only be accessed via {@link #getIndexFor(Class<? extends Component>)}. Each
+ * component class will always return the same instance of {@link ComponentType}.
  * 
  * @author Stefan Bachmann
  */

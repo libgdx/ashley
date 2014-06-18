@@ -18,7 +18,7 @@ public class EntitySystem {
 	}
 	
 	/**
-	 * Intiliasies the EntitySystem with the priority specified
+	 * Initialises the EntitySystem with the priority specified
 	 * @param priority The priority to execute this system with (lower means higher priority)
 	 */
 	public EntitySystem(int priority){
