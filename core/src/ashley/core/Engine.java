@@ -158,8 +158,10 @@ public class Engine {
 	 * @param system The system to remove
 	 */
 	public void removeSystem(EntitySystem system){
-		if(systems.removeValue(system, true))
+		if(systems.removeValue(system, true)) {
+			systemsByClass.remove(system.getClass());
 			system.removedFromEngine(this);
+		}
 	}
 	
 	/**
