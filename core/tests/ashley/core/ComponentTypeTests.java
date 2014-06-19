@@ -1,4 +1,4 @@
-package ashley;
+package ashley.core;
 
 import static org.junit.Assert.*;
 
