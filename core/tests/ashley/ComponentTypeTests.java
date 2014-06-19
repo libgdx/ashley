@@ -18,6 +18,12 @@ public class ComponentTypeTests {
 	}
 	
 	@Test
+	public void validComponentType() {
+		assertNotNull(ComponentType.getTypeFor(ComponentA.class));
+		assertNotNull(ComponentType.getTypeFor(ComponentB.class));
+	}
+	
+	@Test
 	public void sameComponentType() {
 		ComponentType componentType1 = ComponentType.getTypeFor(ComponentA.class);
 		ComponentType componentType2 = ComponentType.getTypeFor(ComponentA.class);
