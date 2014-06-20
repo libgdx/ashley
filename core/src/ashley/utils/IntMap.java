@@ -26,7 +26,7 @@ import java.util.NoSuchElementException;
  * depending on hash collisions. Load factors greater than 0.91 greatly increase the chances the map will have to rehash to the
  * next higher POT size.
  * @author Nathan Sweet */
-public class IntMap<V> {
+public class IntMap<V> implements ImmutableIntMap<V> {
 	private static final int PRIME1 = 0xbe1f14b1;
 	private static final int PRIME2 = 0xb4b82e39;
 	private static final int PRIME3 = 0xced1c241;
@@ -155,8 +155,8 @@ public class IntMap<V> {
 	}
 
 	public void putAll (IntMap<V> map) {
-		for (Entry<V> entry : map.entries())
-			put(entry.key, entry.value);
+		for (Entry<Integer, V> entry : map.entries())
+			put(entry.getKey(), entry.getValue());
 	}
 
 	/** Skips checks for existing keys. */
@@ -283,6 +283,7 @@ public class IntMap<V> {
 		size++;
 	}
 
+	@Override
 	public V get (int key) {
 		if (key == 0) return zeroValue;
 		int index = key & mask;
@@ -296,6 +297,7 @@ public class IntMap<V> {
 		return valueTable[index];
 	}
 
+	@Override
 	public V get (int key, V defaultValue) {
 		if (key == 0) return zeroValue;
 		int index = key & mask;
@@ -398,6 +400,7 @@ public class IntMap<V> {
 	 * an expensive operation.
 	 * @param identity If true, uses == to compare the specified value with values in the map. If false, uses
 	 *           {@link #equals(Object)}. */
+	@Override
 	public boolean containsValue (Object value, boolean identity) {
 		V[] valueTable = this.valueTable;
 		if (value == null) {
@@ -417,6 +420,7 @@ public class IntMap<V> {
 		return false;
 	}
 
+	@Override
 	public boolean containsKey (int key) {
 		if (key == 0) return hasZeroValue;
 		int index = key & mask;
@@ -440,7 +444,8 @@ public class IntMap<V> {
 	/** Returns the key for the specified value, or <tt>notFound</tt> if it is not in the map. Note this traverses the entire map
 	 * and compares every value, which may be an expensive operation.
 	 * @param identity If true, uses == to compare the specified value with values in the map. If false, uses
-	 *           {@link #equals(Object)}. */
+	 *           {@link #equals(Object)}. */	
+	@Override
 	public int findKey (Object value, boolean identity, int notFound) {
 		V[] valueTable = this.valueTable;
 		if (value == null) {
@@ -562,13 +567,23 @@ public class IntMap<V> {
 			keys.reset();
 		return keys;
 	}
+	
+	static private class InternalEntry<V> extends Entry<Integer, V> {
 
-	static public class Entry<V> {
-		public int key;
-		public V value;
-
-		public String toString () {
-			return key + "=" + value;
+		public InternalEntry() {
+			super(0, null);
+		}
+		
+		public InternalEntry(Integer key, V value) {
+			super(key, value);
+		}
+		
+		public void setKey(int key) {
+			this.key = key;
+		}
+		
+		public void setValue(V value) {
+			this.value = value;
 		}
 	}
 
@@ -605,6 +620,10 @@ public class IntMap<V> {
 				}
 			}
 		}
+		
+		public boolean hasNext () {
+			return hasNext;
+		}
 
 		public void remove () {
 			if (currentIndex == INDEX_ZERO && map.hasZeroValue) {
@@ -623,15 +642,15 @@ public class IntMap<V> {
 		}
 	}
 
-	static public class Entries<V> extends MapIterator<V> implements Iterable<Entry<V>>, Iterator<Entry<V>> {
-		private Entry<V> entry = new Entry();
+	static public class Entries<V> extends MapIterator<V> implements Iterable<Entry<Integer, V>>, Iterator<Entry<Integer, V>>, ImmutableEntries<V> {
+		private InternalEntry<V> entry = new InternalEntry();
 
 		public Entries (IntMap map) {
 			super(map);
 		}
 
 		/** Note the same entry instance is returned each time this method is called. */
-		public Entry<V> next () {
+		public Entry<Integer, V> next () {
 			if (!hasNext) throw new NoSuchElementException();
 			int[] keyTable = map.keyTable;
 			if (nextIndex == INDEX_ZERO) {
@@ -646,22 +665,15 @@ public class IntMap<V> {
 			return entry;
 		}
 
-		public boolean hasNext () {
-			return hasNext;
-		}
 
-		public Iterator<Entry<V>> iterator () {
+		public Iterator<Entry<Integer, V>> iterator () {
 			return this;
 		}
 	}
 
-	static public class Values<V> extends MapIterator<V> implements Iterable<V>, Iterator<V> {
+	static public class Values<V> extends MapIterator<V> implements Iterable<V>, Iterator<V>, ImmutableValues<V>{
 		public Values (IntMap<V> map) {
 			super(map);
-		}
-
-		public boolean hasNext () {
-			return hasNext;
 		}
 
 		public V next () {
@@ -687,13 +699,13 @@ public class IntMap<V> {
 			return array;
 		}
 	}
-
-	static public class Keys extends MapIterator {
+	
+	static public class Keys extends MapIterator implements Iterable<Integer>, Iterator<Integer>, ImmutableKeys{
 		public Keys (IntMap map) {
 			super(map);
 		}
 
-		public int next () {
+		public Integer next () {
 			int key = nextIndex == INDEX_ZERO ? 0 : map.keyTable[nextIndex];
 			currentIndex = nextIndex;
 			findNextIndex();
@@ -707,5 +719,30 @@ public class IntMap<V> {
 				array.add(next());
 			return array;
 		}
+
+		@Override
+		public Iterator<Integer> iterator() {
+			return this;
+		}
+	}
+
+	@Override
+	public ImmutableEntries<V> immutableEntries() {
+		return entries();
+	}
+
+	@Override
+	public ImmutableValues<V> immutableValues() {
+		return values();
+	}
+
+	@Override
+	public ImmutableIntMap.ImmutableKeys immutableKeys() {
+		return keys();
+	}
+
+	@Override
+	public int size() {
+		return size;
 	}
 }

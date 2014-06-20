@@ -8,6 +8,8 @@ import ashley.core.Family;
 import ashley.core.PooledEngine;
 import ashley.tests.components.MovementComponent;
 import ashley.tests.components.PositionComponent;
+import ashley.utils.ImmutableIntMap;
+import ashley.utils.ImmutableIntMap.ImmutableKeys;
 import ashley.utils.IntMap;
 import ashley.utils.IntMap.Keys;
 
@@ -34,8 +36,8 @@ public class BasicTest {
 			engine.addEntity(entity);
 		}
 		
-		log("MovementSystem has: " + movementSystem.entities.size + " entities.");
-		log("PositionSystem has: " + positionSystem.entities.size + " entities.");
+		log("MovementSystem has: " + movementSystem.entities.size() + " entities.");
+		log("PositionSystem has: " + positionSystem.entities.size() + " entities.");
 		
 		for(int i=0; i<10; i++){
 			engine.update(0.25f);
@@ -48,7 +50,7 @@ public class BasicTest {
 	}
 	
 	public static class PositionSystem extends EntitySystem {
-		public IntMap<Entity> entities;
+		public ImmutableIntMap<Entity> entities;
 
 		@Override
 		public void addedToEngine(Engine engine) {
@@ -64,7 +66,7 @@ public class BasicTest {
 	}
 	
 	public static class MovementSystem extends EntitySystem {
-		public IntMap<Entity> entities;
+		public ImmutableIntMap<Entity> entities;
 
 		@Override
 		public void addedToEngine(Engine engine) {
@@ -80,9 +82,9 @@ public class BasicTest {
 
 		@Override
 		public void update(float deltaTime) {
-			Keys keys = entities.keys();
+			ImmutableKeys keys = entities.immutableKeys();
 
-			while(keys.hasNext){
+			while(keys.hasNext()){
 				Entity e = entities.get(keys.next());
 				
 				PositionComponent p = e.getComponent(PositionComponent.class);
@@ -92,7 +94,7 @@ public class BasicTest {
 				p.y += m.velocityY * deltaTime;
 			}
 			
-			log(entities.size + " Entities updated in MovementSystem.");
+			log(entities.size() + " Entities updated in MovementSystem.");
 		}
 	}
 	
