@@ -6,6 +6,6 @@ package ashley.core;
  * 
  * @author Stefan Bachmann
  */
-public class Component {
+public abstract class Component {
 	
 }
