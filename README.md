@@ -110,4 +110,6 @@ class SomeGame {
 
 ## Contributing
 
-If you'd like to contribute or submit a bugfix please fork this repo and send a pull requests. Any input & fixes are appreciated!
+If you'd like to contribute or submit a bugfix please fork this repo and send a pull requests. Before sending a pull request, it would be great if you run the JUnit tests and make sure nothing is broken.
+
+Any input & fixes are appreciated!
