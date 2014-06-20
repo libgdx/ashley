@@ -642,7 +642,7 @@ public class IntMap<V> implements ImmutableIntMap<V> {
 		}
 	}
 
-	static public class Entries<V> extends MapIterator<V> implements Iterable<Entry<Integer, V>>, Iterator<Entry<Integer, V>>, ImmutableEntries<V> {
+	static public class Entries<V> extends MapIterator<V> implements Iterable<Entry<Integer, V>>, Iterator<Entry<Integer, V>>, ImmutableIntMap.Entries<V> {
 		private InternalEntry<V> entry = new InternalEntry();
 
 		public Entries (IntMap map) {
@@ -671,7 +671,7 @@ public class IntMap<V> implements ImmutableIntMap<V> {
 		}
 	}
 
-	static public class Values<V> extends MapIterator<V> implements Iterable<V>, Iterator<V>, ImmutableValues<V>{
+	static public class Values<V> extends MapIterator<V> implements Iterable<V>, Iterator<V>, ImmutableIntMap.Values<V>{
 		public Values (IntMap<V> map) {
 			super(map);
 		}
@@ -700,7 +700,7 @@ public class IntMap<V> implements ImmutableIntMap<V> {
 		}
 	}
 	
-	static public class Keys extends MapIterator implements Iterable<Integer>, Iterator<Integer>, ImmutableKeys{
+	static public class Keys extends MapIterator implements Iterable<Integer>, Iterator<Integer>, ImmutableIntMap.Keys{
 		public Keys (IntMap map) {
 			super(map);
 		}
@@ -727,17 +727,17 @@ public class IntMap<V> implements ImmutableIntMap<V> {
 	}
 
 	@Override
-	public ImmutableEntries<V> immutableEntries() {
+	public Entries<V> immutableEntries() {
 		return entries();
 	}
 
 	@Override
-	public ImmutableValues<V> immutableValues() {
+	public Values<V> immutableValues() {
 		return values();
 	}
 
 	@Override
-	public ImmutableIntMap.ImmutableKeys immutableKeys() {
+	public ImmutableIntMap.Keys immutableKeys() {
 		return keys();
 	}
 

@@ -7,7 +7,7 @@ import ashley.core.Family;
 import ashley.tests.components.PositionComponent;
 import ashley.tests.components.VisualComponent;
 import ashley.utils.ImmutableIntMap;
-import ashley.utils.ImmutableIntMap.ImmutableKeys;
+import ashley.utils.ImmutableIntMap.Keys;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -44,7 +44,7 @@ public class RenderSystem extends EntitySystem {
 		batch.begin();
 		batch.setProjectionMatrix(camera.combined);
 		
-		ImmutableKeys keys = entities.immutableKeys();
+		Keys keys = entities.immutableKeys();
 
 		while(keys.hasNext()){
 			Entity e = entities.get(keys.next());
