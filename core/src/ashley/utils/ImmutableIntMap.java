@@ -14,21 +14,21 @@ public interface ImmutableIntMap<V> {
 	public ImmutableValues<V> immutableValues();
 	public ImmutableKeys immutableKeys();
 	
-	public static interface ImmutableEntries<V> {
+	public static interface ImmutableEntries<V> extends Iterable<Entry<Integer, V>> {
 		public void reset();
 		public Entry<Integer, V> next();
 		public boolean hasNext();
 		public Iterator<Entry<Integer, V>> iterator();
 	}
 	
-	public static interface ImmutableValues<V> {
+	public static interface ImmutableValues<V>  extends Iterable<V> {
 		public void reset();
 		public V next();
 		public boolean hasNext();
 		public Iterator<V> iterator();
 	}
 	
-	public static interface ImmutableKeys {
+	public static interface ImmutableKeys extends Iterable<Integer> {
 		public void reset();
 		public Integer next();
 		public boolean hasNext();
