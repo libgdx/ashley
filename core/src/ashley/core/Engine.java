@@ -5,6 +5,7 @@ import java.util.Comparator;
 import ashley.signals.Listener;
 import ashley.signals.Signal;
 import ashley.utils.Array;
+import ashley.utils.ImmutableIntMap;
 import ashley.utils.IntMap;
 import ashley.utils.ObjectMap;
 import ashley.utils.ObjectMap.Entries;
@@ -178,7 +179,7 @@ public class Engine {
 	 * @param family The Family
 	 * @return An IntMap of Entities
 	 */
-	public IntMap<Entity> getEntitiesFor(Family family){
+	public ImmutableIntMap<Entity> getEntitiesFor(Family family){
 		IntMap<Entity> entities = families.get(family, null);
 		if(entities == null){
 			entities = new IntMap<Entity>();

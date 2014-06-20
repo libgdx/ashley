@@ -4,8 +4,8 @@ import ashley.core.Engine;
 import ashley.core.Entity;
 import ashley.core.EntitySystem;
 import ashley.core.Family;
-import ashley.utils.IntMap;
-import ashley.utils.IntMap.Keys;
+import ashley.utils.ImmutableIntMap;
+import ashley.utils.ImmutableIntMap.ImmutableKeys;
 
 /**
  * A simple EntitySystem that iterates over each entity and calls processEntity() for each entity every time
@@ -18,7 +18,7 @@ public abstract class IteratingSystem extends EntitySystem {
 	/** The family describing this systems entities */
 	private Family family;
 	/** The entities used by this system */
-	private IntMap<Entity> entities;
+	private ImmutableIntMap<Entity> entities;
 	
 	/**
 	 * Instantiates a system that will iterate over the entities described by the Family.
@@ -52,9 +52,9 @@ public abstract class IteratingSystem extends EntitySystem {
 
 	@Override
 	public void update(float deltaTime) {
-		Keys keys = entities.keys();
+		ImmutableKeys keys = entities.immutableKeys();
 		
-		while(keys.hasNext){
+		while(keys.hasNext()){
 			processEntity(entities.get(keys.next()), deltaTime);
 		}
 	}
