@@ -27,9 +27,13 @@ public class IgnoreSystemTest {
     }
 
     private static class IgnoredSystem extends EntitySystem {
+
+        int counter = 0;
+
         @Override
         public boolean checkProcessing() {
-            return false;
+            counter = 1 - counter;
+            return counter == 1;
         }
 
         @Override
