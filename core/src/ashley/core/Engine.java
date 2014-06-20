@@ -183,8 +183,10 @@ public class Engine {
 		if(entities == null){
 			entities = new IntMap<Entity>();
 			for(Entity e:this.entities){
-				if(family.matches(e))
+				if(family.matches(e)) {
 					entities.put(e.getIndex(), e);
+					e.getFamilyBits().set(family.getFamilyIndex());
+				}
 			}
 			families.put(family, entities);
 		}
