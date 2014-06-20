@@ -17,13 +17,9 @@ import ashley.utils.Array;
 
 public class EntityTests {
 
-	private static class ComponentA extends Component {
-		
-	}
+	private static class ComponentA extends Component {}
 	
-	private static class ComponentB extends Component {
-		
-	}
+	private static class ComponentB extends Component {}
 	
 	private static class EntityListenerMock implements Listener<Entity> {
 
@@ -57,13 +53,7 @@ public class EntityTests {
 		Entity entity = new Entity();
 		
 		assertEquals(0, entity.getComponents().getSize());
-		
-		BitSet componentBits = entity.getComponentBits();
-		
-		for (int i = 0; i < componentBits.size(); ++i) {
-			assertEquals(false, componentBits.get(i));
-		}
-		
+		assertTrue(entity.getComponentBits().isEmpty());
 		assertNull(entity.getComponent(ComponentA.class));
 		assertNull(entity.getComponent(ComponentB.class));
 		assertFalse(entity.hasComponent(ComponentA.class));
@@ -105,7 +95,7 @@ public class EntityTests {
 	}
 	
 	@Test
-	public void addAndRemoveComponents() {
+	public void addAndRemoveAllComponents() {
 		Entity entity = new Entity();
 		
 		entity.add(new ComponentA());
@@ -144,11 +134,16 @@ public class EntityTests {
 	public void addSameComponent() {
 		Entity entity = new Entity();
 		
-		entity.add(new ComponentA());
-		entity.add(new ComponentA());
+		ComponentA a1 = new ComponentA();
+		ComponentA a2 = new ComponentA();
+		
+		entity.add(a1);
+		entity.add(a2);
 		
 		assertEquals(1, entity.getComponents().getSize());
 		assertTrue(entity.hasComponent(ComponentA.class));
+		assertNotEquals(a1, entity.getComponent(ComponentA.class));
+		assertEquals(a2, entity.getComponent(ComponentA.class));
 	}
 	
 	@Test
