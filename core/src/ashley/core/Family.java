@@ -82,12 +82,30 @@ public class Family {
 	}
 
 	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((bits == null) ? 0 : bits.hashCode());
+		result = prime * result + index;
+		return result;
+	}
+
+	@Override
 	public boolean equals(Object obj) {
-		if(obj instanceof Family){
-			if(obj == this)
-				return true;
-			else return bits.equals(((Family)obj).bits);
-		}
-		return false;
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (!(obj instanceof Family))
+			return false;
+		Family other = (Family) obj;
+		if (bits == null) {
+			if (other.bits != null)
+				return false;
+		} else if (!bits.equals(other.bits))
+			return false;
+		if (index != other.index)
+			return false;
+		return true;
 	}
 }
