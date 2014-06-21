@@ -48,6 +48,10 @@ public class IntMap<V> implements ImmutableIntMap<V> {
 	private Entries entries;
 	private Values values;
 	private Keys keys;
+	
+	private ImmutableEntries immutableEntries;
+	private ImmutableValues immutableValues;
+	private ImmutableKeys immutableKeys;
 
 	/** Creates a new map with an initial capacity of 32 and a load factor of 0.8. This map will hold 25 items before growing the
 	 * backing table. */
@@ -642,7 +646,7 @@ public class IntMap<V> implements ImmutableIntMap<V> {
 		}
 	}
 
-	static public class Entries<V> extends MapIterator<V> implements Iterable<Entry<Integer, V>>, Iterator<Entry<Integer, V>>, ImmutableIntMap.Entries<V> {
+	static public class Entries<V> extends MapIterator<V> implements Iterable<Entry<Integer, V>>, Iterator<Entry<Integer, V>> {
 		private InternalEntry<V> entry = new InternalEntry();
 
 		public Entries (IntMap map) {
@@ -669,9 +673,21 @@ public class IntMap<V> implements ImmutableIntMap<V> {
 		public Iterator<Entry<Integer, V>> iterator () {
 			return this;
 		}
+	}	
+	
+	static public class ImmutableEntries<V> extends Entries<V> implements ImmutableIntMap.Entries<V>{
+		
+		public ImmutableEntries (IntMap map) {
+			super(map);
+		}
+
+		@Override
+		public void remove () {
+			throw new UnsupportedOperationException();
+		}
 	}
 
-	static public class Values<V> extends MapIterator<V> implements Iterable<V>, Iterator<V>, ImmutableIntMap.Values<V>{
+	static public class Values<V> extends MapIterator<V> implements Iterable<V>, Iterator<V> {
 		public Values (IntMap<V> map) {
 			super(map);
 		}
@@ -700,7 +716,19 @@ public class IntMap<V> implements ImmutableIntMap<V> {
 		}
 	}
 	
-	static public class Keys extends MapIterator implements Iterable<Integer>, Iterator<Integer>, ImmutableIntMap.Keys{
+	static public class ImmutableValues<V> extends Values<V> implements ImmutableIntMap.Values<V>{
+		
+		public ImmutableValues (IntMap map) {
+			super(map);
+		}
+
+		@Override
+		public void remove () {
+			throw new UnsupportedOperationException();
+		}
+	}
+	
+	static public class Keys extends MapIterator implements Iterable<Integer>, Iterator<Integer> {
 		public Keys (IntMap map) {
 			super(map);
 		}
@@ -725,20 +753,44 @@ public class IntMap<V> implements ImmutableIntMap<V> {
 			return this;
 		}
 	}
+	
+	static public class ImmutableKeys extends Keys implements ImmutableIntMap.Keys {
+		
+		public ImmutableKeys (IntMap map) {
+			super(map);
+		}
 
-	@Override
-	public Entries<V> immutableEntries() {
-		return entries();
+		@Override
+		public void remove () {
+			throw new UnsupportedOperationException();
+		}
 	}
 
 	@Override
-	public Values<V> immutableValues() {
-		return values();
+	public ImmutableIntMap.Entries<V> immutableEntries() {
+		if (immutableEntries == null)
+			immutableEntries = new ImmutableEntries(this);
+		else
+			immutableEntries.reset();
+		return immutableEntries;
+	}
+
+	@Override
+	public ImmutableIntMap.Values<V> immutableValues() {
+		if (immutableValues == null)
+			immutableValues = new ImmutableValues(this);
+		else
+			immutableValues.reset();
+		return immutableValues;
 	}
 
 	@Override
 	public ImmutableIntMap.Keys immutableKeys() {
-		return keys();
+		if (immutableKeys == null)
+			immutableKeys = new ImmutableKeys(this);
+		else
+			immutableKeys.reset();
+		return immutableKeys;
 	}
 
 	@Override

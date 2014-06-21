@@ -9,7 +9,6 @@ import ashley.core.PooledEngine;
 import ashley.tests.components.MovementComponent;
 import ashley.tests.components.PositionComponent;
 import ashley.utils.ImmutableIntMap;
-import ashley.utils.ImmutableIntMap.Keys;
 
 public class BasicTest {
 	
@@ -80,10 +79,8 @@ public class BasicTest {
 
 		@Override
 		public void update(float deltaTime) {
-			Keys keys = entities.immutableKeys();
-
-			while(keys.hasNext()){
-				Entity e = entities.get(keys.next());
+			
+			for (Entity e : entities.immutableValues()){
 				
 				PositionComponent p = e.getComponent(PositionComponent.class);
 				MovementComponent m = e.getComponent(MovementComponent.class);

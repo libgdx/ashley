@@ -1,7 +1,11 @@
 package ashley.utils;
 
-import java.util.Iterator;
-
+/**
+ * Interface for immutable associative arrays indexed by integers.
+ * However, note that the indexed values could be modified if they are mutable.
+ * 
+ * @author David Saltares
+ */
 public interface ImmutableIntMap<V> {
 	public int size();
 	public V get(int key);
@@ -14,24 +18,9 @@ public interface ImmutableIntMap<V> {
 	public Values<V> immutableValues();
 	public Keys immutableKeys();
 	
-	public static interface Entries<V> extends Iterable<Entry<Integer, V>> {
-		public void reset();
-		public Entry<Integer, V> next();
-		public boolean hasNext();
-		public Iterator<Entry<Integer, V>> iterator();
-	}
+	public static interface Entries<V> extends Iterable<Entry<Integer, V>> { }
 	
-	public static interface Values<V>  extends Iterable<V> {
-		public void reset();
-		public V next();
-		public boolean hasNext();
-		public Iterator<V> iterator();
-	}
+	public static interface Values<V>  extends Iterable<V> { }
 	
-	public static interface Keys extends Iterable<Integer> {
-		public void reset();
-		public Integer next();
-		public boolean hasNext();
-		public Iterator<Integer> iterator();
-	}
+	public static interface Keys extends Iterable<Integer> { }
 }
