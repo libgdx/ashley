@@ -10,7 +10,7 @@ import ashley.utils.Pool.Poolable;
  * 
  * - Create entities using {@link #createEntity()}
  * - Create components using {@link #createComponent(Class)}
- * - Components should implement the Poolable interface when in need to reset its state upon removal
+ * - Components should implement the {@link Poolable} interface when in need to reset its state upon removal
  * 
  * @author David Saltares
  */
