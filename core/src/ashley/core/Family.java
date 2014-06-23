@@ -66,10 +66,10 @@ public class Family {
 	@SafeVarargs
 	public static Family getFamilyFor(Class<? extends Component> ...componentTypes){
 		BitSet bits = new BitSet();
-		
-		for(int i=0; i<componentTypes.length; i++){
-			bits.set(ComponentType.getIndexFor(componentTypes[i]));	
-		}
+
+        for (Class<? extends Component> componentType : componentTypes) {
+            bits.set(ComponentType.getIndexFor(componentType));
+        }
 		
 		String hash = bits.toString();
 		Family family = families.get(hash, null);
@@ -104,8 +104,6 @@ public class Family {
 				return false;
 		} else if (!bits.equals(other.bits))
 			return false;
-		if (index != other.index)
-			return false;
-		return true;
-	}
+        return index == other.index;
+    }
 }

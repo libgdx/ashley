@@ -178,8 +178,6 @@ public class Entity {
 		if (!(obj instanceof Entity))
 			return false;
 		Entity other = (Entity) obj;
-		if (index != other.index)
-			return false;
-		return true;
-	}
+        return index == other.index;
+    }
 }
