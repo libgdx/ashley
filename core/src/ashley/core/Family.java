@@ -67,8 +67,9 @@ public class Family {
 	public static Family getFamilyFor(Class<? extends Component> ...componentTypes){
 		BitSet bits = new BitSet();
 
-        for (Class<? extends Component> componentType : componentTypes) {
-            bits.set(ComponentType.getIndexFor(componentType));
+        int typesLength = componentTypes.length;
+        for(int i = 0; i < typesLength; i++){
+            bits.set(ComponentType.getIndexFor(componentTypes[i]));
         }
 		
 		String hash = bits.toString();
