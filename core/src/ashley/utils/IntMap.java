@@ -769,7 +769,7 @@ public class IntMap<V> implements ImmutableIntMap<V> {
 	@Override
 	public ImmutableIntMap.Entries<V> immutableEntries() {
 		if (immutableEntries == null)
-			immutableEntries = new ImmutableEntries(this);
+			immutableEntries = new ImmutableEntries<V>(this);
 		else
 			immutableEntries.reset();
 		return immutableEntries;
@@ -778,7 +778,7 @@ public class IntMap<V> implements ImmutableIntMap<V> {
 	@Override
 	public ImmutableIntMap.Values<V> immutableValues() {
 		if (immutableValues == null)
-			immutableValues = new ImmutableValues(this);
+			immutableValues = new ImmutableValues<V>(this);
 		else
 			immutableValues.reset();
 		return immutableValues;

@@ -18,9 +18,22 @@ public interface ImmutableIntMap<V> {
 	public Values<V> immutableValues();
 	public Keys immutableKeys();
 	
-	public static interface Entries<V> extends Iterable<Entry<Integer, V>> { }
+	public static interface Entries<V> extends Iterable<Entry<Integer, V>> { 
+		public void reset();
+		public Entry<Integer, V> next();
+		public boolean hasNext();
+
+	}
 	
-	public static interface Values<V>  extends Iterable<V> { }
+	public static interface Values<V>  extends Iterable<V> {
+		public void reset();
+		public V next();
+		public boolean hasNext();
+	}
 	
-	public static interface Keys extends Iterable<Integer> { }
+	public static interface Keys extends Iterable<Integer> {
+		public void reset();
+		public Integer next();
+		public boolean hasNext();
+	}
 }
