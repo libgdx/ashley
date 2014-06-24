@@ -18,6 +18,12 @@ public interface ImmutableIntMap<V> {
 	public Values<V> immutableValues();
 	public Keys immutableKeys();
 	
+	/**
+	 * @author David Saltares
+	 *
+	 * Immutable entries for easy iteration.
+	 * Calling {@code remove()} on the iterator will throw an {@code UnsupportedOperationException}.
+	 */
 	public static interface Entries<V> extends Iterable<Entry<Integer, V>> { 
 		public void reset();
 		public Entry<Integer, V> next();
@@ -25,12 +31,24 @@ public interface ImmutableIntMap<V> {
 
 	}
 	
+	/**
+	 * @author David Saltares
+	 *
+	 * Immutable values for easy iteration.
+	 * Calling {@code remove()} on the iterator will throw an {@code UnsupportedOperationException}.
+	 */
 	public static interface Values<V>  extends Iterable<V> {
 		public void reset();
 		public V next();
 		public boolean hasNext();
 	}
 	
+	/**
+	 * @author David Saltares
+	 *
+	 * Immutable keys for easy iteration.
+	 * Calling {@code remove()} on the iterator will throw an {@code UnsupportedOperationException}.
+	 */
 	public static interface Keys extends Iterable<Integer> {
 		public void reset();
 		public Integer next();
