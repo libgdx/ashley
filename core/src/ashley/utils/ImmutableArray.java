@@ -1,5 +1,12 @@
 package ashley.utils;
 
+/**
+ * Interface for arrays that cannot be modified.
+ * However, note that mutable elements in the array could be modified.
+ * 
+ * @author David Saltares
+ *
+ */
 public interface ImmutableArray<T> {
 	public int getSize();
 	public T get(int index);

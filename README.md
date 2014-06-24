@@ -8,6 +8,10 @@ and transparent to use.
 
 Licensed under Apache 2.0
 
+We're continuously testing Ashley with Jenkins and JUnit.
+
+[![Build Status](http://144.76.220.132:8080/job/ashley/badge/icon)](http://144.76.220.132:8080/job/ashley/)
+
 ## Usage
 
 We are currently in the process of making the project available from Maven Central. In the meantime, if you wish you use Ashley, follow these steps.

@@ -44,9 +44,9 @@ public class Engine {
 	/** Whether or not the entity listeners are being notified of an event */
 	private boolean notifying;
 	
-	/** A listener for the Engine that's called everytime a component is added. */
+	/** A listener for the Engine that's called every time a component is added. */
 	private final Listener<Entity> componentAdded;
-	/** A listener for the Engine that's called everytime a component is removed. */
+	/** A listener for the Engine that's called every time a component is removed. */
 	private final Listener<Entity> componentRemoved;
 	
 	public Engine(){

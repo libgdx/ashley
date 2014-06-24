@@ -47,7 +47,7 @@ public class ComponentType {
     }
 
     /**
-     * Returns the unique ComponentType index for a specific Component Class. Basically a quikc helper
+     * Returns the unique ComponentType index for a specific Component Class. Basically a quick helper
      * method. The same could be done via getTypeFor().
      * @param componentType The Component class
      * @return The index for the specified Component Class
@@ -73,8 +73,6 @@ public class ComponentType {
 		if (getClass() != obj.getClass())
 			return false;
 		ComponentType other = (ComponentType) obj;
-		if (index != other.index)
-			return false;
-		return true;
-	}
+        return index == other.index;
+    }
 }
