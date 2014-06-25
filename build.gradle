@@ -6,27 +6,28 @@ buildscript {
 }
 
 allprojects {
-    apply plugin: "eclipse"
-    apply plugin: "idea"
+    apply plugin: 'eclipse'
+    apply plugin: 'idea'
+    apply plugin: 'java'
 
     repositories {
-        mavenLocal()
         mavenCentral()
+        maven { url "https://oss.sonatype.org/content/repositories/releases/" }
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+        mavenLocal()
     }
 }
 
 ext.projectGroup = "ashley"
 
 project(":core") {
-    apply plugin: "java"
+    apply from : '../publish.gradle'
 }
 
 project(":tests") {
-    apply plugin: "java"
 
     ext {
-        gdxVersion = '1.1.0'
+        gdxVersion = '1.2.0'
     }
 
     dependencies {

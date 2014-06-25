@@ -1,0 +1,53 @@
+apply plugin: "maven-publish"
+
+groupName = 'com.badlogicgames.ashley'
+idName = 'ashley'
+artifactVersion = '1.0.0-SNAPSHOT'
+
+ext.snapshotUser = hasProperty('snapshotUser') ? snapshotUser : ""
+ext.snapshotPass = hasProperty('snapshotPass') ? snapshotPass : ""
+ext.releaseUser = hasProperty('releaseUser') ? releaseUser : ""
+ext.releasePass = hasProperty('releasePass') ? releasePass : ""
+
+task sourceJar(type: Jar) {
+    from sourceSets.main.allJava
+}
+
+task javadocsJar(type: Jar, dependsOn: javadoc) {
+    from javadoc.destinationDir
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+
+            groupId groupName
+            artifactId idName
+            version artifactVersion
+
+            artifact sourceJar {
+                classifier "sources"
+            }
+
+            artifact javadocsJar {
+                classifier "javadoc"
+            }
+        }
+    }
+    repositories {
+        maven {
+            url = artifactVersion.endsWith("SNAPSHOT") ? "https://oss.sonatype.org/content/repositories/snapshots/" : "http://repo1.maven.org/maven2/"
+            credentials {
+                if (artifactVersion.endsWith("SNAPSHOT")) {
+                    username snapshotUser
+                    password snapshotPass
+                } else {
+                    username releaseUser
+                    password releasePass
+                }
+            }
+        }
+
+    }
+}
