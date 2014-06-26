@@ -16,8 +16,8 @@ import ashley.utils.ObjectMap;
  * @author Stefan Bachmann
  */
 public class Family {
-	private static final ObjectMap<String, Family> families = new ObjectMap<String, Family>();
-	
+
+	private static final ObjectMap<String, Family> families = new ObjectMap<String, Family>();	
 	private static int familyIndex = 0;
 	
 	/** A bitset used for quick comparison between families & entities */
@@ -132,7 +132,6 @@ public class Family {
 		if ( !families.containsKey(hash)){
 			families.put(hash,  family);
 			family.index = familyIndex++;
-			System.out.println("Total hashed families :" + familyIndex);
 			return family;
 		}
 		
@@ -146,7 +145,7 @@ public class Family {
 	/**
 	 * @deprecated use {@link Family#getFamilyForAll(Class...)} or {@link #getFamilyForOne(Class...)}
 	 * </p>
-	 * Returns a family with the passed componentTypes as a descriptor. 
+	 * Returns a family with the passed componentTypes as a descriptor.
 	 * @param componentTypes The components to describe the family
 	 * @return The family
 	 */
@@ -171,9 +170,7 @@ public class Family {
 			bits.set(ComponentType.getIndexFor(componentTypes[i]));	
 		}
 		
-		Family family = new Family();
-		family.allBits = bits;
-		
+		Family family = new Family(bits, new BitSet(), new BitSet());
 		return family;
 	}
 
@@ -185,13 +182,10 @@ public class Family {
 			bits.set(ComponentType.getIndexFor(componentTypes[i]));	
 		}
 		
-		Family family = new Family();
-		family.oneBits = bits;
+		Family family = new Family(new BitSet(), bits, new BitSet());
 		
 		return family;
 	}
-	
-	
 
 	@Override
 	public boolean equals(Object obj) {

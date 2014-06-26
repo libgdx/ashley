@@ -15,8 +15,8 @@ import ashley.tests.components.VisualComponent;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class FamilyExclusionTest {
-	public static void main(String[] args) throws IOException {
 
+	public static void main(String[] args) throws IOException {
 		Entity e1 = new Entity();
 		e1.add(new MovementComponent(2, 2));
 		e1.add(new PositionComponent(1, 1));
@@ -55,8 +55,8 @@ public class FamilyExclusionTest {
 
 		Family f3 = Family.getHashedFamily(Family.getFamilyForOne(NameComponent.class, MovementComponent.class).exclude(VisualComponent.class) );		;
 		log("Entitites with Name or Movement, but without Visual Component ");
-
-		for (Entity e : engine.getEntitiesFor(f3).values()) {
+		
+		for ( Entity e : engine.getEntitiesFor(f3).values()){
 			log(e.getComponent(NameComponent.class).name);
 		}
 		
@@ -92,3 +92,4 @@ public class FamilyExclusionTest {
 		}
     }
 }
+
