@@ -36,8 +36,7 @@ public abstract class IteratingSystem extends EntitySystem {
 	 */
 	public IteratingSystem(Family family, int priority){
 		super(priority);
-		
-		this.family = family;
+		this.family = Family.getHashedFamily(family);
 	}
 		
 	@Override

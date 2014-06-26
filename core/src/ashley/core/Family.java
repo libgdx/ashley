@@ -16,8 +16,7 @@ import ashley.utils.ObjectMap;
  * @author Stefan Bachmann
  */
 public class Family {
-	private static final ObjectMap<String, Family> familiesByAllBits = new ObjectMap<String, Family>();
-	private static final ObjectMap<String, Family> familiesByOneBits = new ObjectMap<String, Family>();
+	private static final ObjectMap<String, Family> families = new ObjectMap<String, Family>();
 	
 	private static int familyIndex = 0;
 	
@@ -27,14 +26,13 @@ public class Family {
 	private BitSet excludeBits;
 	
 	/** Each family has a unique index, used for bitmasking */
-	private final int index;
-	
+	private int index;
+		
 	/** Private constructor, use static method Family.getFamilyFor() */
 	private Family(BitSet allBits,BitSet oneBits, BitSet excludeBits){
 		this.allBits = allBits;
 		this.oneBits = oneBits;
 		this.excludeBits = excludeBits;
-		this.index = familyIndex++;
 	}
 	
 	private Family(){
@@ -117,10 +115,38 @@ public class Family {
 	}
 	
 	/**
+	 * To retrieve a stored family which contains the same bitsets as {@link fam}
+	 * @param family The family. Usually, you obtain this family by using {@link Family#getFamilyForAll(Class...)} or
+	 * {@link Family#getFamilyForOne(Class...)}
+	 * @return the hashed family which matches the given family specs
+	 */
+	public static Family getHashedFamily(Family family){
+		StringBuilder hashBuilder = new StringBuilder();
+		
+		hashBuilder.append( family.allBits.toString() );
+		hashBuilder.append( family.oneBits.toString() );
+		hashBuilder.append( family.excludeBits.toString() );
+		
+		String hash = hashBuilder.toString();
+		
+		if ( !families.containsKey(hash)){
+			families.put(hash,  family);
+			family.index = familyIndex++;
+			System.out.println("Total hashed families :" + familyIndex);
+			return family;
+		}
+		
+		family.allBits = null;
+		family.oneBits = null;
+		family.excludeBits = null;
+		
+		return families.get(hash);		
+	}
+		
+	/**
 	 * @deprecated use {@link Family#getFamilyForAll(Class...)} or {@link #getFamilyForOne(Class...)}
 	 * </p>
-	 * Returns a family with the passed componentTypes as a descriptor. Each set of component types will
-	 * always return the same Family instance.
+	 * Returns a family with the passed componentTypes as a descriptor. 
 	 * @param componentTypes The components to describe the family
 	 * @return The family
 	 */
@@ -130,8 +156,7 @@ public class Family {
 	}
 	
 	/**
-	 * Returns a family with the passed componentTypes as a descriptor. Each set of component types will
-	 * always return the same Family instance.
+	 * Returns a family with the passed componentTypes as a descriptor. 
 	 * </p>
 	 * 
 	 * The Family is determined by ALL the the components
@@ -146,13 +171,8 @@ public class Family {
 			bits.set(ComponentType.getIndexFor(componentTypes[i]));	
 		}
 		
-		String hash = bits.toString();
-		Family family = familiesByAllBits.get(hash, null);
-		if(family == null){
-			family = new Family();
-			family.allBits = bits;
-			familiesByAllBits.put(hash, family);
-		}
+		Family family = new Family();
+		family.allBits = bits;
 		
 		return family;
 	}
@@ -165,16 +185,13 @@ public class Family {
 			bits.set(ComponentType.getIndexFor(componentTypes[i]));	
 		}
 		
-		String hash = bits.toString();
-		Family family = familiesByOneBits.get(hash, null);
-		if(family == null){
-			family = new Family();
-			family.oneBits = bits;
-			familiesByOneBits.put(hash, family);
-		}
+		Family family = new Family();
+		family.oneBits = bits;
 		
 		return family;
 	}
+	
+	
 
 	@Override
 	public boolean equals(Object obj) {
