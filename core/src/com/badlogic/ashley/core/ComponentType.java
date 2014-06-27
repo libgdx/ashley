@@ -1,5 +1,7 @@
 package com.badlogic.ashley.core;
 
+import java.util.BitSet;
+
 import com.badlogic.ashley.utils.ObjectMap;
 
 /**
@@ -55,6 +57,21 @@ public class ComponentType {
     public static int getIndexFor(Class<? extends Component> componentType) {
     	return getTypeFor(componentType).getIndex();
     }
+    
+    /**
+	 * @param componentTypes list of component types
+	 * @return BitSet representing the collection of components for quick comparison and matching. See {@link Family#getFamilyFor(BitSet, BitSet, BitSet)}.
+	 */
+	public static BitSet getBitsFor(Class<? extends Component> ...componentTypes) {
+		BitSet bits = new BitSet();
+
+        int typesLength = componentTypes.length;
+        for(int i = 0; i < typesLength; i++){
+            bits.set(ComponentType.getIndexFor(componentTypes[i]));
+        }
+        
+        return bits;
+	}
     
     @Override
 	public int hashCode() {

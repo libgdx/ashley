@@ -20,14 +20,20 @@ public class Family {
 	private static ObjectMap<String, Family> families = new ObjectMap<String, Family>();
 	private static int familyIndex = 0;
 	
-	/** A bitset used for quick comparison between families & entities */
-	private final BitSet bits;
+	/** Must contain all the components in the set */
+	private final BitSet all;
+	/** Must contain at least one of the components in the set */
+	private final BitSet one;
+	/** Cannot contain any of the components in the set */
+	private final BitSet exclude;
 	/** Each family has a unique index, used for bitmasking */
 	private final int index;
 	
 	/** Private constructor, use static method Family.getFamilyFor() */
-	private Family(BitSet bits){
-		this.bits = bits;
+	private Family(BitSet all, BitSet any, BitSet exclude){
+		this.all = all;
+		this.one = any;
+		this.exclude = exclude;
 		this.index = familyIndex++;
 	}
 	
@@ -49,9 +55,17 @@ public class Family {
 		if(entityComponentBits.isEmpty())
 			return false;
 		
-		for (int i = bits.nextSetBit(0); i >= 0; i = bits.nextSetBit(i+1)){
+		for (int i = all.nextSetBit(0); i >= 0; i = all.nextSetBit(i+1)){
 			if(!entityComponentBits.get(i))
 				return false;
+		}
+		
+		if (!one.isEmpty() && !one.intersects(entityComponentBits)) {
+			return false;
+		}
+		
+		if (!exclude.isEmpty() && exclude.intersects(entityComponentBits)) {
+			return false;
 		}
 		
 		return true;
@@ -60,22 +74,27 @@ public class Family {
 	/**
 	 * Returns a family with the passed componentTypes as a descriptor. Each set of component types will
 	 * always return the same Family instance.
-	 * @param componentTypes The components to describe the family
+	 * @param componentTypes The components to describe the family, entities must match all these components
 	 * @return The family
 	 */
 	@SafeVarargs
 	public static Family getFamilyFor(Class<? extends Component> ...componentTypes){
-		BitSet bits = new BitSet();
-
-        int typesLength = componentTypes.length;
-        for(int i = 0; i < typesLength; i++){
-            bits.set(ComponentType.getIndexFor(componentTypes[i]));
-        }
-		
-		String hash = bits.toString();
+		return getFamilyFor(ComponentType.getBitsFor(componentTypes), new BitSet(), new BitSet());
+	}
+	
+	/**
+	 * Returns a family with the passed componentTypes as a descriptor. Each set of component types will
+	 * always return the same Family instance.
+	 *  
+	 * @param componentTypes The components to describe the family, entities must match all these components. See {@link ComponentType#bitsFor(BitSet, BitSet, BitSet)}.
+	 * @return The family
+	 */
+	@SafeVarargs
+	public static Family getFamilyFor(BitSet all, BitSet one, BitSet exclude){
+		String hash = getFamilyHash(all, one, exclude);
 		Family family = families.get(hash, null);
 		if(family == null){
-			family = new Family(bits);
+			family = new Family(all, one, exclude);
 			families.put(hash, family);
 		}
 		
@@ -86,7 +105,9 @@ public class Family {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((bits == null) ? 0 : bits.hashCode());
+		result = prime * result + ((all == null) ? 0 : all.hashCode());
+		result = prime * result + ((one == null) ? 0 : one.hashCode());
+		result = prime * result + ((exclude == null) ? 0 : exclude.hashCode());
 		result = prime * result + index;
 		return result;
 	}
@@ -100,11 +121,33 @@ public class Family {
 		if (!(obj instanceof Family))
 			return false;
 		Family other = (Family) obj;
-		if (bits == null) {
-			if (other.bits != null)
+		if (all == null) {
+			if (other.all != null)
 				return false;
-		} else if (!bits.equals(other.bits))
+		} else if (!all.equals(other.all))
 			return false;
-        return index == other.index;
-    }
+		if (one == null) {
+			if (other.one != null)
+				return false;
+		} else if (!one.equals(other.one))
+			return false;
+		if (exclude == null) {
+			if (other.exclude != null)
+				return false;
+		} else if (!exclude.equals(other.exclude))
+			return false;
+		
+		return index == other.index;
+	}
+	
+	private static String getFamilyHash(BitSet all, BitSet one, BitSet exclude) {
+		StringBuilder builder = new StringBuilder();
+		builder.append("all:");
+		builder.append(all.toString());
+		builder.append(",one:");
+		builder.append(one.toString());
+		builder.append(",exclude:");
+		builder.append(exclude.toString());
+		return builder.toString();
+	}
 }
