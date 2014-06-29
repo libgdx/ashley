@@ -1,53 +1,113 @@
-apply plugin: "maven-publish"
+import org.gradle.api.XmlProvider
+import org.gradle.api.artifacts.maven.MavenDeployment
 
-groupName = 'com.badlogicgames.ashley'
-idName = 'ashley'
-artifactVersion = '1.0.0-SNAPSHOT'
+apply plugin: 'maven'
+apply plugin: 'signing'
 
-ext.snapshotUser = hasProperty('snapshotUser') ? snapshotUser : ""
-ext.snapshotPass = hasProperty('snapshotPass') ? snapshotPass : ""
-ext.releaseUser = hasProperty('releaseUser') ? releaseUser : ""
-ext.releasePass = hasProperty('releasePass') ? releasePass : ""
+group = 'com.badlogicgames.ashley'
+version = '1.0.0'
+ext.packaging = 'jar'
 
-task sourceJar(type: Jar) {
-    from sourceSets.main.allJava
+def isDevBuild
+def isCiBuild
+def isReleaseBuild
+
+def sonatypeRepositoryUrl
+
+//set build variables based on build type (release, continuous integration, development)
+if(hasProperty("release")) {
+    isReleaseBuild = true
+    sonatypeRepositoryUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"                             
+    println "Performing release build"
+} else if (hasProperty("snapshot")) {
+    isCiBuild = true
+    version += "-SNAPSHOT"
+    sonatypeRepositoryUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
+    println "Performing snapshot build"
+} else {
+    isDevBuild = true
+    println "Performing local build"
 }
 
-task javadocsJar(type: Jar, dependsOn: javadoc) {
-    from javadoc.destinationDir
+repositories {
+    mavenCentral()
 }
 
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            from components.java
+task artifactDocs(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from 'build/docs/javadoc'
+}
 
-            groupId groupName
-            artifactId idName
-            version artifactVersion
+task artifactSources(type: Jar) {
+    from sourceSets.main.allSource
+    classifier = 'sources'
+}
 
-            artifact sourceJar {
-                classifier "sources"
-            }
+artifacts {
+    archives jar
+    archives artifactDocs
+    archives artifactSources
+}
 
-            artifact javadocsJar {
-                classifier "javadoc"
-            }
-        }
+if(isReleaseBuild) {
+    signing {
+        sign configurations.archives
     }
+} else {
+    task signArchives {
+        // do nothing
+    }
+}
+
+uploadArchives {
     repositories {
-        maven {
-            url = artifactVersion.endsWith("SNAPSHOT") ? "https://oss.sonatype.org/content/repositories/snapshots/" : "http://repo1.maven.org/maven2/"
-            credentials {
-                if (artifactVersion.endsWith("SNAPSHOT")) {
-                    username snapshotUser
-                    password snapshotPass
-                } else {
-                    username releaseUser
-                    password releasePass
+        if (isDevBuild) {
+            mavenLocal()
+        }
+        else {
+            mavenDeployer {
+                if(isReleaseBuild) {
+                    beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
                 }
+
+                repository(url: sonatypeRepositoryUrl) {
+                  authentication(userName: sonatypeUsername, password: sonatypePassword)
+                }
+
+                pom.version = version
+                pom.packaging = 'jar'
+
+                pom.project {
+                   name 'Ashley'
+                   description 'Ashely, a miminal entity framework inspired by Ash and Atermis'
+                   url 'https://github.com/libgdx/ashley'
+
+                   scm {
+                       url 'scm:git@github.com:libgdx/ashley.git'
+                       connection 'scm:git@github.com:libgdx/ashley.git'
+                       developerConnection 'scm:git@github.com:libgdx/ashley.git'
+                   }
+
+                   licenses {
+                       license {
+                           name 'The Apache Software License, Version 2.0'
+                           url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                           distribution 'repo'
+                       }
+                   }
+
+                   developers {
+                       developer {
+                           id 'stbachmann'
+                           name 'Stefan Bachmann'
+                       }
+                       developer {
+                           id 'siondream'
+                           name 'David Saltares'
+                       }
+                   }
+               }
             }
         }
-
     }
 }
