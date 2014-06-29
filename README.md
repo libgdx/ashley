@@ -14,7 +14,31 @@ We're continuously testing Ashley with Jenkins and JUnit.
 
 ## Usage
 
-We are currently in the process of making the project available from Maven Central. In the meantime, if you wish you use Ashley, follow these steps.
+Ashley is available with maven from the following repositories
+
+**Releases**
+* Maven Central
+* https://oss.sonatype.org/content/repositories/releases
+
+**Snapshots**
+* https://oss.sonatype.org/content/repositories/snapshots
+
+**Gradle dependency declaration**
+```groovy
+compile "com.badlogicgames.ashley:ashley:1.0.0"
+```
+
+
+**Maven dependency declaration**
+```xml
+<dependency>
+    <groupId>com.badlogicgames.ashley</groupId>
+    <artifactId>ashley</artifactId>
+    <version>1.0.0</version>
+</dependency>
+```
+
+### Working from source
 
 1. Install [Gradle](http://www.gradle.org/downloads)
 2. Check out the Git repository
