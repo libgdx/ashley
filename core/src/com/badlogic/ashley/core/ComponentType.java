@@ -1,7 +1,6 @@
 package com.badlogic.ashley.core;
 
-import java.util.BitSet;
-
+import com.badlogic.ashley.utils.Bits;
 import com.badlogic.ashley.utils.ObjectMap;
 
 /**
@@ -60,10 +59,10 @@ public class ComponentType {
     
     /**
 	 * @param componentTypes list of component types
-	 * @return BitSet representing the collection of components for quick comparison and matching. See {@link Family#getFamilyFor(BitSet, BitSet, BitSet)}.
+	 * @return Bits representing the collection of components for quick comparison and matching. See {@link Family#getFamilyFor(Bits, Bits, Bits)}.
 	 */
-	public static BitSet getBitsFor(Class<? extends Component> ...componentTypes) {
-		BitSet bits = new BitSet();
+	public static Bits getBitsFor(Class<? extends Component> ...componentTypes) {
+		Bits bits = new Bits();
 
         int typesLength = componentTypes.length;
         for(int i = 0; i < typesLength; i++){

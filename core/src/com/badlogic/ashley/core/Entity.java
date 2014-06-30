@@ -1,9 +1,8 @@
 package com.badlogic.ashley.core;
 
-import java.util.BitSet;
-
 import com.badlogic.ashley.signals.Signal;
 import com.badlogic.ashley.utils.Array;
+import com.badlogic.ashley.utils.Bits;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.ashley.utils.ObjectMap;
 import com.badlogic.ashley.utils.ObjectMap.Keys;
@@ -27,10 +26,10 @@ public class Entity {
 	private ObjectMap<Class<? extends Component>, Component> components;
 	/** An auxiliary array for quick access to all the components of an entity */
 	private Array<Component> componentsArray;
-	/** A bitset describing all the components in this entity. For quick matching. */
-	private BitSet componentBits;
-	/** A bitset describing all the systems this entity was matched with. */
-	private BitSet familyBits;
+	/** A Bits describing all the components in this entity. For quick matching. */
+	private Bits componentBits;
+	/** A Bits describing all the systems this entity was matched with. */
+	private Bits familyBits;
 	/** A flag that can be used to bit mask this entity. Up to the user to manage. */
 	public int flags;
 	
@@ -45,8 +44,8 @@ public class Entity {
 	public Entity(){
 		components = new ObjectMap<Class<? extends Component>, Component>();
 		componentsArray = new Array<Component>();
-		componentBits = new BitSet();
-		familyBits = new BitSet();
+		componentBits = new Bits();
+		familyBits = new Bits();
 		flags = 0;
 		
 		index = nextIndex++;
@@ -136,7 +135,7 @@ public class Entity {
 	/**
 	 * @return this Entity's component bits, describing all the components it contains
 	 */
-	public BitSet getComponentBits(){
+	public Bits getComponentBits(){
 		return componentBits;
 	}
 	
@@ -150,7 +149,7 @@ public class Entity {
 	/**
 	 * @return this Entity's family bits, describing all the systems it currently is being processed with
 	 */
-	public BitSet getFamilyBits(){
+	public Bits getFamilyBits(){
 		return familyBits;
 	}
 	

@@ -1,7 +1,6 @@
 package com.badlogic.ashley.core;
 
-import java.util.BitSet;
-
+import com.badlogic.ashley.utils.Bits;
 import com.badlogic.ashley.utils.ObjectMap;
 
 /**
@@ -21,16 +20,16 @@ public class Family {
 	private static int familyIndex = 0;
 	
 	/** Must contain all the components in the set */
-	private final BitSet all;
+	private final Bits all;
 	/** Must contain at least one of the components in the set */
-	private final BitSet one;
+	private final Bits one;
 	/** Cannot contain any of the components in the set */
-	private final BitSet exclude;
+	private final Bits exclude;
 	/** Each family has a unique index, used for bitmasking */
 	private final int index;
 	
 	/** Private constructor, use static method Family.getFamilyFor() */
-	private Family(BitSet all, BitSet any, BitSet exclude){
+	private Family(Bits all, Bits any, Bits exclude){
 		this.all = all;
 		this.one = any;
 		this.exclude = exclude;
@@ -50,7 +49,7 @@ public class Family {
 	 * @return Whether the entity matches or not
 	 */
 	public boolean matches(Entity entity){
-		BitSet entityComponentBits = entity.getComponentBits();
+		Bits entityComponentBits = entity.getComponentBits();
 		
 		if(entityComponentBits.isEmpty())
 			return false;
@@ -79,18 +78,20 @@ public class Family {
 	 */
 	@SafeVarargs
 	public static Family getFamilyFor(Class<? extends Component> ...componentTypes){
-		return getFamilyFor(ComponentType.getBitsFor(componentTypes), new BitSet(), new BitSet());
+		return getFamilyFor(ComponentType.getBitsFor(componentTypes), new Bits(), new Bits());
 	}
 	
 	/**
 	 * Returns a family with the passed componentTypes as a descriptor. Each set of component types will
 	 * always return the same Family instance.
 	 *  
-	 * @param componentTypes The components to describe the family, entities must match all these components. See {@link ComponentType#bitsFor(BitSet, BitSet, BitSet)}.
+	 * @param all entities will have to contain all of the components in the set. See {@link ComponentType#getBitsFor(Class<? extends Component> ...)}.
+	 * @param one entities will have to contain at least one of the components in the set.See {@link ComponentType#getBitsFor(Class<? extends Component> ...)}.
+	 * @param exclude entities cannot contain any of the components in the set. See {@link ComponentType#getBitsFor(Class<? extends Component> ...)}.
 	 * @return The family
 	 */
 	@SafeVarargs
-	public static Family getFamilyFor(BitSet all, BitSet one, BitSet exclude){
+	public static Family getFamilyFor(Bits all, Bits one, Bits exclude){
 		String hash = getFamilyHash(all, one, exclude);
 		Family family = families.get(hash, null);
 		if(family == null){
@@ -140,7 +141,7 @@ public class Family {
 		return index == other.index;
 	}
 	
-	private static String getFamilyHash(BitSet all, BitSet one, BitSet exclude) {
+	private static String getFamilyHash(Bits all, Bits one, Bits exclude) {
 		StringBuilder builder = new StringBuilder();
 		builder.append("all:");
 		builder.append(all.toString());

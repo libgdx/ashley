@@ -2,7 +2,6 @@ package com.badlogic.ashley.core;
 
 import static org.junit.Assert.*;
 
-import java.util.BitSet;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -14,6 +13,7 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.signals.Listener;
 import com.badlogic.ashley.signals.Signal;
 import com.badlogic.ashley.utils.Array;
+import com.badlogic.ashley.utils.Bits;
 
 public class EntityTests {
 
@@ -68,10 +68,10 @@ public class EntityTests {
 		
 		assertEquals(1, entity.getComponents().getSize());
 		
-		BitSet componentBits = entity.getComponentBits();
+		Bits componentBits = entity.getComponentBits();
 		int componentAIndex = ComponentType.getIndexFor(ComponentA.class);
 		
-		for (int i = 0; i < componentBits.size(); ++i) {
+		for (int i = 0; i < componentBits.length(); ++i) {
 			assertEquals(i == componentAIndex, componentBits.get(i));
 		}
 		
@@ -84,7 +84,7 @@ public class EntityTests {
 		
 		assertEquals(0, entity.getComponents().getSize());
 		
-		for (int i = 0; i < componentBits.size(); ++i) {
+		for (int i = 0; i < componentBits.length(); ++i) {
 			assertFalse(componentBits.get(i));
 		}
 		
@@ -103,11 +103,11 @@ public class EntityTests {
 		
 		assertEquals(2, entity.getComponents().getSize());
 		
-		BitSet componentBits = entity.getComponentBits();
+		Bits componentBits = entity.getComponentBits();
 		int componentAIndex = ComponentType.getIndexFor(ComponentA.class);
 		int componentBIndex = ComponentType.getIndexFor(ComponentB.class);
 		
-		for (int i = 0; i < componentBits.size(); ++i) {
+		for (int i = 0; i < componentBits.length(); ++i) {
 			assertEquals(i == componentAIndex || i == componentBIndex, componentBits.get(i));
 		}
 		
@@ -120,7 +120,7 @@ public class EntityTests {
 		
 		assertEquals(0, entity.getComponents().getSize());
 		
-		for (int i = 0; i < componentBits.size(); ++i) {
+		for (int i = 0; i < componentBits.length(); ++i) {
 			assertFalse(componentBits.get(i));
 		}
 		
