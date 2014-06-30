@@ -20,6 +20,13 @@ allprojects {
 
 ext.projectGroup = "ashley"
 
+/** needed to disable Java 8 doclint which throws errors **/
+allprojects {
+    tasks.withType(Javadoc) {
+        options.addStringOption('Xdoclint:none', '-quiet')
+    }
+}
+
 project(":core") {
     apply from : '../publish.gradle'
 }

@@ -16,26 +16,8 @@ sourceSets {
 	}
 }
 
-archivesBaseName = 'ashley'
-version = '1.0-SNAPSHOT'
-
 javadoc {
 	title = 'Ashley Entity System API'
-}
-
-task sourcesJar(type: Jar, dependsOn: classes) {
-    classifier = 'sources'
-    from sourceSets.main.allSource
-}
-
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
-    from javadoc.destinationDir
-}
-
-artifacts {
-    archives sourcesJar
-    archives javadocJar
 }
 
 dependencies {
