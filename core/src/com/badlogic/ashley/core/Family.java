@@ -16,8 +16,9 @@
 
 package com.badlogic.ashley.core;
 
-import com.badlogic.ashley.utils.Bits;
-import com.badlogic.ashley.utils.ObjectMap;
+import com.badlogic.gdx.utils.Bits;
+import com.badlogic.gdx.utils.ObjectMap;
+
 
 /**
  * A family represents a group of components. It is used to describe what entities a system
@@ -160,11 +161,22 @@ public class Family {
 	private static String getFamilyHash(Bits all, Bits one, Bits exclude) {
 		StringBuilder builder = new StringBuilder();
 		builder.append("all:");
-		builder.append(all.toString());
+		builder.append(getBitsString(all));
 		builder.append(",one:");
-		builder.append(one.toString());
+		builder.append(getBitsString(one));
 		builder.append(",exclude:");
-		builder.append(exclude.toString());
+		builder.append(getBitsString(exclude));
+		return builder.toString();
+	}
+	
+	private static String getBitsString(Bits bits) {
+		StringBuilder builder = new StringBuilder();
+		
+		int numBits = bits.length();
+		for (int i = 0; i < numBits; ++i) {
+			builder.append(bits.get(i) ? "1" : "0");
+		}
+		
 		return builder.toString();
 	}
 }

@@ -16,9 +16,10 @@
 
 package com.badlogic.ashley.core;
 
-import com.badlogic.ashley.utils.Pool;
-import com.badlogic.ashley.utils.Pools;
-import com.badlogic.ashley.utils.Pool.Poolable;
+import com.badlogic.gdx.utils.Pool;
+import com.badlogic.gdx.utils.Pool.Poolable;
+import com.badlogic.gdx.utils.Pools;
+
 
 /**
  * Engine derived class adding Entity and Component pooling. This improves performance in environments
@@ -33,13 +34,11 @@ import com.badlogic.ashley.utils.Pool.Poolable;
 public class PooledEngine extends Engine {
 	
 	private EntityPool entityPool;
-	private Pools componentPools;
 	
 	public PooledEngine() {
 		super();
 		
 		entityPool = new EntityPool();
-		componentPools = new Pools();
 	}
 	
 	/**
@@ -74,7 +73,7 @@ public class PooledEngine extends Engine {
 	 * @return obtains an available pooled component of the required type
 	 */
 	public <T extends Component> T createComponent(Class<T> componentType) {
-		return componentPools.obtain(componentType);
+		return Pools.obtain(componentType);
 	}
 	
 	private class PooledEntity extends Entity implements Poolable {
@@ -82,7 +81,7 @@ public class PooledEngine extends Engine {
 		@Override
 		public Component remove(Class<? extends Component> componentType){
 			Component component = super.remove(componentType);
-			componentPools.free(component);
+			Pools.free(component);
 			return component;
 		}
 

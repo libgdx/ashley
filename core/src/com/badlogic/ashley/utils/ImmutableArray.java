@@ -16,17 +16,71 @@
 
 package com.badlogic.ashley.utils;
 
+import com.badlogic.gdx.utils.Array;
+
+
 /**
- * Interface for arrays that cannot be modified.
- * However, note that mutable elements in the array could be modified.
+ * Wrapper class to treat {@link Array} objects as if they were immutable.
+ * However, note that the values could be modified if they are mutable.
  * 
  * @author David Saltares
- *
  */
-public interface ImmutableArray<T> {
-	public int getSize();
-	public T get(int index);
-	public boolean contains(T value, boolean identity);
-	public int indexOf(T value, boolean identity);
-	public int lastIndexOf(T value, boolean identity);
+public class ImmutableArray<T> {
+	private final Array<T> array;
+	
+	public ImmutableArray(Array<T> array) {
+		this.array = array;
+	}
+	
+	public int size() {
+		return array.size;
+	}
+	
+	public T get(int index) {
+		return array.get(index);
+	}
+	
+	public boolean contains(T value, boolean identity) {
+		return array.contains(value, identity);
+	}
+	
+	public int indexOf(T value, boolean identity) {
+		return array.indexOf(value, identity);
+	}
+	
+	public int lastIndexOf(T value, boolean identity) {
+		return array.lastIndexOf(value, identity);
+	}
+	
+	public T peek() {
+		return array.peek();
+	}
+	
+	public T first() {
+		return array.first();
+	}
+	
+	public T random () {
+		return array.random();
+	}
+	
+	public T[] toArray () {
+		return array.toArray();
+	}
+
+	public <V> V[] toArray (Class type) {
+		return array.toArray(type);
+	}
+
+	public boolean equals (Object object) {
+		return array.equals(object);
+	}
+
+	public String toString () {
+		return array.toString();
+	}
+
+	public String toString (String separator) {
+		return array.toString(separator); 
+	}
 }

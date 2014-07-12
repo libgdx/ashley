@@ -26,9 +26,8 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntityListener;
 import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.ashley.core.Family;
-import com.badlogic.ashley.utils.Array;
 import com.badlogic.ashley.utils.ImmutableIntMap;
-import com.badlogic.ashley.utils.IntMap;
+import com.badlogic.gdx.utils.Array;
 
 public class EngineTests {
 	

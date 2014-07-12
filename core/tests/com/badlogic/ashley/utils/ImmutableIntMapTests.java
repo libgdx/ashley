@@ -18,14 +18,16 @@ package com.badlogic.ashley.utils;
 
 import static org.junit.Assert.*;
 
+import java.util.Iterator;
+
 import org.junit.Test;
 
-import com.badlogic.ashley.utils.Entry;
 import com.badlogic.ashley.utils.ImmutableIntMap;
-import com.badlogic.ashley.utils.IntMap;
-import com.badlogic.ashley.utils.ImmutableIntMap.Entries;
-import com.badlogic.ashley.utils.ImmutableIntMap.Keys;
-import com.badlogic.ashley.utils.ImmutableIntMap.Values;
+import com.badlogic.ashley.utils.ImmutableIntMap.ImmutableEntries;
+import com.badlogic.ashley.utils.ImmutableIntMap.ImmutableValues;
+import com.badlogic.gdx.utils.GdxRuntimeException;
+import com.badlogic.gdx.utils.IntMap;
+import com.badlogic.gdx.utils.IntMap.Entry;
 
 public class ImmutableIntMapTests {
 
@@ -39,7 +41,7 @@ public class ImmutableIntMapTests {
 			map.put(i, i);
 		}
 		
-		ImmutableIntMap<Integer> immutable = map;
+		ImmutableIntMap<Integer> immutable = new ImmutableIntMap<Integer>(map);
 		
 		assertEquals(numElements, immutable.size());
 		assertTrue(immutable.containsKey(0));
@@ -64,22 +66,17 @@ public class ImmutableIntMapTests {
 			map.put(i, i);
 		}
 		
-		ImmutableIntMap<Integer> immutable = map;
+		ImmutableIntMap<Integer> immutable = new ImmutableIntMap<Integer>(map);
 		
-		Entries<Integer> entries = immutable.immutableEntries();
-		for (Entry<Integer, Integer> entry : entries) {
-			assertEquals(entry.key, entry.value);
+		ImmutableEntries<Integer> entries = immutable.entries();
+		for (Entry<Integer> entry : entries) {
+			assertEquals((int)entry.key, (int)entry.value);
 		}
 		
-		Values<Integer> values = immutable.immutableValues();
+		ImmutableValues<Integer> values = immutable.values();
 		int counter = 0;
 		for (Integer value : values) {
 			assertEquals(counter++, value.intValue());
-		}
-		
-		Keys keys = immutable.immutableKeys();
-		for (Integer key : keys) {
-			assertEquals(map.get(key), key);
 		}
 	}
 		
@@ -88,41 +85,33 @@ public class ImmutableIntMapTests {
 		IntMap<Integer> map = new IntMap<Integer>();
 		map.put(0, 0);
 
-		ImmutableIntMap<Integer> immutable = map;
+		ImmutableIntMap<Integer> immutable = new ImmutableIntMap<Integer>(map);
 		
-		Entries<Integer> entries = immutable.immutableEntries();
+		ImmutableEntries<Integer> entries = immutable.entries();
 		boolean entriesThrown = false;
 		
 		try {
-			entries.iterator().remove();
-		} catch (UnsupportedOperationException e) {
+			Iterator<Entry<Integer>> it = entries.iterator();
+			it.next();
+			it.remove();
+		} catch (GdxRuntimeException e) {
 			entriesThrown = true;
 		}
 		
 		assertTrue(entriesThrown);
 		
-		Values<Integer> values = immutable.immutableValues();
+		ImmutableValues<Integer> values = immutable.values();
 		
 		boolean valuesThrown = false;
 		
 		try {
-			values.iterator().remove();
-		} catch (UnsupportedOperationException e) {
+			Iterator<Integer> it = values.iterator();
+			it.next();
+			it.remove();
+		} catch (GdxRuntimeException e) {
 			valuesThrown = true;
 		}
 		
 		assertTrue(valuesThrown);
-		
-		Keys keys = immutable.immutableKeys();
-		
-		boolean keysThrown = false;
-		
-		try {
-			keys.iterator().remove();
-		} catch (UnsupportedOperationException e) {
-			keysThrown = true;
-		}
-		
-		assertTrue(keysThrown);
 	}
 }

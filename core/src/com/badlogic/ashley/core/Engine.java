@@ -20,12 +20,12 @@ import java.util.Comparator;
 
 import com.badlogic.ashley.signals.Listener;
 import com.badlogic.ashley.signals.Signal;
-import com.badlogic.ashley.utils.Array;
 import com.badlogic.ashley.utils.ImmutableIntMap;
-import com.badlogic.ashley.utils.IntMap;
-import com.badlogic.ashley.utils.ObjectMap;
-import com.badlogic.ashley.utils.ObjectMap.Entries;
-import com.badlogic.ashley.utils.ObjectMap.Entry;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.IntMap;
+import com.badlogic.gdx.utils.ObjectMap;
+import com.badlogic.gdx.utils.ObjectMap.Entries;
+import com.badlogic.gdx.utils.ObjectMap.Entry;
 
 /**
  * The Engine class is the heart of the Entity framework. It is responsible for keeping track of entities and
@@ -53,6 +53,8 @@ public class Engine {
 	private ObjectMap<Class<?>, EntitySystem> systemsByClass;
 	/** A hashmap that organises all entities into family buckets */
 	private ObjectMap<Family, IntMap<Entity>> families;
+	/** A hashmap that organises all entities into immutable family buckets */
+	private ObjectMap<Family, ImmutableIntMap<Entity>> immutableFamilies;
 	/** A collection of entity added/removed event listeners */
 	private Array<EntityListener> listeners;
 	/** EntityListeners that await removal */
@@ -70,6 +72,7 @@ public class Engine {
 		systems = new Array<EntitySystem>();
 		systemsByClass = new ObjectMap<Class<?>, EntitySystem>();
 		families = new ObjectMap<Family, IntMap<Entity>>();
+		immutableFamilies = new ObjectMap<Family, ImmutableIntMap<Entity>>();
 		listeners = new Array<EntityListener>();
 		removalPendingListeners = new Array<EntityListener>();
 		notifying = false;
@@ -206,8 +209,10 @@ public class Engine {
 				}
 			}
 			families.put(family, entities);
+			immutableFamilies.put(family, new ImmutableIntMap<Entity>(entities));
 		}
-		return families.get(family);
+		
+		return immutableFamilies.get(family);
 	}
 	
 	/**

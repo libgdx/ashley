@@ -16,8 +16,9 @@
 
 package com.badlogic.ashley.core;
 
-import com.badlogic.ashley.utils.Bits;
-import com.badlogic.ashley.utils.ObjectMap;
+import com.badlogic.gdx.utils.Bits;
+import com.badlogic.gdx.utils.ObjectMap;
+
 
 /**
  * A {@link ComponentType} is used to uniquely identify a Component sub-class by assigning them an index. This is used

@@ -96,7 +96,7 @@ public class BasicTest {
 		@Override
 		public void update(float deltaTime) {
 			
-			for (Entity e : entities.immutableValues()){
+			for (Entity e : entities.values()){
 				
 				PositionComponent p = e.getComponent(PositionComponent.class);
 				MovementComponent m = e.getComponent(MovementComponent.class);

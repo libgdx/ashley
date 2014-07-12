@@ -28,8 +28,8 @@ import com.badlogic.ashley.core.ComponentType;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.signals.Listener;
 import com.badlogic.ashley.signals.Signal;
-import com.badlogic.ashley.utils.Array;
-import com.badlogic.ashley.utils.Bits;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Bits;
 
 public class EntityTests {
 
@@ -68,7 +68,7 @@ public class EntityTests {
 	public void noComponents() {
 		Entity entity = new Entity();
 		
-		assertEquals(0, entity.getComponents().getSize());
+		assertEquals(0, entity.getComponents().size());
 		assertTrue(entity.getComponentBits().isEmpty());
 		assertNull(entity.getComponent(ComponentA.class));
 		assertNull(entity.getComponent(ComponentB.class));
@@ -82,7 +82,7 @@ public class EntityTests {
 		
 		entity.add(new ComponentA());
 		
-		assertEquals(1, entity.getComponents().getSize());
+		assertEquals(1, entity.getComponents().size());
 		
 		Bits componentBits = entity.getComponentBits();
 		int componentAIndex = ComponentType.getIndexFor(ComponentA.class);
@@ -98,7 +98,7 @@ public class EntityTests {
 		
 		entity.remove(ComponentA.class);
 		
-		assertEquals(0, entity.getComponents().getSize());
+		assertEquals(0, entity.getComponents().size());
 		
 		for (int i = 0; i < componentBits.length(); ++i) {
 			assertFalse(componentBits.get(i));
@@ -117,7 +117,7 @@ public class EntityTests {
 		entity.add(new ComponentA());
 		entity.add(new ComponentB());
 		
-		assertEquals(2, entity.getComponents().getSize());
+		assertEquals(2, entity.getComponents().size());
 		
 		Bits componentBits = entity.getComponentBits();
 		int componentAIndex = ComponentType.getIndexFor(ComponentA.class);
@@ -134,7 +134,7 @@ public class EntityTests {
 		
 		entity.removeAll();
 		
-		assertEquals(0, entity.getComponents().getSize());
+		assertEquals(0, entity.getComponents().size());
 		
 		for (int i = 0; i < componentBits.length(); ++i) {
 			assertFalse(componentBits.get(i));
@@ -156,7 +156,7 @@ public class EntityTests {
 		entity.add(a1);
 		entity.add(a2);
 		
-		assertEquals(1, entity.getComponents().getSize());
+		assertEquals(1, entity.getComponents().size());
 		assertTrue(entity.hasComponent(ComponentA.class));
 		assertNotEquals(a1, entity.getComponent(ComponentA.class));
 		assertEquals(a2, entity.getComponent(ComponentA.class));

@@ -16,58 +16,173 @@
 
 package com.badlogic.ashley.utils;
 
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+
+import com.badlogic.gdx.utils.GdxRuntimeException;
+import com.badlogic.gdx.utils.IntArray;
+import com.badlogic.gdx.utils.IntMap;
+import com.badlogic.gdx.utils.IntMap.Entries;
+import com.badlogic.gdx.utils.IntMap.Entry;
+import com.badlogic.gdx.utils.IntMap.Values;
+import com.badlogic.gdx.utils.IntMap.Keys;
+
 /**
- * Interface for immutable associative arrays indexed by integers.
+ * Wrapper class to treat {@link IntMap} objects as if they were immutable.
  * However, note that the indexed values could be modified if they are mutable.
  * 
  * @author David Saltares
  */
-public interface ImmutableIntMap<V> {
-	public int size();
-	public V get(int key);
-	public V get(int key, V defaultValue);
-	public boolean containsValue(Object object, boolean identity);
-	public boolean containsKey(int key);
-	public int findKey(Object object, boolean identity, int notFound);
+public class ImmutableIntMap<V> implements Iterable<IntMap.Entry<V>> {
+	private final IntMap<V> map;
+	private ImmutableEntries entries;
+	private ImmutableValues values;
+	private ImmutableKeys keys;
 	
-	public Entries<V> immutableEntries();
-	public Values<V> immutableValues();
-	public Keys immutableKeys();
+	public ImmutableIntMap(IntMap<V> map) {
+		this.map = map;
+	}
 	
-	/**
-	 * @author David Saltares
-	 *
-	 * Immutable entries for easy iteration.
-	 * Calling {@code remove()} on the iterator will throw an {@code UnsupportedOperationException}.
-	 */
-	public static interface Entries<V> extends Iterable<Entry<Integer, V>> { 
-		public void reset();
-		public Entry<Integer, V> next();
-		public boolean hasNext();
+	public int size() {
+		return map.size;
+	}
+	
+	public V get(int key) {
+		return map.get(key);
+	}
+	
+	public V get(int key, V defaultValue) {
+		return map.get(key, defaultValue);
+	}
+	
+	public boolean containsValue(Object object, boolean identity) {
+		return map.containsValue(object, identity);
+	}
+	
+	public boolean containsKey(int key) {
+		return map.containsKey(key);
+	}
+	
+	public int findKey(Object object, boolean identity, int notFound) {
+		return map.findKey(object, identity, notFound);
+	}
+	
+	public String toString () {
+		return map.toString();
+	}
+	
+	/** Returns an iterator for the entries in the map. Calling {@link Entries#remove()} will throw an
+	 * {@link GdxRuntimeException}. Note that the same iterator instance is returned each
+	 * time this method is called.*/
+	public ImmutableEntries<V> entries() {
+		if (entries == null) {
+			entries = new ImmutableEntries(map.entries());
+		}
+		
+		entries.reset();
+		return entries;
+	}
+	
+	/** Returns an iterator for the values in the map. Calling {@link Values#remove()} will throw an
+	 * {@link GdxRuntimeException}. Note that the same iterator instance is returned each
+	 * time this method is called.*/
+	public ImmutableValues<V> values() {
+		if (values == null) {
+			values = new ImmutableValues(map.values());
+		}
+		
+		values.reset();
+		return values;
+	}
+	
+	/** Returns an iterator for the keys in the map. Calling {@link Keys#remove()} will throw an
+	 * {@link GdxRuntimeException}. Note that the same iterator instance is returned each time
+	 * this method is called. */
+	public ImmutableKeys keys() {
+		if (keys == null) {
+			keys = new ImmutableKeys(map.keys());
+		}
+	
+		return keys;
+	}
+	
+	public Iterator<Entry<V>> iterator () {
+		return entries();
+	}
+	
+	static public class ImmutableEntries<V> implements Iterable<Entry<V>>, Iterator<Entry<V>> {
+		private final Entries<V> entries;
 
+		public ImmutableEntries (Entries<V> entries) {
+			this.entries = entries;
+		}
+		
+		public void reset () {
+			entries.reset();
+		}
+
+		public void remove () {
+			throw new GdxRuntimeException("Remove not allowed.");
+		}
+
+		public boolean hasNext () {
+			return entries.hasNext();
+		}
+
+		public Entry<V> next () {
+			return entries.next();
+		}
+
+		public Iterator<Entry<V>> iterator () {
+			return this;
+		}
 	}
 	
-	/**
-	 * @author David Saltares
-	 *
-	 * Immutable values for easy iteration.
-	 * Calling {@code remove()} on the iterator will throw an {@code UnsupportedOperationException}.
-	 */
-	public static interface Values<V>  extends Iterable<V> {
-		public void reset();
-		public V next();
-		public boolean hasNext();
+	static public class ImmutableValues<V> implements Iterable<V>, Iterator<V>  {
+		private final Values<V> values;
+		
+		public ImmutableValues (Values<V> values) {
+			this.values = values;
+		}
+
+		public void reset () {
+			values.reset();
+		}
+
+		public void remove () {
+			throw new GdxRuntimeException("Remove not allowed.");
+		}
+
+		public boolean hasNext () {
+			return values.hasNext();
+		}
+
+		public V next () {
+			return values.next();
+		}
+
+		public Iterator<V> iterator () {
+			return this;
+		}
 	}
 	
-	/**
-	 * @author David Saltares
-	 *
-	 * Immutable keys for easy iteration.
-	 * Calling {@code remove()} on the iterator will throw an {@code UnsupportedOperationException}.
-	 */
-	public static interface Keys extends Iterable<Integer> {
-		public void reset();
-		public Integer next();
-		public boolean hasNext();
+	static public class ImmutableKeys  {
+		private final Keys keys;
+		
+		public ImmutableKeys (Keys keys) {
+			this.keys = keys;
+		}
+		
+		public void reset () {
+			keys.reset();
+		}
+
+		public int next () {
+			return keys.next();
+		}
+
+		public IntArray toArray () {
+			return keys.toArray();
+		}
 	}
 }

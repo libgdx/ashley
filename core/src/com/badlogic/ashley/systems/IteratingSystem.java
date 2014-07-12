@@ -21,7 +21,7 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableIntMap;
-import com.badlogic.ashley.utils.ImmutableIntMap.Keys;
+import com.badlogic.gdx.utils.IntMap.Entry;
 
 /**
  * A simple EntitySystem that iterates over each entity and calls processEntity() for each entity every time
@@ -68,10 +68,8 @@ public abstract class IteratingSystem extends EntitySystem {
 
 	@Override
 	public void update(float deltaTime) {
-		Keys keys = entities.immutableKeys();
-		
-		while(keys.hasNext()){
-			processEntity(entities.get(keys.next()), deltaTime);
+		for (Entry<Entity> entry : entities) {
+			processEntity(entry.value, deltaTime);
 		}
 	}
 

@@ -18,7 +18,10 @@ allprojects {
     }
 }
 
-ext.projectGroup = "ashley"
+ext {
+	projectGroup = "ashley"
+	gdxVersion = '1.2.0'
+}
 
 /** needed to disable Java 8 doclint which throws errors **/
 allprojects {
@@ -29,17 +32,15 @@ allprojects {
 
 project(":core") {
     apply from : '../publish.gradle'
+	
+	dependencies {
+        compile "com.badlogicgames.gdx:gdx:$gdxVersion"
+    }
 }
 
 project(":tests") {
-
-    ext {
-        gdxVersion = '1.2.0'
-    }
-
     dependencies {
         compile project(":core")
-        compile "com.badlogicgames.gdx:gdx:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
     }

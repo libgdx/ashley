@@ -16,7 +16,7 @@
 
 package com.badlogic.ashley.tests.utils;
 
-import com.badlogic.ashley.utils.ObjectMap;
+import com.badlogic.gdx.utils.ObjectMap;
 
 /**
  * A simple Timer class that let's you measure multiple times and are identified via an id.

@@ -22,7 +22,7 @@ import com.badlogic.ashley.tests.components.MovementComponent;
 import com.badlogic.ashley.tests.components.PositionComponent;
 import com.badlogic.ashley.tests.systems.MovementSystem;
 import com.badlogic.ashley.tests.utils.Timer;
-import com.badlogic.ashley.utils.Array;
+import com.badlogic.gdx.utils.Array;
 
 public class SpeedTest {
 	public static int NUMBER_ENTITIES = 100000;

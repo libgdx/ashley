@@ -22,7 +22,7 @@ import org.junit.Test;
 
 import com.badlogic.ashley.signals.Listener;
 import com.badlogic.ashley.signals.Signal;
-import com.badlogic.ashley.utils.Array;
+import com.badlogic.gdx.utils.Array;
 
 public class SignalTests {
 

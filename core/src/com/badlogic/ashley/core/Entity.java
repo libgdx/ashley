@@ -17,11 +17,11 @@
 package com.badlogic.ashley.core;
 
 import com.badlogic.ashley.signals.Signal;
-import com.badlogic.ashley.utils.Array;
-import com.badlogic.ashley.utils.Bits;
 import com.badlogic.ashley.utils.ImmutableArray;
-import com.badlogic.ashley.utils.ObjectMap;
-import com.badlogic.ashley.utils.ObjectMap.Keys;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Bits;
+import com.badlogic.gdx.utils.ObjectMap;
+import com.badlogic.gdx.utils.ObjectMap.Keys;
 
 /**
  * Entities are simple containers. They can hold components that give them "data". The component's data
@@ -42,6 +42,8 @@ public class Entity {
 	private ObjectMap<Class<? extends Component>, Component> components;
 	/** An auxiliary array for quick access to all the components of an entity */
 	private Array<Component> componentsArray;
+	/** A wrapper around componentsArray so users cannot modify it */
+	private ImmutableArray<Component> immutableComponentsArray;
 	/** A Bits describing all the components in this entity. For quick matching. */
 	private Bits componentBits;
 	/** A Bits describing all the systems this entity was matched with. */
@@ -60,6 +62,7 @@ public class Entity {
 	public Entity(){
 		components = new ObjectMap<Class<? extends Component>, Component>();
 		componentsArray = new Array<Component>();
+		immutableComponentsArray = new ImmutableArray<Component>(componentsArray);
 		componentBits = new Bits();
 		familyBits = new Bits();
 		flags = 0;
@@ -159,7 +162,7 @@ public class Entity {
 	 * @return immutable array with all the entity components
 	 */
 	public ImmutableArray<Component> getComponents() {
-		return componentsArray;
+		return immutableComponentsArray;
 	}
 	
 	/**
