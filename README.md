@@ -89,7 +89,7 @@ Here you'll see a demonstration on how to use the basic `EntitySystem`
 
 ```java
 public class RenderingSystem extends EntitySystem {
-  private IntMap<Entity> entities;
+  private ImmutableIntMap<Entity> entities;
 
   public RenderingSystem () {
     // setup the rendering system.
@@ -101,8 +101,7 @@ public class RenderingSystem extends EntitySystem {
   }
 
   public void update (float deltaTime) {
-    Keys keys = entities.keys();
-    while (keys.hasNext) {
+    for (Entity e : entities.values()) {
       // render your entities
     }
   }
