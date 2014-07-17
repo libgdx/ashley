@@ -25,7 +25,7 @@ Ashley is available with maven from the following repositories
 
 **Gradle dependency declaration**
 ```groovy
-compile "com.badlogicgames.ashley:ashley:1.0.0"
+compile "com.badlogicgames.ashley:core:1.0.0"
 ```
 
 
@@ -33,7 +33,7 @@ compile "com.badlogicgames.ashley:ashley:1.0.0"
 ```xml
 <dependency>
     <groupId>com.badlogicgames.ashley</groupId>
-    <artifactId>ashley</artifactId>
+    <artifactId>core</artifactId>
     <version>1.0.0</version>
 </dependency>
 ```
