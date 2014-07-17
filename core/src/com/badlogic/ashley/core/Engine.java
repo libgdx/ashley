@@ -190,7 +190,7 @@ public class Engine {
 	 * @return The Entity System
 	 */
 	public <T extends EntitySystem> T getSystem(Class<T> systemType) {
-		return systemType.cast(systemsByClass.get(systemType));
+		return (T) systemsByClass.get(systemType);
 	}
 	
 	/**

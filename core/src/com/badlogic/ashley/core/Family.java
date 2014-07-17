@@ -107,7 +107,6 @@ public class Family {
 	 * @param exclude entities cannot contain any of the components in the set. See {@link ComponentType#getBitsFor(Class<? extends Component> ...)}.
 	 * @return The family
 	 */
-	@SafeVarargs
 	public static Family getFamilyFor(Bits all, Bits one, Bits exclude){
 		String hash = getFamilyHash(all, one, exclude);
 		Family family = families.get(hash, null);

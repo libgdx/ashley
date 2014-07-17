@@ -139,7 +139,7 @@ public class Entity {
 	 * @return The Component
 	 */
 	public <T extends Component> T getComponent(Class<T> componentType){
-		return componentType.cast(components.get(componentType));
+		return (T) components.get(componentType);
 	}
 	
 	/**
