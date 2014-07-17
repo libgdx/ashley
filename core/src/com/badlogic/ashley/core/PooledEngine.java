@@ -19,6 +19,7 @@ package com.badlogic.ashley.core;
 import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.Pool.Poolable;
 import com.badlogic.gdx.utils.Pools;
+import com.badlogic.gdx.utils.reflect.ClassReflection;
 
 
 /**
@@ -59,8 +60,8 @@ public class PooledEngine extends Engine {
 	public void removeEntity(Entity entity){
 		super.removeEntity(entity);
 		
-		if (PooledEntity.class.isAssignableFrom(entity.getClass())) {
-			PooledEntity pooledEntity = PooledEntity.class.cast(entity);
+		if (ClassReflection.isAssignableFrom(PooledEntity.class, entity.getClass())) {
+			PooledEntity pooledEntity = (PooledEntity) entity;
 			entityPool.free(pooledEntity);
 		}
 	}
