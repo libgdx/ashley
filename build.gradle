@@ -30,7 +30,7 @@ allprojects {
     }
 }
 
-project(":core") {
+project(":ashley") {
     apply from : '../publish.gradle'
 	
 	dependencies {
@@ -40,7 +40,7 @@ project(":core") {
 
 project(":tests") {
     dependencies {
-        compile project(":core")
+        compile project(":ashley")
         compile "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
     }
