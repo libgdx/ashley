@@ -25,7 +25,7 @@ Ashley is available with maven from the following repositories
 
 **Gradle dependency declaration**
 ```groovy
-compile "com.badlogicgames.ashley:core:1.0.0"
+compile "com.badlogicgames.ashley:ashley:1.0.0"
 ```
 
 
@@ -33,7 +33,7 @@ compile "com.badlogicgames.ashley:core:1.0.0"
 ```xml
 <dependency>
     <groupId>com.badlogicgames.ashley</groupId>
-    <artifactId>core</artifactId>
+    <artifactId>ashley</artifactId>
     <version>1.0.0</version>
 </dependency>
 ```
@@ -42,10 +42,10 @@ compile "com.badlogicgames.ashley:core:1.0.0"
 
 1. Install [Gradle](http://www.gradle.org/downloads)
 2. Check out the Git repository
-3. Import the `core` project. It works with Eclipse, Intellij, Netbeans or the command line.
+3. Import the `ashley` project. It works with Eclipse, Intellij, Netbeans or the command line.
 4. Now you can either:
-  * Run the `jar` task to generate `ashley/core/build/libs/ashley-version.jar`
-  * Add the `core` project as a dependency to yours
+  * Run the `jar` task to generate `ashley/build/libs/ashley-version.jar`
+  * Add the `ashley` project as a dependency to yours
 
 ## Examples
 
