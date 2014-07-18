@@ -1,1 +1,1 @@
-include 'core', 'tests'
+include 'ashley', 'tests'
