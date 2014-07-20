@@ -6,6 +6,8 @@ A tiny entity framework written in Java. It's inspired by frameworks like
 entity framework  without the use of black-magic and thus making the API easy
 and transparent to use.
 
+Ashley is compatible with GWT.
+
 Licensed under Apache 2.0
 
 We're continuously testing Ashley with Jenkins and JUnit.
@@ -25,7 +27,7 @@ Ashley is available with maven from the following repositories
 
 **Gradle dependency declaration**
 ```groovy
-compile "com.badlogicgames.ashley:ashley:1.0.0"
+compile "com.badlogicgames.ashley:ashley:1.0.1"
 ```
 
 
@@ -34,7 +36,7 @@ compile "com.badlogicgames.ashley:ashley:1.0.0"
 <dependency>
     <groupId>com.badlogicgames.ashley</groupId>
     <artifactId>ashley</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
 </dependency>
 ```
 
@@ -42,9 +44,9 @@ compile "com.badlogicgames.ashley:ashley:1.0.0"
 
 1. Install [Gradle](http://www.gradle.org/downloads)
 2. Check out the Git repository
-3. Import the `ashley` project. It works with Eclipse, Intellij, Netbeans or the command line.
+3. Import the `core` and `tests` projects inside the repository folder
 4. Now you can either:
-  * Run the `jar` task to generate `ashley/build/libs/ashley-version.jar`
+  * Run the `uploadArchives` task to generate the corresponding jar files and place them inside your local Maven repository
   * Add the `ashley` project as a dependency to yours
 
 ## Examples
