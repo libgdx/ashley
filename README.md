@@ -6,139 +6,35 @@ A tiny entity framework written in Java. It's inspired by frameworks like
 entity framework  without the use of black-magic and thus making the API easy
 and transparent to use.
 
-Ashley is compatible with GWT.
-
-Licensed under Apache 2.0
-
-We're continuously testing Ashley with Jenkins and JUnit.
+Ashley lives under the [Libgdx](https://github.com/libgdx) family but it does not force you to use that specific framework if you do not wish to do so.
 
 [![Build Status](http://144.76.220.132:8080/job/ashley/badge/icon)](http://144.76.220.132:8080/job/ashley/)
 
-## Usage
+### Get started
+
+* [Use Ashley in your project](https://github.com/libgdx/ashley/wiki/Getting-started-with-Ashley)
+* [Read the wiki](https://github.com/libgdx/ashley/wiki)
+* [Refer to the javadocs](http://libgdx.badlogicgames.com/ashley/docs/)
+* [Read the examples](https://github.com/libgdx/ashley/tree/master/tests)
+
+
+### News and community
+
+Stay up to date in Ashley matters by following [@siondream](https://twitter.com/siondream) and reading [siondream.com](http://siondream.com). Check the [libgdx](http://www.badlogicgames.com/) blog as well for additional updates.
 
 Ashley is available with maven from the following repositories
 
-**Releases**
-* Maven Central
-* https://oss.sonatype.org/content/repositories/releases
+### Report isssues
 
-**Snapshots**
-* https://oss.sonatype.org/content/repositories/snapshots
+Something not working quite as expected? Do you need a feature that has not been implemented yet? Check the [issue tracker](https://github.com/libgdx/ashley/issues) and add a new one if your problem is not already listed. Please try to provide a detailed description of your problem, including the steps to reproduce it.
 
-**Gradle dependency declaration**
-```groovy
-compile "com.badlogicgames.ashley:ashley:1.0.1"
-```
+### Contribute
 
+Awesome! If you would like to contribute with a new feature or submit a bugfix, fork this repo and send a pull request. Please, make sure all the [unit tests](https://github.com/libgdx/ashley/tree/master/ashley/tests/com/badlogic/ashley) are passing before submitting and add new ones in case you added new features.
 
-**Maven dependency declaration**
-```xml
-<dependency>
-    <groupId>com.badlogicgames.ashley</groupId>
-    <artifactId>ashley</artifactId>
-    <version>1.0.1</version>
-</dependency>
-```
+### License
 
-### Working from source
+Ashley is licensed under the [Apache 2 License](https://github.com/libgdx/ashley/blob/master/LICENSE), meaning you
+can use it free of charge, without strings attached in commercial and non-commercial projects. We love to
+get (non-mandatory) credit in case you release a game or app using Ashley!
 
-1. Install [Gradle](http://www.gradle.org/downloads)
-2. Check out the Git repository
-3. Import the `core` and `tests` projects inside the repository folder
-4. Now you can either:
-  * Run the `uploadArchives` task to generate the corresponding jar files and place them inside your local Maven repository
-  * Add the `ashley` project as a dependency to yours
-
-## Examples
-
-There are some examples that are located in the
-[Tests Directory](ashley-tests/src/ashley/tests)
-
-Components are data holders and shouldn't contain any logic. How you structure your components is completely up to you, as long as it extends the base "Component" class.
-
-```java
-public class Position extends Component {
-  public float x, y;
-
-  public Position(float x, float y, float dir) {
-    this.x = x;
-    this.y = y;
-  }
-}
-```
-
-Systems are processing classes used in Ashley. They might iterate through entities or perform some other task every tick.
-
-Ashley provides a basic `IteratingSystem` that simplifies the process of entity processing systems. However you can always define your own custom implementation via `EntitySystem`.
-
-```java
-public class MovementSystem extends IteratingSystem {
-  public MovementSystem () {
-    super(Family.getFamilyFor(Position.class, Velocity.class));
-  }
-
-  public void processEntity (Entity entity, float deltaTime) {
-    Position position = entity.getComponent(Position.class);
-    Velocity velocity = entity.getComponent(Velocity.class);
-    
-    position.x += velocity.x * deltaTime;
-    position.y += velocity.y * deltaTime;
-  }
-}
-```
-
-Here you'll see a demonstration on how to use the basic `EntitySystem`
-
-```java
-public class RenderingSystem extends EntitySystem {
-  private ImmutableIntMap<Entity> entities;
-
-  public RenderingSystem () {
-    // setup the rendering system.
-  }
-
-  public void addedToEngine (Engine engine) {
-    // returns a reference to all entities within the Engine that match the family of components
-    entities = engine.getEntitiesFor(Family.getFamilyFor(Position.class, Display.class));
-  }
-
-  public void update (float deltaTime) {
-    for (Entity e : entities.values()) {
-      // render your entities
-    }
-  }
-}
-```
-
-Meshing it all together:
-
-```java
-class SomeGame {
-  public SomeGame() {
-    Engine engine = new Engine();
-    engine.addSystem(new MovementSystem());
-    engine.addSystem(new RenderingSystem());
-
-    Entity entity = new Entity();
-    entity.add(new Position(0.0f,0.0f));
-    entity.add(new Velocity(3.0f));
-    entity.add(new Display("hero.png"));
-
-    engine.addEntity(entity);
-  }
-
-  public void update(float deltaTime) {
-    /* your main loop */
-
-    engine.update(deltaTime);
-
-    /* more of your main loop */
-  }
-}
-```
-
-## Contributing
-
-If you'd like to contribute or submit a bugfix please fork this repo and send a pull requests. Before sending a pull request, it would be great if you run the JUnit tests and make sure nothing is broken.
-
-Any input & fixes are appreciated!
