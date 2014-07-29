@@ -22,8 +22,6 @@ Ashley lives under the [Libgdx](https://github.com/libgdx) family but it does no
 
 Stay up to date in Ashley matters by following [@siondream](https://twitter.com/siondream) and reading [siondream.com](http://siondream.com). Check the [libgdx](http://www.badlogicgames.com/) blog as well for additional updates.
 
-Ashley is available with maven from the following repositories
-
 ### Report isssues
 
 Something not working quite as expected? Do you need a feature that has not been implemented yet? Check the [issue tracker](https://github.com/libgdx/ashley/issues) and add a new one if your problem is not already listed. Please try to provide a detailed description of your problem, including the steps to reproduce it.
