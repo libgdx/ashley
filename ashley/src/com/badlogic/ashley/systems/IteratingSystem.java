@@ -68,8 +68,8 @@ public abstract class IteratingSystem extends EntitySystem {
 
 	@Override
 	public void update(float deltaTime) {
-		for (Entry<Entity> entry : entities) {
-			processEntity(entry.value, deltaTime);
+		for (Entity entity : entities.values()) {
+			processEntity(entity, deltaTime);
 		}
 	}
 
