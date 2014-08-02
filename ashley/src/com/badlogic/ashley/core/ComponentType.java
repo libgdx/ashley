@@ -29,7 +29,7 @@ import com.badlogic.gdx.utils.ObjectMap;
  * 
  * @author Stefan Bachmann
  */
-public class ComponentType {
+final class ComponentType {
 	/** Hashmap to keep track of all Component subclasses hashed by their Class */
 	private static ObjectMap<Class<? extends Component>, ComponentType> componentTypes = new ObjectMap<Class<? extends Component>, ComponentType>();
 	private static int typeIndex = 0;
