@@ -16,6 +16,7 @@
 
 package com.badlogic.ashley.tests.systems;
 
+import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntitySystem;
@@ -31,6 +32,9 @@ public class RenderSystem extends EntitySystem {
 	
 	private SpriteBatch batch;
 	private OrthographicCamera camera;
+	
+	private ComponentMapper<PositionComponent> pm = ComponentMapper.getFor(PositionComponent.class);
+	private ComponentMapper<VisualComponent> vm = ComponentMapper.getFor(VisualComponent.class);
 	
 	public RenderSystem(OrthographicCamera camera){
 		batch = new SpriteBatch();
@@ -59,8 +63,8 @@ public class RenderSystem extends EntitySystem {
 		batch.setProjectionMatrix(camera.combined);
 		
 		for (Entity e : entities.values()) {
-			position = e.getComponent(PositionComponent.class);
-			visual = e.getComponent(VisualComponent.class);
+			position = pm.get(e);
+			visual = vm.get(e);
 			
 			batch.draw(visual.region, position.x, position.y);
 		}
