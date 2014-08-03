@@ -16,6 +16,7 @@
 
 package com.badlogic.ashley.tests;
 
+import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntityListener;
@@ -80,6 +81,9 @@ public class BasicTest {
 	
 	public static class MovementSystem extends EntitySystem {
 		public ImmutableIntMap<Entity> entities;
+		
+		private ComponentMapper<PositionComponent> pm = ComponentMapper.getFor(PositionComponent.class);
+		private ComponentMapper<MovementComponent> mm = ComponentMapper.getFor(MovementComponent.class);
 
 		@Override
 		public void addedToEngine(Engine engine) {
@@ -98,8 +102,8 @@ public class BasicTest {
 			
 			for (Entity e : entities.values()){
 				
-				PositionComponent p = e.getComponent(PositionComponent.class);
-				MovementComponent m = e.getComponent(MovementComponent.class);
+				PositionComponent p = pm.get(e);
+				MovementComponent m = mm.get(e);
 				
 				p.x += m.velocityX * deltaTime;
 				p.y += m.velocityY * deltaTime;

@@ -17,11 +17,10 @@
 package com.badlogic.ashley.core;
 
 import com.badlogic.ashley.signals.Signal;
+import com.badlogic.ashley.utils.Bag;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Bits;
-import com.badlogic.gdx.utils.ObjectMap;
-import com.badlogic.gdx.utils.ObjectMap.Keys;
 
 /**
  * Entities are simple containers. They can hold components that give them "data". The component's data
@@ -35,12 +34,18 @@ import com.badlogic.gdx.utils.ObjectMap.Keys;
 public class Entity {
 	private static int nextIndex;
 	
+	/** A flag that can be used to bit mask this entity. Up to the user to manage. */
+	public int flags;
+	/** Will dispatch an event when a component is added. */
+	public final Signal<Entity> componentAdded;
+	/** Will dispatch an event when a component is removed. */
+	public final Signal<Entity> componentRemoved;
+	
 	/** Unique entity index for fast retrieval */
 	private int index;
-	
-	/** The hashmap that holds all the components hashed via their class type */
-	private ObjectMap<Class<? extends Component>, Component> components;
-	/** An auxiliary array for quick access to all the components of an entity */
+	/** A collection that holds all the components indexed by their {@link ComponentType} index */
+	private Bag<Component> components;
+	/** An auxiliary array for user access to all the components of an entity */
 	private Array<Component> componentsArray;
 	/** A wrapper around componentsArray so users cannot modify it */
 	private ImmutableArray<Component> immutableComponentsArray;
@@ -48,19 +53,12 @@ public class Entity {
 	private Bits componentBits;
 	/** A Bits describing all the systems this entity was matched with. */
 	private Bits familyBits;
-	/** A flag that can be used to bit mask this entity. Up to the user to manage. */
-	public int flags;
-	
-	/** Will dispatch an event when a component is added. */
-	public Signal<Entity> componentAdded;
-	/** Will dispatch an event when a component is removed. */
-	public Signal<Entity> componentRemoved;
 	
 	/**
 	 * Creates an empty Entity.
 	 */
 	public Entity(){
-		components = new ObjectMap<Class<? extends Component>, Component>();
+		components = new Bag<Component>();
 		componentsArray = new Array<Component>();
 		immutableComponentsArray = new ImmutableArray<Component>(componentsArray);
 		componentBits = new Bits();
@@ -71,6 +69,13 @@ public class Entity {
 		
 		componentAdded = new Signal<Entity>();
 		componentRemoved = new Signal<Entity>();
+	}
+	
+	/**
+	 * @return this entity's unique index
+	 */
+	public int getIndex(){
+		return index;
 	}
 	
 	/**
@@ -88,10 +93,12 @@ public class Entity {
 			}
 		}
 		
-		components.put(component.getClass(), component);
+		int componentTypeIndex = ComponentType.getIndexFor(component.getClass()); 
+		
+		components.set(componentTypeIndex, component);
 		componentsArray.add(component);
 		
-		componentBits.set(ComponentType.getIndexFor(component.getClass()));
+		componentBits.set(componentTypeIndex);
 		
 		componentAdded.dispatch(this);
 		return this;
@@ -100,22 +107,20 @@ public class Entity {
 	/**
 	 * Removes the component of the specified type. Since there is only ever one component of one type, we
 	 * don't need an instance reference.
-	 * @param componentType The Component to remove
+	 * @param componentClass The Component to remove
 	 * @return The removed component, or null if the Entity did no contain such a component
 	 */
-	public Component remove(Class<? extends Component> componentType){
-		Component removeComponent = components.get(componentType, null);
+	public Component remove(Class<? extends Component> componentClass){
+		ComponentType componentType = ComponentType.getTypeFor(componentClass);
+		int componentTypeIndex = componentType.getIndex();
+		Component removeComponent = components.get(componentTypeIndex);
 		
 		if(removeComponent != null){
-			components.remove(componentType);
-			
+			components.set(componentTypeIndex, null);
 			componentsArray.removeValue(removeComponent, true);
-			
-			componentBits.clear(ComponentType.getIndexFor(componentType));
+			componentBits.clear(componentTypeIndex);
 			
 			componentRemoved.dispatch(this);
-			
-			components.remove(componentType);
 		}
 		
 		return removeComponent;
@@ -125,37 +130,9 @@ public class Entity {
 	 * Removes all the entity components
 	 */
 	public void removeAll() {
-		Keys<Class<? extends Component>> keys = components.keys();
-		
-		while (keys.hasNext()) {
-			remove(keys.next());
-			keys = components.keys();
+		while(componentsArray.size > 0) {
+			remove(componentsArray.get(0).getClass());
 		}
-	}
-	
-	/**
-	 * Quick and dirty component retrieval
-	 * @param componentType The Component class to retrieve
-	 * @return The Component
-	 */
-	public <T extends Component> T getComponent(Class<T> componentType){
-		return (T) components.get(componentType);
-	}
-	
-	/**
-	 * Quick way of checking whether an entity has a component or not
-	 * @param componentType The Component class to check
-	 * @return True if the entity has a Component of that class, False if it doesn't 
-	 */
-	public boolean hasComponent(Class<? extends Component> componentType) {
-		return componentBits.get(ComponentType.getIndexFor(componentType));
-	}
-	
-	/**
-	 * @return this Entity's component bits, describing all the components it contains
-	 */
-	public Bits getComponentBits(){
-		return componentBits;
 	}
 	
 	/**
@@ -165,20 +142,35 @@ public class Entity {
 		return immutableComponentsArray;
 	}
 	
-	/**
-	 * @return this Entity's family bits, describing all the systems it currently is being processed with
-	 */
-	public Bits getFamilyBits(){
-		return familyBits;
+	<T extends Component> T getComponent(ComponentType componentType) {
+		int componentTypeIndex = componentType.getIndex();
+		
+		if (componentTypeIndex < components.getCapacity()) {
+			return (T)components.get(componentType.getIndex());
+		}
+		else {
+			return null;
+		}
+	}
+
+	boolean hasComponent(ComponentType componentType) {
+		return componentBits.get(componentType.getIndex());
 	}
 	
 	/**
-	 * @return this entity's unique index
+	 * @return this Entity's component bits, describing all the components it contains
 	 */
-	public int getIndex(){
-		return index;
+	Bits getComponentBits(){
+		return componentBits;
 	}
-
+	
+	/**
+	 * @return this Entity's family bits, describing all the systems it currently is being processed with
+	 */
+	Bits getFamilyBits(){
+		return familyBits;
+	}
+	
 	@Override
 	public int hashCode() {
 		return index;

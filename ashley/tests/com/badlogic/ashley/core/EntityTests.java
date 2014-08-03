@@ -50,6 +50,9 @@ public class EntityTests {
 		}
 	}
 	
+	private ComponentMapper<ComponentA> am = ComponentMapper.getFor(ComponentA.class);
+	private ComponentMapper<ComponentB> bm = ComponentMapper.getFor(ComponentB.class);
+	
 	@Test
 	public void uniqueIndex() {
 		int numEntities = 10000;
@@ -70,10 +73,10 @@ public class EntityTests {
 		
 		assertEquals(0, entity.getComponents().size());
 		assertTrue(entity.getComponentBits().isEmpty());
-		assertNull(entity.getComponent(ComponentA.class));
-		assertNull(entity.getComponent(ComponentB.class));
-		assertFalse(entity.hasComponent(ComponentA.class));
-		assertFalse(entity.hasComponent(ComponentB.class));
+		assertNull(am.get(entity));
+		assertNull(bm.get(entity));
+		assertFalse(am.has(entity));
+		assertFalse(bm.has(entity));
 	}
 	
 	@Test
@@ -91,10 +94,10 @@ public class EntityTests {
 			assertEquals(i == componentAIndex, componentBits.get(i));
 		}
 		
-		assertNotNull(entity.getComponent(ComponentA.class));
-		assertNull(entity.getComponent(ComponentB.class));
-		assertTrue(entity.hasComponent(ComponentA.class));
-		assertFalse(entity.hasComponent(ComponentB.class));
+		assertNotNull(am.get(entity));
+		assertNull(bm.get(entity));
+		assertTrue(am.has(entity));
+		assertFalse(bm.has(entity));
 		
 		entity.remove(ComponentA.class);
 		
@@ -104,10 +107,10 @@ public class EntityTests {
 			assertFalse(componentBits.get(i));
 		}
 		
-		assertNull(entity.getComponent(ComponentA.class));
-		assertNull(entity.getComponent(ComponentB.class));
-		assertFalse(entity.hasComponent(ComponentA.class));
-		assertFalse(entity.hasComponent(ComponentB.class));
+		assertNull(am.get(entity));
+		assertNull(bm.get(entity));
+		assertFalse(am.has(entity));
+		assertFalse(bm.has(entity));
 	}
 	
 	@Test
@@ -127,10 +130,10 @@ public class EntityTests {
 			assertEquals(i == componentAIndex || i == componentBIndex, componentBits.get(i));
 		}
 		
-		assertNotNull(entity.getComponent(ComponentA.class));
-		assertNotNull(entity.getComponent(ComponentB.class));
-		assertTrue(entity.hasComponent(ComponentA.class));
-		assertTrue(entity.hasComponent(ComponentB.class));
+		assertNotNull(am.get(entity));
+		assertNotNull(bm.get(entity));
+		assertTrue(am.has(entity));
+		assertTrue(bm.has(entity));
 		
 		entity.removeAll();
 		
@@ -140,10 +143,10 @@ public class EntityTests {
 			assertFalse(componentBits.get(i));
 		}
 		
-		assertNull(entity.getComponent(ComponentA.class));
-		assertNull(entity.getComponent(ComponentB.class));
-		assertFalse(entity.hasComponent(ComponentA.class));
-		assertFalse(entity.hasComponent(ComponentB.class));
+		assertNull(am.get(entity));
+		assertNull(bm.get(entity));
+		assertFalse(am.has(entity));
+		assertFalse(bm.has(entity));
 	}
 	
 	@Test
@@ -157,9 +160,9 @@ public class EntityTests {
 		entity.add(a2);
 		
 		assertEquals(1, entity.getComponents().size());
-		assertTrue(entity.hasComponent(ComponentA.class));
-		assertNotEquals(a1, entity.getComponent(ComponentA.class));
-		assertEquals(a2, entity.getComponent(ComponentA.class));
+		assertTrue(am.has(entity));
+		assertNotEquals(a1, am.get(entity));
+		assertEquals(a2, am.get(entity));
 	}
 	
 	@Test
