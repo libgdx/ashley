@@ -21,11 +21,14 @@ import com.badlogic.gdx.utils.ObjectMap;
 
 
 /**
- * A {@link ComponentType} is used to uniquely identify a Component sub-class by assigning them an index. This is used
- * for various creating bit masks for fast comparison. See {@link Family} and {@link Entity}.
+ * Uniquely identifies a {@link Component} sub-class.
+ * It assigns them an index which is used internally for fast comparison and retrieval.
+ * See {@link Family} and {@link Entity}.
  * 
- * You cannot instantiate a {@link ComponentType}. They can only be accessed via {@link #getIndexFor(Class<? extends Component>)}. Each
- * component class will always return the same instance of {@link ComponentType}.
+ * ComponentType is a package protected class.
+ * 
+ * You cannot instantiate a ComponentType. They can only be accessed via {@link #getIndexFor(Class<? extends Component>)}. Each
+ * component class will always return the same instance of ComponentType.
  * 
  * @author Stefan Bachmann
  */
@@ -42,15 +45,14 @@ final class ComponentType {
 	}
 	
 	/**
-	 * Returns this ComponentType's unique index
+	 * @return This ComponentType's unique index
 	 */
 	public int getIndex(){
 		return index;
 	}
 	
     /**
-     * Returns the ComponentType instance for the specified Component Class.
-     * @param componentType The Component class
+     * @param componentType The {@link Component} class
      * @return A ComponentType matching the Component Class
      */
     public static ComponentType getFor(Class<? extends Component> componentType) {
@@ -65,17 +67,16 @@ final class ComponentType {
     }
 
     /**
-     * Returns the unique ComponentType index for a specific Component Class. Basically a quick helper
-     * method. The same could be done via getTypeFor().
-     * @param componentType The Component class
-     * @return The index for the specified Component Class
+     * Quick helper method. The same could be done via {@link ComponentType.getFor(Class<? extends Component>)}.
+     * @param componentType The {@link Component} class
+     * @return The index for the specified {@link Component} Class
      */
     public static int getIndexFor(Class<? extends Component> componentType) {
     	return getFor(componentType).getIndex();
     }
     
     /**
-	 * @param componentTypes list of component types
+	 * @param componentTypes list of {@link Component} classes
 	 * @return Bits representing the collection of components for quick comparison and matching. See {@link Family#getFor(Bits, Bits, Bits)}.
 	 */
 	public static Bits getBitsFor(Class<? extends Component> ...componentTypes) {

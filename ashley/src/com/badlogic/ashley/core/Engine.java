@@ -27,16 +27,17 @@ import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.ObjectMap.Entry;
 
 /**
- * The Engine class is the heart of the Entity framework. It is responsible for keeping track of entities and
- * managing EntitySystems. The Engine should be updated every tick via the {@link #update(float)} method.
+ * The heart of the Entity framework. It is responsible for keeping track of {@link Entity} and
+ * managing {@link EntitySystem} objects. The Engine should be updated every tick via the {@link #update(float)} method.
  * 
  * With the Engine you can:
  * 
  * <ul>
- * <li>Add/Remove Entities</li>
- * <li>Add/Remove EntitySystems</li>
- * <li>Obtain a list of entities for a specific Family</li>
+ * <li>Add/Remove {@link Entity} objects</li>
+ * <li>Add/Remove {@link EntitySystem}s</li>
+ * <li>Obtain a list of entities for a specific {@link Family}</li>
  * <li>Update the main loop</li>
+ * <li>Register/unregister {@link EntityListener} objects</li>
  * </ul>
  * 
  * @author Stefan Bachmann
@@ -92,8 +93,7 @@ public class Engine {
 	}
 	
 	/**
-	 * Add an entity to this Engine
-	 * @param entity The Entity to add
+	 * Adds an entity to this Engine.
 	 */
 	public void addEntity(Entity entity){
 		entities.add(entity);
@@ -117,8 +117,7 @@ public class Engine {
 	}
 	
 	/**
-	 * Remove an entity from this Engine
-	 * @param entity The Entity to remove
+	 * Removes an entity from this Engine.
 	 */
 	public void removeEntity(Entity entity){
 		entities.removeValue(entity, true);
@@ -144,7 +143,7 @@ public class Engine {
 	}
 	
 	/**
-	 * Removes all entities registered with this Engine
+	 * Removes all entities registered with this Engine.
 	 */
 	public void removeAllEntities() {
 		while(entities.size > 0) {
@@ -153,8 +152,7 @@ public class Engine {
 	}
 	
 	/**
-	 * Add the EntitySystem to this Engine
-	 * @param system The system to add
+	 * Adds the {@link EntitySystem} to this Engine.
 	 */
 	public void addSystem(EntitySystem system){
 		Class<? extends EntitySystem> systemType = system.getClass();
@@ -169,8 +167,7 @@ public class Engine {
 	}
 	
 	/**
-	 * Removes the EntitySystem from this Engine
-	 * @param system The system to remove
+	 * Removes the {@link EntitySystem} from this Engine.
 	 */
 	public void removeSystem(EntitySystem system){
 		if(systems.removeValue(system, true)) {
@@ -180,18 +177,14 @@ public class Engine {
 	}
 	
 	/**
-	 * Quick entity system retrieval
-	 * @param systemType The EntitySystem class to retrieve
-	 * @return The Entity System
+	 * Quick {@link EntitySystem} retrieval.
 	 */
 	public <T extends EntitySystem> T getSystem(Class<T> systemType) {
 		return (T) systemsByClass.get(systemType);
 	}
 	
 	/**
-	 * Returns an IntMap of entities for the specified Family. Will return the same instance every time.
-	 * @param family The Family
-	 * @return An IntMap of Entities
+	 * Returns immutable collection of entities for the specified {@link Family}. Will return the same instance every time.
 	 */
 	public ImmutableIntMap<Entity> getEntitiesFor(Family family){
 		IntMap<Entity> entities = families.get(family, null);
@@ -211,18 +204,14 @@ public class Engine {
 	}
 	
 	/**
-	 * Adds entity listener
-	 *  
-	 * @param listener listener to be added
+	 * Adds an {@link EntityListener}
 	 */
 	public void addEntityListener(EntityListener listener) {
 		listeners.add(listener);
 	}
 	
 	/**
-	 * Removes entity listener 
-	 * 
-	 * @param listener listener to be removed
+	 * Removes an {@link EntityListener} 
 	 */
 	public void removeEntityListener(EntityListener listener) {
 		if (notifying) {
@@ -234,9 +223,17 @@ public class Engine {
 	}
 	
 	/**
-	 * Internal listener for when a Component is added to an entity
-	 * @param entity The Entity that had a component added to
+	 * Updates all the systems in this Engine.
+	 * @param deltaTime The time passed since the last frame.
 	 */
+	public void update(float deltaTime){
+		for(int i=0; i<systems.size; i++){
+            if (systems.get(i).checkProcessing()) {
+                systems.get(i).update(deltaTime);
+            }
+		}
+	}
+	
 	private void componentAdded(Entity entity){
 		for (Entry<Family, IntMap<Entity>> entry : families.entries()) {
 			if(!entity.getFamilyBits().get(entry.key.getIndex())){
@@ -248,11 +245,6 @@ public class Engine {
 		}
 	}
 	
-
-	/**
-	 * Internal listener for when a Component is removed from an entity
-	 * @param entity The Entity that had a component removed from
-	 */
 	private void componentRemoved(Entity entity){
 		for (Entry<Family, IntMap<Entity>> entry : families.entries()) {
 			if(entity.getFamilyBits().get(entry.key.getIndex())){
@@ -264,27 +256,12 @@ public class Engine {
 		}
 	}
 	
-	/**
-	 * Removes pending listeners
-	 */
 	private void removePendingListeners() {
 		for (EntityListener listener : removalPendingListeners) {
 			listeners.removeValue(listener, true);
 		}
 		
 		removalPendingListeners.clear();
-	}
-	
-	/**
-	 * Updates all the systems in this Engine
-	 * @param deltaTime The time passed since the last frame
-	 */
-	public void update(float deltaTime){
-		for(int i=0; i<systems.size; i++){
-            if (systems.get(i).checkProcessing()) {
-                systems.get(i).update(deltaTime);
-            }
-		}
 	}
 	
 	private static class SystemComparator implements Comparator<EntitySystem>{

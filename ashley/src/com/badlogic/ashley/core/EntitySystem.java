@@ -17,8 +17,7 @@
 package com.badlogic.ashley.core;
 
 /**
- * EntitySystem is a base class for processing entities and exposes a few basic methods
- * required.
+ * Abstract class for processing sets of {@link Entity} objects.
  *
  * @author Stefan Bachmann
  */
@@ -34,34 +33,34 @@ public abstract class EntitySystem {
 	}
 
 	/**
-	 * Initialises the EntitySystem with the priority specified
-	 * @param priority The priority to execute this system with (lower means higher priority)
+	 * Initialises the EntitySystem with the priority specified.
+	 * @param priority The priority to execute this system with (lower means higher priority).
 	 */
 	public EntitySystem(int priority){
 		this.priority = priority;
 	}
 
 	/**
-	 * Called when this EntitySystem is added to an Engine
-	 * @param engine The Engine this system was added to
+	 * Called when this EntitySystem is added to an {@link Engine}.
+	 * @param engine The {@link Engine} this system was added to.
 	 */
 	public void addedToEngine(Engine engine) {}
 
 	/**
-	 * Called when this EntitySystem is removed from an Engine
-	 * @param engine The Engine the system was removed from
+	 * Called when this EntitySystem is removed from an {@link Engine}.
+	 * @param engine The {@link Engine} the system was removed from.
 	 */
 	public void removedFromEngine(Engine engine) {}
 
 	/**
-	 * The update method called every tick
-	 * @param deltaTime The time passed since last frame in Seconds
+	 * The update method called every tick.
+	 * @param deltaTime The time passed since last frame in seconds.
 	 */
 	public void update(float deltaTime) {}
 
     /**
      *
-     * @return true if the system should be processed, false if not.
+     * @return Whether or not the system should be processed.
      */
     public boolean checkProcessing() {
         return true;

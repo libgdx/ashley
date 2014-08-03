@@ -23,11 +23,8 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Bits;
 
 /**
- * Entities are simple containers. They can hold components that give them "data". The component's data
- * is then in return process by systems.
- * 
- * An entity can only hold one instance of a component type. So you can't add two PositionComponents to the
- * same entity. Sorry.
+ * Simple containers of {@link Component}s that give them "data". The component's data
+ * is then processed by {@link EntitySystem}s.
  * 
  * @author Stefan Bachmann
  */
@@ -72,16 +69,15 @@ public class Entity {
 	}
 	
 	/**
-	 * @return this entity's unique index
+	 * @return The Entity's unique index.
 	 */
 	public int getIndex(){
 		return index;
 	}
 	
 	/**
-	 * Add a component to this Entity. If a component of the same type already exists, it'll be replaced.
-	 * @param component The component to add
-	 * @return The entity for easy chaining
+	 * Adds a {@link Component} to this Entity. If a {@link Component} of the same type already exists, it'll be replaced.
+	 * @return The Entity for easy chaining
 	 */
 	public Entity add(Component component){
 		Class<? extends Component> componentClass = component.getClass();
@@ -105,10 +101,9 @@ public class Entity {
 	}
 	
 	/**
-	 * Removes the component of the specified type. Since there is only ever one component of one type, we
+	 * Removes the {@link Component} of the specified type. Since there is only ever one component of one type, we
 	 * don't need an instance reference.
-	 * @param componentClass The Component to remove
-	 * @return The removed component, or null if the Entity did no contain such a component
+	 * @return The removed {@link Component}, or null if the Entity did no contain such a component.
 	 */
 	public Component remove(Class<? extends Component> componentClass){
 		ComponentType componentType = ComponentType.getFor(componentClass);
@@ -127,7 +122,7 @@ public class Entity {
 	}
 	
 	/**
-	 * Removes all the entity components
+	 * Removes all the {@link Component}'s from the Entity.
 	 */
 	public void removeAll() {
 		while(componentsArray.size > 0) {
@@ -136,12 +131,17 @@ public class Entity {
 	}
 	
 	/**
-	 * @return immutable array with all the entity components
+	 * @return immutable collection with all the Entity {@link Component}s.
 	 */
 	public ImmutableArray<Component> getComponents() {
 		return immutableComponentsArray;
 	}
 	
+	/**
+	 * Internal use.
+	 * 
+	 * @return The {@link Component} object for the specified class, null if the Entity does not have any components for that class.
+	 */
 	<T extends Component> T getComponent(ComponentType componentType) {
 		int componentTypeIndex = componentType.getIndex();
 		
@@ -153,19 +153,26 @@ public class Entity {
 		}
 	}
 
+	/**
+	 * Internal use.
+	 * 
+	 * @return Whether or not the Entity has a {@link Component} for the specified class.
+	 */
 	boolean hasComponent(ComponentType componentType) {
 		return componentBits.get(componentType.getIndex());
 	}
 	
 	/**
-	 * @return this Entity's component bits, describing all the components it contains
+	 * Internal use.
+	 * 
+	 * @return This Entity's component bits, describing all the {@link Component}s it contains.
 	 */
 	Bits getComponentBits(){
 		return componentBits;
 	}
 	
 	/**
-	 * @return this Entity's family bits, describing all the systems it currently is being processed with
+	 * @return This Entity's {@link Family} bits, describing all the {@link EntitySystem}s it currently is being processed by.
 	 */
 	Bits getFamilyBits(){
 		return familyBits;

@@ -23,12 +23,14 @@ import com.badlogic.gdx.utils.reflect.ClassReflection;
 
 
 /**
- * Engine derived class adding Entity and Component pooling. This improves performance in environments
+ * Supports {@link Entity} and {@link Component} pooling. This improves performance in environments
  * where creating/deleting entities is frequent as it greatly reduces memory allocation.
  * 
- * - Create entities using {@link #createEntity()}
- * - Create components using {@link #createComponent(Class)}
- * - Components should implement the {@link Poolable} interface when in need to reset its state upon removal
+ * <ul>
+ * <li>Create entities using {@link #createEntity()}</li>
+ * <li>Create components using {@link #createComponent(Class)}</li>
+ * <li>Components should implement the {@link Poolable} interface when in need to reset its state upon removal</li>
+ * </ul>
  * 
  * @author David Saltares
  */
@@ -43,18 +45,14 @@ public class PooledEngine extends Engine {
 	}
 	
 	/**
-	 * Retrieves a clean entity from the Engine pool. In order to add it to the world, use
-	 * {@link #addEntity(Entity)}.
-	 * 
-	 * @return clean entity from pool.
+	 * @return Clean {@link Entity} from the Engine pool. In order to add it to the {@link Engine}, use {@link #addEntity(Entity)}.
 	 */
 	public Entity createEntity() {
 		return entityPool.obtain();
 	}
 	
 	/**
-	 * Remove an entity from this Engine
-	 * @param entity The Entity to remove
+	 * Removes an {@link Entity} from this {@link Engine}
 	 */
 	@Override
 	public void removeEntity(Entity entity){
@@ -67,11 +65,8 @@ public class PooledEngine extends Engine {
 	}
 	
 	/**
-	 * Retrieves a new component from the Engine pool. It will be placed back in the
-	 * pool whenever it's removed from an entity or the entity itself it's removed.
-	 * 
-	 * @param componentType type of the component to create
-	 * @return obtains an available pooled component of the required type
+	 * Retrieves a new {@link Component} from the {@link Engine} pool. It will be placed back in the
+	 * pool whenever it's removed from an {@link Entity} or the {@link Entity} itself it's removed.
 	 */
 	public <T extends Component> T createComponent(Class<T> componentType) {
 		return Pools.obtain(componentType);

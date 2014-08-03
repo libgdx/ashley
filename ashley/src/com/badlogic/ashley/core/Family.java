@@ -21,12 +21,12 @@ import com.badlogic.gdx.utils.ObjectMap;
 
 
 /**
- * A family represents a group of components. It is used to describe what entities a system
- * should process. 
+ * Represents a group of {@link Component}s. It is used to describe what {@link Entity} objects an
+ * {@link EntitySystem} should process.
  * 
- * Example: {@code Family.getFamilyFor(PositionComponent.class, VelocityComponent.class)}
+ * Example: {@code Family.getFor(PositionComponent.class, VelocityComponent.class)}
  * 
- * Families can't be instantiate directly but must be accessed via {@code Family.getFamilyFor()}, this is
+ * Families can't be instantiate directly but must be accessed via {@code Family.getFor()}, this is
  * to avoid duplicate families that describe the same components.
  * 
  * @author Stefan Bachmann
@@ -54,16 +54,14 @@ public class Family {
 	}
 	
 	/**
-	 * Returns this family's unique index
+	 * @return This family's unique index
 	 */
 	public int getIndex(){
 		return this.index;
 	}
 	
 	/**
-	 * Checks if the passed entity matches this family's requirements.
-	 * @param entity The entity to check for matching
-	 * @return Whether the entity matches or not
+	 * @return Whether the entity matches the family requirements or not
 	 */
 	public boolean matches(Entity entity){
 		Bits entityComponentBits = entity.getComponentBits();
@@ -88,10 +86,8 @@ public class Family {
 	}
 	
 	/**
-	 * Returns a family with the passed componentTypes as a descriptor. Each set of component types will
+	 * @return The family matching the specified {@link Component} classes as a descriptor. Each set of component types will
 	 * always return the same Family instance.
-	 * @param componentTypes The components to describe the family, entities must match all these components
-	 * @return The family
 	 */
 	@SafeVarargs
 	public static Family getFor(Class<? extends Component> ...componentTypes){
@@ -99,7 +95,7 @@ public class Family {
 	}
 	
 	/**
-	 * Returns a family with the passed componentTypes as a descriptor. Each set of component types will
+	 * Returns a family with the passed {@link Component} classes as a descriptor. Each set of component types will
 	 * always return the same Family instance.
 	 *  
 	 * @param all entities will have to contain all of the components in the set. See {@link ComponentType#getBitsFor(Class<? extends Component> ...)}.

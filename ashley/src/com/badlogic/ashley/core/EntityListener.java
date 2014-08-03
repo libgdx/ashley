@@ -16,16 +16,21 @@
 
 package com.badlogic.ashley.core;
 
+/**
+ * Gets notified of {@link Entity} related events.
+ * 
+ * @author David Saltares
+ */
 public interface EntityListener {
 	/**
-	 * Called whenever an entity is added to Engine
+	 * Called whenever an {@link Entity} is added to {@link Engine}
 	 * 
 	 * @param entity
 	 */
 	public void entityAdded(Entity entity);
 	
 	/**
-	 * Called whenever an entity is removed from Engine
+	 * Called whenever an {@link Entity} is removed from {@link Engine}
 	 * 
 	 * @param entity
 	 */
