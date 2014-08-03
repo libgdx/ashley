@@ -35,14 +35,14 @@ public class ComponentTypeTests {
 	
 	@Test
 	public void validComponentType() {
-		assertNotNull(ComponentType.getTypeFor(ComponentA.class));
-		assertNotNull(ComponentType.getTypeFor(ComponentB.class));
+		assertNotNull(ComponentType.getFor(ComponentA.class));
+		assertNotNull(ComponentType.getFor(ComponentB.class));
 	}
 	
 	@Test
 	public void sameComponentType() {
-		ComponentType componentType1 = ComponentType.getTypeFor(ComponentA.class);
-		ComponentType componentType2 = ComponentType.getTypeFor(ComponentA.class);
+		ComponentType componentType1 = ComponentType.getFor(ComponentA.class);
+		ComponentType componentType2 = ComponentType.getFor(ComponentA.class);
 		
 		assertEquals(true, componentType1.equals(componentType2));
 		assertEquals(true, componentType2.equals(componentType1));
@@ -53,8 +53,8 @@ public class ComponentTypeTests {
 	
 	@Test
 	public void differentComponentType() {
-		ComponentType componentType1 = ComponentType.getTypeFor(ComponentA.class);
-		ComponentType componentType2 = ComponentType.getTypeFor(ComponentB.class);
+		ComponentType componentType1 = ComponentType.getFor(ComponentA.class);
+		ComponentType componentType2 = ComponentType.getFor(ComponentB.class);
 		
 		assertEquals(false, componentType1.equals(componentType2));
 		assertEquals(false, componentType2.equals(componentType1));

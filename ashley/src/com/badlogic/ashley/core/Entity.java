@@ -111,7 +111,7 @@ public class Entity {
 	 * @return The removed component, or null if the Entity did no contain such a component
 	 */
 	public Component remove(Class<? extends Component> componentClass){
-		ComponentType componentType = ComponentType.getTypeFor(componentClass);
+		ComponentType componentType = ComponentType.getFor(componentClass);
 		int componentTypeIndex = componentType.getIndex();
 		Component removeComponent = components.get(componentTypeIndex);
 		

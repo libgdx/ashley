@@ -53,7 +53,7 @@ final class ComponentType {
      * @param componentType The Component class
      * @return A ComponentType matching the Component Class
      */
-    public static ComponentType getTypeFor(Class<? extends Component> componentType) {
+    public static ComponentType getFor(Class<? extends Component> componentType) {
         ComponentType type = componentTypes.get(componentType);
 
         if (type == null) {
@@ -71,12 +71,12 @@ final class ComponentType {
      * @return The index for the specified Component Class
      */
     public static int getIndexFor(Class<? extends Component> componentType) {
-    	return getTypeFor(componentType).getIndex();
+    	return getFor(componentType).getIndex();
     }
     
     /**
 	 * @param componentTypes list of component types
-	 * @return Bits representing the collection of components for quick comparison and matching. See {@link Family#getFamilyFor(Bits, Bits, Bits)}.
+	 * @return Bits representing the collection of components for quick comparison and matching. See {@link Family#getFor(Bits, Bits, Bits)}.
 	 */
 	public static Bits getBitsFor(Class<? extends Component> ...componentTypes) {
 		Bits bits = new Bits();

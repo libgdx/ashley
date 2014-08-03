@@ -50,7 +50,7 @@ public class IteratingSystemTest {
         final float delta = 0.15f;
         final Engine engine = new Engine();
 
-        final Family family = Family.getFamilyFor(ComponentA.class, ComponentB.class);
+        final Family family = Family.getFor(ComponentA.class, ComponentB.class);
         final IteratingSystemMock system = new IteratingSystemMock(family);
         final Entity e = new Entity();
 

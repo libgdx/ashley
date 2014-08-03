@@ -49,6 +49,6 @@ public final class ComponentMapper<T extends Component> {
 	}
 
 	private ComponentMapper(Class<T> componentClass) {
-		componentType = ComponentType.getTypeFor(componentClass);
+		componentType = ComponentType.getFor(componentClass);
 	}	
 }

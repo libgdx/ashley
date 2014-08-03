@@ -35,33 +35,33 @@ public class FamilyTests {
 	
 	@Test
 	public void validFamily() {
-		assertNotNull(Family.getFamilyFor(ComponentA.class));
-		assertNotNull(Family.getFamilyFor(ComponentB.class));
-		assertNotNull(Family.getFamilyFor(ComponentC.class));
-		assertNotNull(Family.getFamilyFor(ComponentA.class, ComponentB.class));
-		assertNotNull(Family.getFamilyFor(ComponentA.class, ComponentC.class));
-		assertNotNull(Family.getFamilyFor(ComponentB.class, ComponentA.class));
-		assertNotNull(Family.getFamilyFor(ComponentB.class, ComponentC.class));
-		assertNotNull(Family.getFamilyFor(ComponentC.class, ComponentA.class));
-		assertNotNull(Family.getFamilyFor(ComponentC.class, ComponentB.class));
-		assertNotNull(Family.getFamilyFor(ComponentA.class, ComponentB.class, ComponentC.class));
-		assertNotNull(Family.getFamilyFor(ComponentType.getBitsFor(ComponentA.class, ComponentB.class),
+		assertNotNull(Family.getFor(ComponentA.class));
+		assertNotNull(Family.getFor(ComponentB.class));
+		assertNotNull(Family.getFor(ComponentC.class));
+		assertNotNull(Family.getFor(ComponentA.class, ComponentB.class));
+		assertNotNull(Family.getFor(ComponentA.class, ComponentC.class));
+		assertNotNull(Family.getFor(ComponentB.class, ComponentA.class));
+		assertNotNull(Family.getFor(ComponentB.class, ComponentC.class));
+		assertNotNull(Family.getFor(ComponentC.class, ComponentA.class));
+		assertNotNull(Family.getFor(ComponentC.class, ComponentB.class));
+		assertNotNull(Family.getFor(ComponentA.class, ComponentB.class, ComponentC.class));
+		assertNotNull(Family.getFor(ComponentType.getBitsFor(ComponentA.class, ComponentB.class),
 										  ComponentType.getBitsFor(ComponentC.class, ComponentD.class),
 										  ComponentType.getBitsFor(ComponentE.class, ComponentF.class)));
 	}
 	
 	@Test
 	public void sameFamily() {
-		Family family1 = Family.getFamilyFor(ComponentA.class);
-		Family family2 = Family.getFamilyFor(ComponentA.class);
-		Family family3 = Family.getFamilyFor(ComponentA.class, ComponentB.class);
-		Family family4 = Family.getFamilyFor(ComponentA.class, ComponentB.class);
-		Family family5 = Family.getFamilyFor(ComponentA.class, ComponentB.class, ComponentC.class);
-		Family family6 = Family.getFamilyFor(ComponentA.class, ComponentB.class, ComponentC.class);
-		Family family7 = Family.getFamilyFor(ComponentType.getBitsFor(ComponentA.class, ComponentB.class),
+		Family family1 = Family.getFor(ComponentA.class);
+		Family family2 = Family.getFor(ComponentA.class);
+		Family family3 = Family.getFor(ComponentA.class, ComponentB.class);
+		Family family4 = Family.getFor(ComponentA.class, ComponentB.class);
+		Family family5 = Family.getFor(ComponentA.class, ComponentB.class, ComponentC.class);
+		Family family6 = Family.getFor(ComponentA.class, ComponentB.class, ComponentC.class);
+		Family family7 = Family.getFor(ComponentType.getBitsFor(ComponentA.class, ComponentB.class),
 											 ComponentType.getBitsFor(ComponentC.class, ComponentD.class),
 											 ComponentType.getBitsFor(ComponentE.class, ComponentF.class));
-		Family family8 = Family.getFamilyFor(ComponentType.getBitsFor(ComponentA.class, ComponentB.class),
+		Family family8 = Family.getFor(ComponentType.getBitsFor(ComponentA.class, ComponentB.class),
 											 ComponentType.getBitsFor(ComponentC.class, ComponentD.class),
 											 ComponentType.getBitsFor(ComponentE.class, ComponentF.class));
 		
@@ -74,28 +74,28 @@ public class FamilyTests {
 		assertTrue(family7.equals(family8));
 		assertTrue(family8.equals(family7));
 		
-		assertEquals(family1.getFamilyIndex(), family2.getFamilyIndex());
-		assertEquals(family3.getFamilyIndex(), family4.getFamilyIndex());
-		assertEquals(family5.getFamilyIndex(), family6.getFamilyIndex());
-		assertEquals(family7.getFamilyIndex(), family8.getFamilyIndex());
+		assertEquals(family1.getIndex(), family2.getIndex());
+		assertEquals(family3.getIndex(), family4.getIndex());
+		assertEquals(family5.getIndex(), family6.getIndex());
+		assertEquals(family7.getIndex(), family8.getIndex());
 	}
 	
 	@Test
 	public void differentFamily() {
-		Family family1 = Family.getFamilyFor(ComponentA.class);
-		Family family2 = Family.getFamilyFor(ComponentB.class);
-		Family family3 = Family.getFamilyFor(ComponentC.class);
-		Family family4 = Family.getFamilyFor(ComponentA.class, ComponentB.class);
-		Family family5 = Family.getFamilyFor(ComponentA.class, ComponentC.class);
-		Family family6 = Family.getFamilyFor(ComponentB.class, ComponentA.class);
-		Family family7 = Family.getFamilyFor(ComponentB.class, ComponentC.class);
-		Family family8 = Family.getFamilyFor(ComponentC.class, ComponentA.class);
-		Family family9 = Family.getFamilyFor(ComponentC.class, ComponentB.class);
-		Family family10 = Family.getFamilyFor(ComponentA.class, ComponentB.class, ComponentC.class);
-		Family family11 = Family.getFamilyFor(ComponentType.getBitsFor(ComponentA.class, ComponentB.class),
+		Family family1 = Family.getFor(ComponentA.class);
+		Family family2 = Family.getFor(ComponentB.class);
+		Family family3 = Family.getFor(ComponentC.class);
+		Family family4 = Family.getFor(ComponentA.class, ComponentB.class);
+		Family family5 = Family.getFor(ComponentA.class, ComponentC.class);
+		Family family6 = Family.getFor(ComponentB.class, ComponentA.class);
+		Family family7 = Family.getFor(ComponentB.class, ComponentC.class);
+		Family family8 = Family.getFor(ComponentC.class, ComponentA.class);
+		Family family9 = Family.getFor(ComponentC.class, ComponentB.class);
+		Family family10 = Family.getFor(ComponentA.class, ComponentB.class, ComponentC.class);
+		Family family11 = Family.getFor(ComponentType.getBitsFor(ComponentA.class, ComponentB.class),
 											  ComponentType.getBitsFor(ComponentC.class, ComponentD.class),
 											  ComponentType.getBitsFor(ComponentE.class, ComponentF.class));
-		Family family12 = Family.getFamilyFor(ComponentType.getBitsFor(ComponentC.class, ComponentD.class),
+		Family family12 = Family.getFor(ComponentType.getBitsFor(ComponentC.class, ComponentD.class),
 											  ComponentType.getBitsFor(ComponentE.class, ComponentF.class),
 											  ComponentType.getBitsFor(ComponentA.class, ComponentB.class));
 		
@@ -122,21 +122,21 @@ public class FamilyTests {
 		assertFalse(family10.equals(family9));
 		assertFalse(family11.equals(family12));
 		
-		assertNotEquals(family1.getFamilyIndex(), family2.getFamilyIndex());
-		assertNotEquals(family1.getFamilyIndex(), family3.getFamilyIndex());
-		assertNotEquals(family1.getFamilyIndex(), family4.getFamilyIndex());
-		assertNotEquals(family1.getFamilyIndex(), family5.getFamilyIndex());
-		assertNotEquals(family1.getFamilyIndex(), family6.getFamilyIndex());
-		assertNotEquals(family1.getFamilyIndex(), family7.getFamilyIndex());
-		assertNotEquals(family1.getFamilyIndex(), family8.getFamilyIndex());
-		assertNotEquals(family1.getFamilyIndex(), family9.getFamilyIndex());
-		assertNotEquals(family1.getFamilyIndex(), family10.getFamilyIndex());
-		assertNotEquals(family11.getFamilyIndex(), family12.getFamilyIndex());
+		assertNotEquals(family1.getIndex(), family2.getIndex());
+		assertNotEquals(family1.getIndex(), family3.getIndex());
+		assertNotEquals(family1.getIndex(), family4.getIndex());
+		assertNotEquals(family1.getIndex(), family5.getIndex());
+		assertNotEquals(family1.getIndex(), family6.getIndex());
+		assertNotEquals(family1.getIndex(), family7.getIndex());
+		assertNotEquals(family1.getIndex(), family8.getIndex());
+		assertNotEquals(family1.getIndex(), family9.getIndex());
+		assertNotEquals(family1.getIndex(), family10.getIndex());
+		assertNotEquals(family11.getIndex(), family12.getIndex());
 	}
 	
 	@Test
 	public void entityMatch() {
-		Family family = Family.getFamilyFor(ComponentA.class, ComponentB.class);
+		Family family = Family.getFor(ComponentA.class, ComponentB.class);
 		
 		Entity entity = new Entity();
 		entity.add(new ComponentA());
@@ -151,7 +151,7 @@ public class FamilyTests {
 	
 	@Test
 	public void entityMismatch() {
-		Family family = Family.getFamilyFor(ComponentA.class, ComponentC.class);
+		Family family = Family.getFor(ComponentA.class, ComponentC.class);
 		
 		Entity entity = new Entity();
 		entity.add(new ComponentA());
@@ -166,7 +166,7 @@ public class FamilyTests {
 	
 	@Test
 	public void entityMatchThenMismatch() {
-		Family family = Family.getFamilyFor(ComponentA.class, ComponentB.class);
+		Family family = Family.getFor(ComponentA.class, ComponentB.class);
 		
 		Entity entity = new Entity();
 		entity.add(new ComponentA());
@@ -181,7 +181,7 @@ public class FamilyTests {
 	
 	@Test
 	public void entityMismatchThenMatch() {
-		Family family = Family.getFamilyFor(ComponentA.class, ComponentB.class);
+		Family family = Family.getFor(ComponentA.class, ComponentB.class);
 		
 		Entity entity = new Entity();
 		entity.add(new ComponentA());
@@ -196,11 +196,11 @@ public class FamilyTests {
 	
 	@Test
 	public void familyFiltering() {
-		Family family1 = Family.getFamilyFor(ComponentType.getBitsFor(ComponentA.class, ComponentB.class),
+		Family family1 = Family.getFor(ComponentType.getBitsFor(ComponentA.class, ComponentB.class),
 											 ComponentType.getBitsFor(ComponentC.class, ComponentD.class),
 											 ComponentType.getBitsFor(ComponentE.class, ComponentF.class));
 		
-		Family family2 = Family.getFamilyFor(ComponentType.getBitsFor(ComponentC.class, ComponentD.class),
+		Family family2 = Family.getFor(ComponentType.getBitsFor(ComponentC.class, ComponentD.class),
 											 ComponentType.getBitsFor(ComponentA.class, ComponentB.class),
 											 ComponentType.getBitsFor(ComponentE.class, ComponentF.class));
 		

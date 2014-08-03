@@ -56,7 +56,7 @@ public class Family {
 	/**
 	 * Returns this family's unique index
 	 */
-	public int getFamilyIndex(){
+	public int getIndex(){
 		return this.index;
 	}
 	
@@ -94,8 +94,8 @@ public class Family {
 	 * @return The family
 	 */
 	@SafeVarargs
-	public static Family getFamilyFor(Class<? extends Component> ...componentTypes){
-		return getFamilyFor(ComponentType.getBitsFor(componentTypes), new Bits(), new Bits());
+	public static Family getFor(Class<? extends Component> ...componentTypes){
+		return getFor(ComponentType.getBitsFor(componentTypes), new Bits(), new Bits());
 	}
 	
 	/**
@@ -107,7 +107,7 @@ public class Family {
 	 * @param exclude entities cannot contain any of the components in the set. See {@link ComponentType#getBitsFor(Class<? extends Component> ...)}.
 	 * @return The family
 	 */
-	public static Family getFamilyFor(Bits all, Bits one, Bits exclude){
+	public static Family getFor(Bits all, Bits one, Bits exclude){
 		String hash = getFamilyHash(all, one, exclude);
 		Family family = families.get(hash, null);
 		if(family == null){

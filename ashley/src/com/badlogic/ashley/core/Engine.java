@@ -101,7 +101,7 @@ public class Engine {
 		for (Entry<Family, IntMap<Entity>> entry : families.entries()) {
 			if(entry.key.matches(entity)){
 				entry.value.put(entity.getIndex(), entity);
-				entity.getFamilyBits().set(entry.key.getFamilyIndex());
+				entity.getFamilyBits().set(entry.key.getIndex());
 			}
 		}
 		
@@ -127,7 +127,7 @@ public class Engine {
 			for (Entry<Family, IntMap<Entity>> entry : families.entries()) {
 				if(entry.key.matches(entity)){
 					entry.value.remove(entity.getIndex());
-					entity.getFamilyBits().clear(entry.key.getFamilyIndex());
+					entity.getFamilyBits().clear(entry.key.getIndex());
 				}
 			}
 		}
@@ -200,7 +200,7 @@ public class Engine {
 			for(Entity e:this.entities){
 				if(family.matches(e)) {
 					entities.put(e.getIndex(), e);
-					e.getFamilyBits().set(family.getFamilyIndex());
+					e.getFamilyBits().set(family.getIndex());
 				}
 			}
 			families.put(family, entities);
@@ -239,10 +239,10 @@ public class Engine {
 	 */
 	private void componentAdded(Entity entity){
 		for (Entry<Family, IntMap<Entity>> entry : families.entries()) {
-			if(!entity.getFamilyBits().get(entry.key.getFamilyIndex())){
+			if(!entity.getFamilyBits().get(entry.key.getIndex())){
 				if(entry.key.matches(entity)){
 					entry.value.put(entity.getIndex(), entity);
-					entity.getFamilyBits().set(entry.key.getFamilyIndex());
+					entity.getFamilyBits().set(entry.key.getIndex());
 				}
 			}	
 		}
@@ -255,10 +255,10 @@ public class Engine {
 	 */
 	private void componentRemoved(Entity entity){
 		for (Entry<Family, IntMap<Entity>> entry : families.entries()) {
-			if(entity.getFamilyBits().get(entry.key.getFamilyIndex())){
+			if(entity.getFamilyBits().get(entry.key.getIndex())){
 				if(!entry.key.matches(entity)){
 					entry.value.remove(entity.getIndex());
-					entity.getFamilyBits().clear(entry.key.getFamilyIndex());
+					entity.getFamilyBits().clear(entry.key.getIndex());
 				}
 			}
 		}

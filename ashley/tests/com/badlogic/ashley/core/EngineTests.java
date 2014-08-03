@@ -267,7 +267,7 @@ public class EngineTests {
 	public void entitiesForFamily() {
 		Engine engine = new Engine();
 		
-		Family family = Family.getFamilyFor(ComponentA.class, ComponentB.class);
+		Family family = Family.getFor(ComponentA.class, ComponentB.class);
 		ImmutableIntMap<Entity> familyEntities = engine.getEntitiesFor(family);
 		
 		assertEquals(0, familyEntities.size());
@@ -313,14 +313,14 @@ public class EngineTests {
 		
 		engine.addEntity(entity);
 		
-		ImmutableIntMap<Entity> entities = engine.getEntitiesFor(Family.getFamilyFor(ComponentA.class));
+		ImmutableIntMap<Entity> entities = engine.getEntitiesFor(Family.getFor(ComponentA.class));
 		
 		assertEquals(1, entities.size());
 		assertTrue(entities.containsValue(entity, true));
 		
 		engine.removeEntity(entity);
 		
-		ImmutableIntMap<Entity> entitiesAfter = engine.getEntitiesFor(Family.getFamilyFor(ComponentA.class));
+		ImmutableIntMap<Entity> entitiesAfter = engine.getEntitiesFor(Family.getFor(ComponentA.class));
 		
 		assertEquals(0, entities.size());
 		assertFalse(entities.containsValue(entity, true));
@@ -330,7 +330,7 @@ public class EngineTests {
 	public void entitiesForFamilyAfter() {
 		Engine engine = new Engine();
 		
-		Family family = Family.getFamilyFor(ComponentA.class, ComponentB.class);
+		Family family = Family.getFor(ComponentA.class, ComponentB.class);
 		ImmutableIntMap<Entity> familyEntities = engine.getEntitiesFor(family);
 		
 		assertEquals(0, familyEntities.size());
@@ -370,7 +370,7 @@ public class EngineTests {
 	public void entitiesForFamilyWithRemoval() {
 		Engine engine = new Engine();
 		
-		Family family = Family.getFamilyFor(ComponentA.class, ComponentB.class);
+		Family family = Family.getFor(ComponentA.class, ComponentB.class);
 		ImmutableIntMap<Entity> familyEntities = engine.getEntitiesFor(family);
 		
 		Entity entity1 = new Entity();
