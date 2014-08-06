@@ -26,7 +26,8 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntityListener;
 import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.ashley.core.Family;
-import com.badlogic.ashley.utils.ImmutableIntMap;
+import com.badlogic.ashley.utils.ImmutableArray;
+import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.utils.Array;
 
 public class EngineTests {
@@ -268,7 +269,7 @@ public class EngineTests {
 		Engine engine = new Engine();
 		
 		Family family = Family.getFor(ComponentA.class, ComponentB.class);
-		ImmutableIntMap<Entity> familyEntities = engine.getEntitiesFor(family);
+		ImmutableArray<Entity> familyEntities = engine.getEntitiesFor(family);
 		
 		assertEquals(0, familyEntities.size());
 		
@@ -297,10 +298,10 @@ public class EngineTests {
 		engine.addEntity(entity4);
 		
 		assertEquals(3, familyEntities.size());
-		assertTrue(familyEntities.containsValue(entity1, true));
-		assertTrue(familyEntities.containsValue(entity3, true));
-		assertTrue(familyEntities.containsValue(entity4, true));
-		assertFalse(familyEntities.containsValue(entity2, true));
+		assertTrue(familyEntities.contains(entity1, true));
+		assertTrue(familyEntities.contains(entity3, true));
+		assertTrue(familyEntities.contains(entity4, true));
+		assertFalse(familyEntities.contains(entity2, true));
 	}
 	
 	@Test
@@ -313,17 +314,17 @@ public class EngineTests {
 		
 		engine.addEntity(entity);
 		
-		ImmutableIntMap<Entity> entities = engine.getEntitiesFor(Family.getFor(ComponentA.class));
+		ImmutableArray<Entity> entities = engine.getEntitiesFor(Family.getFor(ComponentA.class));
 		
 		assertEquals(1, entities.size());
-		assertTrue(entities.containsValue(entity, true));
+		assertTrue(entities.contains(entity, true));
 		
 		engine.removeEntity(entity);
 		
-		ImmutableIntMap<Entity> entitiesAfter = engine.getEntitiesFor(Family.getFor(ComponentA.class));
+		ImmutableArray<Entity> entitiesAfter = engine.getEntitiesFor(Family.getFor(ComponentA.class));
 		
 		assertEquals(0, entities.size());
-		assertFalse(entities.containsValue(entity, true));
+		assertFalse(entities.contains(entity, true));
 	}
 	
 	@Test
@@ -331,7 +332,7 @@ public class EngineTests {
 		Engine engine = new Engine();
 		
 		Family family = Family.getFor(ComponentA.class, ComponentB.class);
-		ImmutableIntMap<Entity> familyEntities = engine.getEntitiesFor(family);
+		ImmutableArray<Entity> familyEntities = engine.getEntitiesFor(family);
 		
 		assertEquals(0, familyEntities.size());
 		
@@ -360,10 +361,10 @@ public class EngineTests {
 		entity4.add(new ComponentC());
 		
 		assertEquals(3, familyEntities.size());
-		assertTrue(familyEntities.containsValue(entity1, true));
-		assertTrue(familyEntities.containsValue(entity3, true));
-		assertTrue(familyEntities.containsValue(entity4, true));
-		assertFalse(familyEntities.containsValue(entity2, true));
+		assertTrue(familyEntities.contains(entity1, true));
+		assertTrue(familyEntities.contains(entity3, true));
+		assertTrue(familyEntities.contains(entity4, true));
+		assertFalse(familyEntities.contains(entity2, true));
 	}
 	
 	@Test
@@ -371,7 +372,7 @@ public class EngineTests {
 		Engine engine = new Engine();
 		
 		Family family = Family.getFor(ComponentA.class, ComponentB.class);
-		ImmutableIntMap<Entity> familyEntities = engine.getEntitiesFor(family);
+		ImmutableArray<Entity> familyEntities = engine.getEntitiesFor(family);
 		
 		Entity entity1 = new Entity();
 		Entity entity2 = new Entity();
@@ -398,18 +399,18 @@ public class EngineTests {
 		entity4.add(new ComponentC());
 		
 		assertEquals(3, familyEntities.size());
-		assertTrue(familyEntities.containsValue(entity1, true));
-		assertTrue(familyEntities.containsValue(entity3, true));
-		assertTrue(familyEntities.containsValue(entity4, true));
-		assertFalse(familyEntities.containsValue(entity2, true));
+		assertTrue(familyEntities.contains(entity1, true));
+		assertTrue(familyEntities.contains(entity3, true));
+		assertTrue(familyEntities.contains(entity4, true));
+		assertFalse(familyEntities.contains(entity2, true));
 		
 		entity1.remove(ComponentA.class);
 		engine.removeEntity(entity3);
 		
 		assertEquals(1, familyEntities.size());
-		assertTrue(familyEntities.containsValue(entity4, true));
-		assertFalse(familyEntities.containsValue(entity1, true));
-		assertFalse(familyEntities.containsValue(entity3, true));
-		assertFalse(familyEntities.containsValue(entity2, true));
+		assertTrue(familyEntities.contains(entity4, true));
+		assertFalse(familyEntities.contains(entity1, true));
+		assertFalse(familyEntities.contains(entity3, true));
+		assertFalse(familyEntities.contains(entity2, true));
 	}
 }

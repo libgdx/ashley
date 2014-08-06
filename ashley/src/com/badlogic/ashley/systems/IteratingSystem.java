@@ -20,8 +20,7 @@ import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.ashley.core.Family;
-import com.badlogic.ashley.utils.ImmutableIntMap;
-import com.badlogic.gdx.utils.IntMap.Entry;
+import com.badlogic.ashley.utils.ImmutableArray;
 
 /**
  * A simple EntitySystem that iterates over each entity and calls processEntity() for each entity every time
@@ -34,7 +33,7 @@ public abstract class IteratingSystem extends EntitySystem {
 	/** The family describing this systems entities */
 	private Family family;
 	/** The entities used by this system */
-	private ImmutableIntMap<Entity> entities;
+	private ImmutableArray<Entity> entities;
 	
 	/**
 	 * Instantiates a system that will iterate over the entities described by the Family.
@@ -68,8 +67,10 @@ public abstract class IteratingSystem extends EntitySystem {
 
 	@Override
 	public void update(float deltaTime) {
-		for (Entity entity : entities.values()) {
-			processEntity(entity, deltaTime);
+		int numEntities = entities.size();
+		
+		for (int i = 0; i < numEntities; ++i) {
+			processEntity(entities.get(i), deltaTime);
 		}
 	}
 

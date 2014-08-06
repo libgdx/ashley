@@ -20,9 +20,8 @@ import java.util.Comparator;
 
 import com.badlogic.ashley.signals.Listener;
 import com.badlogic.ashley.signals.Signal;
-import com.badlogic.ashley.utils.ImmutableIntMap;
+import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.IntMap;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.ObjectMap.Entry;
 
@@ -52,9 +51,9 @@ public class Engine {
 	/** A hashmap that organises EntitySystems by class for easy retrieval */
 	private ObjectMap<Class<?>, EntitySystem> systemsByClass;
 	/** A hashmap that organises all entities into family buckets */
-	private ObjectMap<Family, IntMap<Entity>> families;
+	private ObjectMap<Family, Array<Entity>> families;
 	/** A hashmap that organises all entities into immutable family buckets */
-	private ObjectMap<Family, ImmutableIntMap<Entity>> immutableFamilies;
+	private ObjectMap<Family, ImmutableArray<Entity>> immutableFamilies;
 	/** A collection of entity added/removed event listeners */
 	private Array<EntityListener> listeners;
 	/** EntityListeners that await removal */
@@ -71,8 +70,8 @@ public class Engine {
 		entities = new Array<Entity>();
 		systems = new Array<EntitySystem>();
 		systemsByClass = new ObjectMap<Class<?>, EntitySystem>();
-		families = new ObjectMap<Family, IntMap<Entity>>();
-		immutableFamilies = new ObjectMap<Family, ImmutableIntMap<Entity>>();
+		families = new ObjectMap<Family, Array<Entity>>();
+		immutableFamilies = new ObjectMap<Family, ImmutableArray<Entity>>();
 		listeners = new Array<EntityListener>();
 		removalPendingListeners = new Array<EntityListener>();
 		notifying = false;
@@ -98,9 +97,9 @@ public class Engine {
 	public void addEntity(Entity entity){
 		entities.add(entity);
 		
-		for (Entry<Family, IntMap<Entity>> entry : families.entries()) {
+		for (Entry<Family, Array<Entity>> entry : families.entries()) {
 			if(entry.key.matches(entity)){
-				entry.value.put(entity.getIndex(), entity);
+				entry.value.add(entity);
 				entity.getFamilyBits().set(entry.key.getIndex());
 			}
 		}
@@ -123,9 +122,9 @@ public class Engine {
 		entities.removeValue(entity, true);
 		
 		if(!entity.getFamilyBits().isEmpty()){
-			for (Entry<Family, IntMap<Entity>> entry : families.entries()) {
+			for (Entry<Family, Array<Entity>> entry : families.entries()) {
 				if(entry.key.matches(entity)){
-					entry.value.remove(entity.getIndex());
+					entry.value.removeValue(entity, true);
 					entity.getFamilyBits().clear(entry.key.getIndex());
 				}
 			}
@@ -186,18 +185,18 @@ public class Engine {
 	/**
 	 * Returns immutable collection of entities for the specified {@link Family}. Will return the same instance every time.
 	 */
-	public ImmutableIntMap<Entity> getEntitiesFor(Family family){
-		IntMap<Entity> entities = families.get(family, null);
+	public ImmutableArray<Entity> getEntitiesFor(Family family){
+		Array<Entity> entities = families.get(family, null);
 		if(entities == null){
-			entities = new IntMap<Entity>();
+			entities = new Array<Entity>();
 			for(Entity e:this.entities){
 				if(family.matches(e)) {
-					entities.put(e.getIndex(), e);
+					entities.add(e);
 					e.getFamilyBits().set(family.getIndex());
 				}
 			}
 			families.put(family, entities);
-			immutableFamilies.put(family, new ImmutableIntMap<Entity>(entities));
+			immutableFamilies.put(family, new ImmutableArray<Entity>(entities));
 		}
 		
 		return immutableFamilies.get(family);
@@ -235,10 +234,10 @@ public class Engine {
 	}
 	
 	private void componentAdded(Entity entity){
-		for (Entry<Family, IntMap<Entity>> entry : families.entries()) {
+		for (Entry<Family, Array<Entity>> entry : families.entries()) {
 			if(!entity.getFamilyBits().get(entry.key.getIndex())){
 				if(entry.key.matches(entity)){
-					entry.value.put(entity.getIndex(), entity);
+					entry.value.add(entity);
 					entity.getFamilyBits().set(entry.key.getIndex());
 				}
 			}	
@@ -246,10 +245,10 @@ public class Engine {
 	}
 	
 	private void componentRemoved(Entity entity){
-		for (Entry<Family, IntMap<Entity>> entry : families.entries()) {
+		for (Entry<Family, Array<Entity>> entry : families.entries()) {
 			if(entity.getFamilyBits().get(entry.key.getIndex())){
 				if(!entry.key.matches(entity)){
-					entry.value.remove(entity.getIndex());
+					entry.value.removeValue(entity, true);
 					entity.getFamilyBits().clear(entry.key.getIndex());
 				}
 			}

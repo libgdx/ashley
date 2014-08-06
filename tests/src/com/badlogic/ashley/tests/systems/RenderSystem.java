@@ -23,12 +23,12 @@ import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.tests.components.PositionComponent;
 import com.badlogic.ashley.tests.components.VisualComponent;
-import com.badlogic.ashley.utils.ImmutableIntMap;
+import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class RenderSystem extends EntitySystem {
-	private ImmutableIntMap<Entity> entities;
+	private ImmutableArray<Entity> entities;
 	
 	private SpriteBatch batch;
 	private OrthographicCamera camera;
@@ -62,7 +62,9 @@ public class RenderSystem extends EntitySystem {
 		batch.begin();
 		batch.setProjectionMatrix(camera.combined);
 		
-		for (Entity e : entities.values()) {
+		for (int i = 0; i < entities.size(); ++i) {
+			Entity e = entities.get(i);
+			
 			position = pm.get(e);
 			visual = vm.get(e);
 			
