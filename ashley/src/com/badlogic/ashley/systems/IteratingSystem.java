@@ -67,9 +67,7 @@ public abstract class IteratingSystem extends EntitySystem {
 
 	@Override
 	public void update(float deltaTime) {
-		int numEntities = entities.size();
-		
-		for (int i = 0; i < numEntities; ++i) {
+		for (int i = 0; i < entities.size(); ++i) {
 			processEntity(entities.get(i), deltaTime);
 		}
 	}
