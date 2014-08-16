@@ -26,8 +26,10 @@ public interface EntityListener {
 	 * Called whenever an {@link Entity} is added to {@link Engine}
 	 * 
 	 * @param entity
+	 * @return The {@link Entity} gets not added to {@link Engine} if one {@link EntityListener} returns false
+	 *  
 	 */
-	public void entityAdded(Entity entity);
+	public boolean entityAdded(Entity entity);
 	
 	/**
 	 * Called whenever an {@link Entity} is removed from {@link Engine}

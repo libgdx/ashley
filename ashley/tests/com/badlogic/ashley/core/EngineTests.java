@@ -46,9 +46,10 @@ public class EngineTests {
 		public int removedCount = 0;
 		
 		@Override
-		public void entityAdded(Entity entity) {
+		public boolean entityAdded(Entity entity) {
 			++addedCount;
 			assertNotNull(entity);
+			return true;
 		}
 
 		@Override
