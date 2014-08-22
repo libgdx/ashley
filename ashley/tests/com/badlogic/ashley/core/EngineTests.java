@@ -16,20 +16,18 @@
 
 package com.badlogic.ashley.core;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-import com.badlogic.ashley.core.Component;
-import com.badlogic.ashley.core.Engine;
-import com.badlogic.ashley.core.Entity;
-import com.badlogic.ashley.core.EntityListener;
-import com.badlogic.ashley.core.EntitySystem;
-import com.badlogic.ashley.core.Family;
-import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.utils.Array;
 
+@SuppressWarnings("unchecked")
 public class EngineTests {
 	
 	private float deltaTime = 0.16f;
@@ -320,8 +318,6 @@ public class EngineTests {
 		assertTrue(entities.contains(entity, true));
 		
 		engine.removeEntity(entity);
-		
-		ImmutableArray<Entity> entitiesAfter = engine.getEntitiesFor(Family.getFor(ComponentA.class));
 		
 		assertEquals(0, entities.size());
 		assertFalse(entities.contains(entity, true));

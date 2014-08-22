@@ -155,6 +155,7 @@ public class Entity {
 	 * 
 	 * @return The {@link Component} object for the specified class, null if the Entity does not have any components for that class.
 	 */
+	@SuppressWarnings("unchecked")
 	<T extends Component> T getComponent(ComponentType componentType) {
 		int componentTypeIndex = componentType.getIndex();
 		

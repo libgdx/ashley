@@ -36,6 +36,7 @@ import com.badlogic.gdx.utils.reflect.ClassReflection;
  * 
  * @author David Saltares
  */
+@SuppressWarnings({"rawtypes","unchecked"})
 public class PooledEngine extends Engine {
 	
 	private EntityPool entityPool;
@@ -159,6 +160,7 @@ public class PooledEngine extends Engine {
 			pool.free(object);
 		}
 
+		@SuppressWarnings("unused")
 		public void freeAll(Array objects) {
 			if (objects == null) throw new IllegalArgumentException("objects cannot be null.");
 			
