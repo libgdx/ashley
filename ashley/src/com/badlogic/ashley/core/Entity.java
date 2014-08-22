@@ -138,6 +138,19 @@ public class Entity {
 	}
 	
 	/**
+	 * Retrieve a component from this {@link Entity} by class.
+	 * 
+	 * <em>Note:</em> the preferred way of retrieving {@link Component}s is using {@link ComponentMapper}s. This method
+	 * is provided for convenience.
+	 * 
+	 * @param clazz the class of the component to be retrieved.
+	 * @return the instance of the specified {@link Component} attached to this {@link Entity}, or null if no such {@link Component} exists.
+	 */
+	public <T extends Component> T getComponent(Class<? extends Component> clazz) {
+		return getComponent(ComponentType.getFor(clazz));
+	}
+	
+	/**
 	 * Internal use.
 	 * 
 	 * @return The {@link Component} object for the specified class, null if the Entity does not have any components for that class.

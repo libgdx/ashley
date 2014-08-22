@@ -16,16 +16,18 @@
 
 package com.badlogic.ashley.core;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.HashSet;
 import java.util.Set;
 
 import org.junit.Test;
 
-import com.badlogic.ashley.core.Component;
-import com.badlogic.ashley.core.ComponentType;
-import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.signals.Listener;
 import com.badlogic.ashley.signals.Signal;
 import com.badlogic.gdx.utils.Array;
@@ -194,5 +196,23 @@ public class EntityTests {
 		entity.remove(ComponentB.class);
 		
 		assertEquals(2, removedListener.counter);
+	}
+	
+	@Test
+	public void getComponentByClass() {
+		ComponentA compA = new ComponentA();
+		ComponentB compB = new ComponentB();
+		
+		Entity entity = new Entity();
+		entity.add(compA).add(compB);
+		
+		ComponentA retA = entity.getComponent(ComponentA.class);
+		ComponentB retB = entity.getComponent(ComponentB.class);
+		
+		assertNotNull(retA);
+		assertNotNull(retB);
+		
+		assertTrue(retA == compA);
+		assertTrue(retB == compB);
 	}
 }
