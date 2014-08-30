@@ -42,6 +42,16 @@ public class SignalTests {
 			assertNotNull(object);
 		}
 	}
+
+	private static class RemoveWhileDispatchListenerMock implements Listener<Dummy> {
+		public int count = 0;
+
+		@Override
+		public void receive (Signal<Dummy> signal, Dummy object) {
+			++count;
+			signal.remove(this);
+		}
+	}
 	
 	@Test
 	public void addListenerAndDispatch() {
@@ -119,6 +129,22 @@ public class SignalTests {
 			assertEquals(i + 1 + numDispatchs, listenerA.count);
 			assertEquals(numDispatchs, listenerB.count);
 		}
+	}
+
+    @Test
+	public void removeWhileDispatch () {
+        Dummy dummy = new Dummy();
+        Signal<Dummy> signal = new Signal<Dummy>();
+        RemoveWhileDispatchListenerMock listenerA = new RemoveWhileDispatchListenerMock();
+        ListenerMock listenerB = new ListenerMock();
+
+        signal.add(listenerA);
+        signal.add(listenerB);
+
+        signal.dispatch(dummy);
+
+        assertEquals(1, listenerA.count);
+        assertEquals(1, listenerB.count);
 	}
 
 }
