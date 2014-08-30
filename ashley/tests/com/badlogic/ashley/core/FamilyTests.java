@@ -20,10 +20,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import com.badlogic.ashley.core.Component;
-import com.badlogic.ashley.core.Entity;
-import com.badlogic.ashley.core.Family;
-
+@SuppressWarnings("unchecked")
 public class FamilyTests {
 	
 	private static class ComponentA extends Component {}

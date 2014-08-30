@@ -68,7 +68,7 @@ public class ImmutableArray<T> {
 		return array.toArray();
 	}
 
-	public <V> V[] toArray (Class type) {
+	public <V> V[] toArray (Class<?> type) {
 		return array.toArray(type);
 	}
 

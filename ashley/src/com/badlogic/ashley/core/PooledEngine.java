@@ -36,6 +36,7 @@ import com.badlogic.gdx.utils.reflect.ClassReflection;
  * 
  * @author David Saltares
  */
+@SuppressWarnings({"rawtypes","unchecked"})
 public class PooledEngine extends Engine {
 	
 	private EntityPool entityPool;

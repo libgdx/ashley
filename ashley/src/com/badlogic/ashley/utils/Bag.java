@@ -38,6 +38,7 @@ public class Bag<E> {
 	 * 
 	 * @param capacity the initial capacity of Bag.
 	 */
+	@SuppressWarnings("unchecked")
 	public Bag(int capacity) {
 		data = (E[])new Object[capacity];
 	}
@@ -184,6 +185,7 @@ public class Bag<E> {
 		grow(newCapacity);
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void grow(int newCapacity) {
 		E[] oldData = data;
 		data = (E[])new Object[newCapacity];
