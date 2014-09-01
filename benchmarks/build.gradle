@@ -1,0 +1,36 @@
+apply plugin: 'java'
+
+sourceCompatibility = 1.6
+
+buildscript {
+    repositories {
+        mavenCentral()
+        mavenLocal()
+        maven { url 'https://github.com/steffenschaefer/gwt-gradle-plugin/raw/maven-repo/' }
+		maven { url "https://oss.sonatype.org/content/repositories/releases/" }
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+    }
+}
+
+allprojects {
+    apply plugin: "eclipse"
+	apply plugin: "idea"
+	
+    ext {
+        appName = 'ecs-benchmark'
+    }
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+        maven { url "https://oss.sonatype.org/content/repositories/releases/" }
+    }
+}
+
+dependencies {
+	compile group: 'junit', name: 'junit', version: '4.+'
+	compile "com.badlogicgames.gdx:gdx:1.3.1"
+	compile "com.badlogicgames.ashley:ashley:1.1.0"
+	compile fileTree(dir: 'libs', include: '*.jar')
+}
