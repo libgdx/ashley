@@ -96,6 +96,15 @@ public class PooledEngine extends Engine {
 		return componentPools.obtain(componentType);
 	}
 	
+	/**
+	 * Removes all free entities and components from their pools.
+	 * Although this will likely result in garbage collection, it will free up memory.
+	 */
+	public void clearPools() {
+		entityPool.clear();
+		componentPools.clear();
+	}
+	
 	private class PooledEntity extends Entity implements Poolable {
 		
 		@Override
@@ -167,6 +176,12 @@ public class PooledEngine extends Engine {
 				Object object = objects.get(i);
 				if (object == null) continue;
 				free(object);
+			}
+		}
+		
+		public void clear() {
+			for (Pool pool : pools.values()) {
+				pool.clear();
 			}
 		}
 	}
