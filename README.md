@@ -28,7 +28,7 @@ Something not working quite as expected? Do you need a feature that has not been
 
 ### Contribute
 
-Awesome! If you would like to contribute with a new feature or submit a bugfix, fork this repo and send a pull request. Please, make sure all the [unit tests](https://github.com/libgdx/ashley/tree/master/ashley/tests/com/badlogic/ashley) are passing before submitting and add new ones in case you added new features.
+Awesome! If you would like to contribute with a new feature or submit a bugfix, fork this repo and send a pull request. Please, make sure all the [unit tests](https://github.com/libgdx/ashley/tree/master/ashley/tests/com/badlogic/ashley) are passing before submitting and add new ones in case you introduced new features.
 
 ### License
 
