@@ -14,18 +14,25 @@
  * limitations under the License.
  ******************************************************************************/
 
-package com.badlogic.ashley.tests.components;
+package com.badlogic.ashley.core;
 
-import com.badlogic.ashley.core.Component;
-
-public class MovementComponent extends Component {
-	public float velocityX;
-	public float velocityY;
+/**
+ * Gets notified of {@link Family} related events.
+ * 
+ * @author Christian May
+ */
+public interface FamilyListener {
+	/**
+	 * Called whenever an {@link Entity} is added to {@link Family}
+	 * 
+	 * @param entity
+	 */
+	public void entityAddedToSystem(Entity entity);
 	
-	public MovementComponent(){}
-	
-	public MovementComponent(float velocityX, float velocityY){
-		this.velocityX = velocityX;
-		this.velocityY = velocityY;
-	}
+	/**
+	 * Called whenever an {@link Entity} is removed from {@link Family}
+	 * 
+	 * @param entity
+	 */
+	public void entityRemovedFromSystem(Entity entity);
 }
