@@ -185,7 +185,14 @@ public class Engine {
 	public <T extends EntitySystem> T getSystem(Class<T> systemType) {
 		return (T) systemsByClass.get(systemType);
 	}
-	
+
+	/**
+	 * Return an immutable collection of the current {@link EntitySystem} in the {@link Engine}
+	 */
+	public ImmutableArray<EntitySystem> getSystems(){
+		return new ImmutableArray<EntitySystem>(this.systems);
+	}
+
 	/**
 	 * @return immutable array of all entity systems managed by the {@link Engine}.
 	 */
@@ -238,9 +245,9 @@ public class Engine {
 	 */
 	public void update(float deltaTime){
 		for(int i=0; i<systems.size; i++){
-            if (systems.get(i).checkProcessing()) {
-                systems.get(i).update(deltaTime);
-            }
+			if (systems.get(i).checkProcessing()) {
+				systems.get(i).update(deltaTime);
+			}
 		}
 	}
 	
