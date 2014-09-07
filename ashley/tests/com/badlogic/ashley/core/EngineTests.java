@@ -22,6 +22,7 @@ import org.junit.Test;
 
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Bits;
 
 @SuppressWarnings("unchecked")
 public class EngineTests {
@@ -404,5 +405,36 @@ public class EngineTests {
 		assertFalse(familyEntities.contains(entity1, true));
 		assertFalse(familyEntities.contains(entity3, true));
 		assertFalse(familyEntities.contains(entity2, true));
+	}
+	
+	@Test
+	public void entitiesForFamilyWithRemovalAndFiltering() {
+		Engine engine = new Engine();
+
+		
+		ImmutableArray<Entity> entitiesWithComponentAOnly = engine.getEntitiesFor(Family.getFor(ComponentType.getBitsFor(ComponentA.class),
+				  																  				new Bits(),
+				  																  				ComponentType.getBitsFor(ComponentB.class)));
+		
+		ImmutableArray<Entity> entitiesWithComponentB = engine.getEntitiesFor(Family.getFor(ComponentB.class));
+		
+		Entity entity1 = new Entity();
+		Entity entity2 = new Entity();
+		
+		engine.addEntity(entity1);
+		engine.addEntity(entity2);
+		
+		entity1.add(new ComponentA());
+		
+		entity2.add(new ComponentA());
+		entity2.add(new ComponentB());
+		
+		assertEquals(1, entitiesWithComponentAOnly.size());
+		assertEquals(1, entitiesWithComponentB.size());
+		
+		entity2.remove(ComponentB.class);
+		
+		assertEquals(2, entitiesWithComponentAOnly.size());
+		assertEquals(0, entitiesWithComponentB.size());
 	}
 }

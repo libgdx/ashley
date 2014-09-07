@@ -79,14 +79,14 @@ public class Engine {
 		componentAdded = new Listener<Entity>(){
 			@Override
 			public void receive(Signal<Entity> signal, Entity object) {
-				componentAdded(object);
+				updateFamilyMembership(object);
 			} 
 		};
 		
 		componentRemoved = new Listener<Entity>(){
 			@Override
 			public void receive(Signal<Entity> signal, Entity object) {
-				componentRemoved(object);
+				updateFamilyMembership(object);
 			} 
 		};
 	}
@@ -234,27 +234,22 @@ public class Engine {
 		}
 	}
 	
-	private void componentAdded(Entity entity){
+	private void updateFamilyMembership(Entity entity){
 		for (Entry<Family, Array<Entity>> entry : families.entries()) {
-			if(!entity.getFamilyBits().get(entry.key.getIndex())){
-				if(entry.key.matches(entity)){
-					entry.value.add(entity);
-					entity.getFamilyBits().set(entry.key.getIndex());
-				}
-			}	
-		}
-	}
-	
-	private void componentRemoved(Entity entity){
-		for (Entry<Family, Array<Entity>> entry : families.entries()) {
-			if(entity.getFamilyBits().get(entry.key.getIndex())){
-				if(!entry.key.matches(entity)){
-					entry.value.removeValue(entity, true);
-					entity.getFamilyBits().clear(entry.key.getIndex());
-				}
+			boolean belongsToFamily = entity.getFamilyBits().get(entry.key.getIndex());
+			boolean matches = entry.key.matches(entity);
+			
+			if (!belongsToFamily && matches) {
+				entry.value.add(entity);
+				entity.getFamilyBits().set(entry.key.getIndex());
+			}
+			else if (belongsToFamily && !matches) {
+				entry.value.removeValue(entity, true);
+				entity.getFamilyBits().clear(entry.key.getIndex());
 			}
 		}
 	}
+
 	
 	private void removePendingListeners() {
 		for (EntityListener listener : removalPendingListeners) {
