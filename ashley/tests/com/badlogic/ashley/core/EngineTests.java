@@ -59,7 +59,6 @@ public class EngineTests {
 		public int removedCalls = 0;
 		
 		private Array<Integer> updates;
-		private boolean active = true;
 		
 		
 		public EntitySystemMock() {
@@ -93,15 +92,6 @@ public class EngineTests {
 			++removedCalls;
 			
 			assertNotNull(engine);
-		}
-		
-		@Override
-		public boolean checkProcessing() {
-			return active;
-		}
-		
-		public void setActive(boolean active) {
-			this.active = active;
 		}
 	}
 	
@@ -253,7 +243,7 @@ public class EngineTests {
 		int numUpdates = 10;
 		
 		for (int i = 0; i < numUpdates; ++i) {
-			system.setActive(i % 2 == 0);
+			system.setProcessing(i % 2 == 0);
 			engine.update(deltaTime);
 			assertEquals(i / 2 + 1, system.updateCalls);
 		}
