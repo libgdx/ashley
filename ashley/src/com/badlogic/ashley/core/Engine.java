@@ -98,24 +98,29 @@ public class Engine {
 	 * Adds an entity to this Engine.
 	 */
 	public void addEntity(Entity entity){
-		entities.add(entity);
-		
-		for (Entry<Family, Array<Entity>> entry : families.entries()) {
-			if(entry.key.matches(entity)){
-				entry.value.add(entity);
-				entity.getFamilyBits().set(entry.key.getIndex());
-			}
-		}
-		
-		entity.componentAdded.add(componentAdded);
-		entity.componentRemoved.add(componentRemoved);
+		boolean shouldadd = true;
 		
 		notifying = true;
 		for (EntityListener listener : listeners) {
-			listener.entityAdded(entity);
+			if(shouldadd) shouldadd = listener.entityAdded(entity);
+			else listener.entityAdded(entity);
 		}
 		notifying = false;
 		removePendingListeners();
+		
+		if(shouldadd){
+			entities.add(entity);
+			
+			for (Entry<Family, Array<Entity>> entry : families.entries()) {
+				if(entry.key.matches(entity)){
+					entry.value.add(entity);
+					entity.getFamilyBits().set(entry.key.getIndex());
+				}
+			}
+			
+			entity.componentAdded.add(componentAdded);
+			entity.componentRemoved.add(componentRemoved);
+		}
 	}
 	
 	/**

@@ -117,8 +117,9 @@ public class BasicTest {
 	public static class Listener implements EntityListener {
 
 		@Override
-		public void entityAdded(Entity entity) {
+		public boolean entityAdded(Entity entity) {
 			log("Entity added " + entity);
+			return true;
 		}
 
 		@Override
