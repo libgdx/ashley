@@ -48,6 +48,8 @@ public class Engine {
 	private Array<Entity> entities;
 	/** An unordered list of EntitySystem */
 	private Array<EntitySystem> systems;
+	/** An unordered and immutable list of EntitySystem */
+	private ImmutableArray<EntitySystem> immutableSystems;
 	/** A hashmap that organises EntitySystems by class for easy retrieval */
 	private ObjectMap<Class<?>, EntitySystem> systemsByClass;
 	/** A hashmap that organises all entities into family buckets */
@@ -69,6 +71,7 @@ public class Engine {
 	public Engine(){
 		entities = new Array<Entity>();
 		systems = new Array<EntitySystem>();
+		immutableSystems = new ImmutableArray<EntitySystem>(systems);
 		systemsByClass = new ObjectMap<Class<?>, EntitySystem>();
 		families = new ObjectMap<Family, Array<Entity>>();
 		immutableFamilies = new ObjectMap<Family, ImmutableArray<Entity>>();
@@ -181,6 +184,13 @@ public class Engine {
 	@SuppressWarnings("unchecked")
 	public <T extends EntitySystem> T getSystem(Class<T> systemType) {
 		return (T) systemsByClass.get(systemType);
+	}
+	
+	/**
+	 * @return immutable array of all entity systems managed by the {@link Engine}.
+	 */
+	public ImmutableArray<EntitySystem> getSystems() {
+		return immutableSystems;
 	}
 	
 	/**

@@ -176,6 +176,20 @@ public class EngineTests {
 	}
 	
 	@Test
+	public void getSystems() {
+		Engine engine = new Engine();
+		EntitySystemMockA systemA = new EntitySystemMockA();
+		EntitySystemMockB systemB = new EntitySystemMockB();
+		
+		assertEquals(0, engine.getSystems().size());
+		
+		engine.addSystem(systemA);
+		engine.addSystem(systemB);
+		
+		assertEquals(2, engine.getSystems().size());
+	}
+	
+	@Test
 	public void systemUpdate() {
 		Engine engine = new Engine();
 		EntitySystemMock systemA = new EntitySystemMockA();
