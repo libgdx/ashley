@@ -61,6 +61,8 @@ public class Engine {
 	private ObjectMap<Family, ImmutableArray<Entity>> immutableFamilies;
 	/** A collection of entity added/removed event listeners */
 	private SnapshotArray<EntityListener> listeners;
+	/** Entity added/removed event listeners per family */
+	private ObjectMap<Family,SnapshotArray<EntityListener>> familyListeners;
 	
 	/** A listener for the Engine that's called every time a component is added. */
 	private final Listener<Entity> componentAdded;
@@ -79,6 +81,7 @@ public class Engine {
 		families = new ObjectMap<Family, Array<Entity>>();
 		immutableFamilies = new ObjectMap<Family, ImmutableArray<Entity>>();
 		listeners = new SnapshotArray<EntityListener>(false, 16);
+		familyListeners = new ObjectMap<Family,SnapshotArray<EntityListener>>();
 		
 		componentAdded = new Listener<Entity>(){
 			@Override
@@ -103,12 +106,7 @@ public class Engine {
 	public void addEntity(Entity entity){
 		entities.add(entity);
 		
-		for (Entry<Family, Array<Entity>> entry : families.entries()) {
-			if(entry.key.matches(entity)){
-				entry.value.add(entity);
-				entity.getFamilyBits().set(entry.key.getIndex());
-			}
-		}
+		updateFamilyMembership(entity);
 		
 		entity.componentAdded.add(componentAdded);
 		entity.componentRemoved.add(componentRemoved);
@@ -186,26 +184,33 @@ public class Engine {
 	 * Returns immutable collection of entities for the specified {@link Family}. Will return the same instance every time.
 	 */
 	public ImmutableArray<Entity> getEntitiesFor(Family family){
-		Array<Entity> entities = families.get(family, null);
-		if(entities == null){
-			entities = new Array<Entity>(false, 16);
-			for(Entity e:this.entities){
-				if(family.matches(e)) {
-					entities.add(e);
-					e.getFamilyBits().set(family.getIndex());
-				}
-			}
-			families.put(family, entities);
-			immutableFamilies.put(family, new ImmutableArray<Entity>(entities));
-		}
-		
+		registerFamily(family);
 		return immutableFamilies.get(family);
 	}
 	
 	/**
-	 * Adds an {@link EntityListener}
+	 * Adds an {@link EntityListener}.
+	 * 
+	 * The listener will be notified every time an entity is added/removed to/from the engine.
 	 */
 	public void addEntityListener(EntityListener listener) {
+		listeners.add(listener);
+	}
+	
+	/**
+	 * Adds an {@link EntityListener} for a specific {@link Family}.
+	 * 
+	 * The listener will be notified every time an entity is added/removed to/from the given family.
+	 */
+	public void addEntityListener(Family family, EntityListener listener) {
+		registerFamily(family);
+		SnapshotArray<EntityListener> listeners = familyListeners.get(family);
+		
+		if (listeners == null) {
+			listeners = new SnapshotArray<EntityListener>(false, 16);
+			familyListeners.put(family, listeners);
+		}
+		
 		listeners.add(listener);
 	}
 	
@@ -214,6 +219,10 @@ public class Engine {
 	 */
 	public void removeEntityListener(EntityListener listener) {
 		listeners.removeValue(listener, true);
+		
+		for (SnapshotArray<EntityListener> familyListenerArray : familyListeners.values()) {
+			familyListenerArray.removeValue(listener, true);
+		}
 	}
 	
 	/**
@@ -234,16 +243,25 @@ public class Engine {
 	
 	private void updateFamilyMembership(Entity entity){
 		for (Entry<Family, Array<Entity>> entry : families.entries()) {
-			boolean belongsToFamily = entity.getFamilyBits().get(entry.key.getIndex());
-			boolean matches = entry.key.matches(entity);
+			Family family = entry.key;
+			Array<Entity> entities = entry.value;
+			int familyIndex = family.getIndex();
+			
+			
+			boolean belongsToFamily = entity.getFamilyBits().get(familyIndex);
+			boolean matches = family.matches(entity);
 			
 			if (!belongsToFamily && matches) {
-				entry.value.add(entity);
-				entity.getFamilyBits().set(entry.key.getIndex());
+				entities.add(entity);
+				entity.getFamilyBits().set(familyIndex);
+				
+				notifyFamilyListenersAdd(family, entity);
 			}
 			else if (belongsToFamily && !matches) {
-				entry.value.removeValue(entity, true);
-				entity.getFamilyBits().clear(entry.key.getIndex());
+				entities.removeValue(entity, true);
+				entity.getFamilyBits().clear(familyIndex);
+				
+				notifyFamilyListenersRemove(family, entity);
 			}
 		}
 	}
@@ -263,9 +281,13 @@ public class Engine {
 		
 		if(!entity.getFamilyBits().isEmpty()){
 			for (Entry<Family, Array<Entity>> entry : families.entries()) {
-				if(entry.key.matches(entity)){
-					entry.value.removeValue(entity, true);
-					entity.getFamilyBits().clear(entry.key.getIndex());
+				Family family = entry.key;
+				Array<Entity> entities = entry.value;
+				
+				if(family.matches(entity)){
+					entities.removeValue(entity, true);
+					entity.getFamilyBits().clear(family.getIndex());
+					notifyFamilyListenersRemove(family, entity);
 				}
 			}
 		}
@@ -279,6 +301,51 @@ public class Engine {
 			listener.entityRemoved(entity);
 		}
 		listeners.end();
+	}
+	
+	private void notifyFamilyListenersAdd(Family family, Entity entity) {
+		SnapshotArray<EntityListener> listeners = familyListeners.get(family);
+		
+		if (listeners != null) {
+			Object[] items = listeners.begin();
+			for (int i = 0, n = listeners.size; i < n; i++) {
+				EntityListener listener = (EntityListener)items[i];
+				listener.entityAdded(entity);
+			}
+			listeners.end();	
+		}
+	}
+	
+	private void notifyFamilyListenersRemove(Family family, Entity entity) {
+		SnapshotArray<EntityListener> listeners = familyListeners.get(family);
+		
+		if (listeners != null) {
+			Object[] items = listeners.begin();
+			for (int i = 0, n = listeners.size; i < n; i++) {
+				EntityListener listener = (EntityListener)items[i];
+				listener.entityRemoved(entity);
+			}
+			listeners.end();	
+		}
+	}
+	
+	private Array<Entity> registerFamily(Family family) {
+		Array<Entity> entities = families.get(family);
+		
+		if (entities == null) {
+			entities = new Array<Entity>(false, 16);
+			families.put(family, entities);
+			immutableFamilies.put(family, new ImmutableArray<Entity>(entities));
+			
+			for(Entity e : this.entities){
+				if(family.matches(e)) {
+					entities.add(e);
+					e.getFamilyBits().set(family.getIndex());
+				}
+			}
+		}
+		
+		return entities;
 	}
 	
 	private static class SystemComparator implements Comparator<EntitySystem>{

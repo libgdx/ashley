@@ -493,4 +493,71 @@ public class EngineTests {
 			assertEquals(1, entities.get(i).getComponent(CounterComponent.class).counter);
 		}
 	}
+	
+	@Test
+	public void familyListener() {
+		Engine engine = new Engine();
+		
+		EntityListenerMock listenerA = new EntityListenerMock();
+		EntityListenerMock listenerB = new EntityListenerMock();
+		
+		Family familyA = Family.getFor(ComponentA.class);
+		Family familyB = Family.getFor(ComponentB.class);
+		
+		engine.addEntityListener(familyA, listenerA);
+		engine.addEntityListener(familyB, listenerB);
+
+		Entity entity1 = new Entity();
+		engine.addEntity(entity1);
+		
+		assertEquals(0, listenerA.addedCount);
+		assertEquals(0, listenerB.addedCount);
+
+		
+		Entity entity2 = new Entity();
+		engine.addEntity(entity2);
+		
+		assertEquals(0, listenerA.addedCount);
+		assertEquals(0, listenerB.addedCount);
+		
+		entity1.add(new ComponentA());
+		
+		assertEquals(1, listenerA.addedCount);
+		assertEquals(0, listenerB.addedCount);
+		
+		entity2.add(new ComponentB());
+		
+		assertEquals(1, listenerA.addedCount);
+		assertEquals(1, listenerB.addedCount);
+		
+		entity1.remove(ComponentA.class);
+		
+		assertEquals(1, listenerA.removedCount);
+		assertEquals(0, listenerB.removedCount);
+		
+		engine.removeEntity(entity2);
+		
+		assertEquals(1, listenerA.removedCount);
+		assertEquals(1, listenerB.removedCount);
+		
+		engine.removeEntityListener(listenerB);
+		
+		engine.addEntity(entity2);
+		
+		assertEquals(1, listenerA.addedCount);
+		assertEquals(1, listenerB.addedCount);
+		
+		entity1.add(new ComponentB());
+		entity1.add(new ComponentA());
+		
+		assertEquals(2, listenerA.addedCount);
+		assertEquals(1, listenerB.addedCount);
+		
+		engine.removeAllEntities();
+		
+		assertEquals(2, listenerA.removedCount);
+		assertEquals(1, listenerB.removedCount);
+		
+		engine.addEntityListener(listenerB);
+	}
 }
