@@ -147,7 +147,7 @@ public class Entity {
 	 * @param componentClass the class of the component to be retrieved.
 	 * @return the instance of the specified {@link Component} attached to this {@link Entity}, or null if no such {@link Component} exists.
 	 */
-	public <T extends Component> T getComponent(Class<? extends Component> componentClass) {
+	public <T extends Component> T getComponent(Class<T> componentClass){
 		return getComponent(ComponentType.getFor(componentClass));
 	}
 	

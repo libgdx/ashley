@@ -117,6 +117,33 @@ public class EngineTests {
 		}
 	}
 	
+	private static class CounterComponent extends Component {
+		int counter = 0;
+	}
+	
+	private static class CounterSystem extends EntitySystem {
+		private ImmutableArray<Entity> entities;
+		private Engine engine;
+		
+		@Override
+		public void addedToEngine(Engine engine) {
+			this.engine = engine;
+			entities = engine.getEntitiesFor(Family.getFor(CounterComponent.class));
+		}
+
+		@Override
+		public void update(float deltaTime) {
+			for (int i = 0; i < entities.size(); ++i) {
+				if (i % 2 == 0) {
+					entities.get(i).getComponent(CounterComponent.class).counter++;
+				}
+				else {
+					engine.removeEntity(entities.get(i));
+				}
+			}
+		}
+	}
+	
 	@Test
 	public void addAndRemoveEntity() {
 		Engine engine = new Engine();
@@ -440,5 +467,30 @@ public class EngineTests {
 		
 		assertEquals(2, entitiesWithComponentAOnly.size());
 		assertEquals(0, entitiesWithComponentB.size());
+	}
+	
+	@Test
+	public void entitySystemRemovalWhileIterating() {
+		Engine engine = new Engine();
+
+		engine.addSystem(new CounterSystem());
+		
+		for (int i = 0; i < 20; ++i) {
+			Entity entity = new Entity();
+			entity.add(new CounterComponent());
+			engine.addEntity(entity);
+		}
+		
+		ImmutableArray<Entity> entities = engine.getEntitiesFor(Family.getFor(CounterComponent.class));
+		
+		for (int i = 0; i < entities.size(); ++i) {
+			assertEquals(0, entities.get(i).getComponent(CounterComponent.class).counter);
+		}
+		
+		engine.update(deltaTime);
+		
+		for (int i = 0; i < entities.size(); ++i) {
+			assertEquals(1, entities.get(i).getComponent(CounterComponent.class).counter);
+		}
 	}
 }
