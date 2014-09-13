@@ -19,6 +19,7 @@ package com.badlogic.ashley.tests;
 import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
+import com.badlogic.ashley.core.FamilyListener;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.ashley.tests.components.MovementComponent;
@@ -41,7 +42,9 @@ public class FamilyListenerTest {
 		PositionSystem positionSystem = new PositionSystem(positionFamily);
 
 		engine.addSystem(movementSystem);
+		engine.addFamilyListener(movementFamily, movementSystem);
 		engine.addSystem(positionSystem);
+		engine.addFamilyListener(positionFamily, positionSystem);
 
 		Array<Entity> entities = new Array<Entity>();
 
@@ -76,15 +79,16 @@ public class FamilyListenerTest {
 
 		for (int i = 0; i < entities.size; i++) {
 			if (i < 5)
-				entities.get(i).add(engine.createComponent(PositionComponent.class));
+				entities.get(i).add(
+						engine.createComponent(PositionComponent.class));
 		}
 		engine.update(0.25f);
 		checkNumOfEntitiesInSystems(engine, movementFamily, positionFamily);
-		
-		
+
 		for (int i = 0; i < entities.size; i++) {
 			if (i >= 5)
-				entities.get(i).add(engine.createComponent(MovementComponent.class));
+				entities.get(i).add(
+						engine.createComponent(MovementComponent.class));
 		}
 		engine.update(0.25f);
 		checkNumOfEntitiesInSystems(engine, movementFamily, positionFamily);
@@ -103,38 +107,34 @@ public class FamilyListenerTest {
 				.getEntitiesFor(positionFamily).size());
 		log("Num entities(" + entitesInPositionSystem
 				+ ") in PositionSystem ok?= " + test, !test);
-	
+
 		log("###################################################");
 	}
 
-	public static class PositionSystem extends IteratingSystem {
+	public static class PositionSystem extends IteratingSystem implements
+			FamilyListener {
 		public PositionSystem(Family family) {
 			super(family);
 		}
 
 		@Override
 		public void processEntity(Entity e, float deltaTime) {
-			// log(this.getClass().getSimpleName() + "= entity [" + e
-			// + "] updated.");
 		}
 
 		@Override
-		public void entityAddedToSystem(Entity e) {
-//			log(this.getClass().getSimpleName() + "= [" + e
-//					+ "] added to System.");
+		public void added(Entity e) {
 			FamilyListenerTest.entitesInPositionSystem++;
 		}
 
 		@Override
-		public void entityRemovedFromSystem(Entity e) {
-//			log(this.getClass().getSimpleName() + "= [" + e
-//					+ "] removed from System.");
+		public void removed(Entity e) {
 			FamilyListenerTest.entitesInPositionSystem--;
 		}
 
 	}
 
-	public static class MovementSystem extends IteratingSystem {
+	public static class MovementSystem extends IteratingSystem implements
+			FamilyListener {
 
 		private ComponentMapper<PositionComponent> pm = ComponentMapper
 				.getFor(PositionComponent.class);
@@ -143,6 +143,7 @@ public class FamilyListenerTest {
 
 		public MovementSystem(Family family) {
 			super(family);
+
 		}
 
 		@Override
@@ -156,16 +157,12 @@ public class FamilyListenerTest {
 		}
 
 		@Override
-		public void entityAddedToSystem(Entity e) {
-//			log(this.getClass().getSimpleName() + "= [" + e
-//					+ "] added to System.");
+		public void added(Entity e) {
 			FamilyListenerTest.entitesInMovementSystem++;
 		}
 
 		@Override
-		public void entityRemovedFromSystem(Entity e) {
-//			log(this.getClass().getSimpleName() + "= [" + e
-//					+ "] removed from System.");
+		public void removed(Entity e) {
 			FamilyListenerTest.entitesInMovementSystem--;
 		}
 

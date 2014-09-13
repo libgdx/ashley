@@ -25,7 +25,9 @@ public class FamilyListenerTest {
 		SystemA systemA = new SystemA(familyA);
 
 		engine.addSystem(systemA);
+		engine.addFamilyListener(familyAB, systemAB);
 		engine.addSystem(systemAB);
+		engine.addFamilyListener(familyA, systemA);
 
 		Array<Entity> entities = new Array<Entity>();
 
@@ -90,9 +92,11 @@ public class FamilyListenerTest {
 	private static class ComponentB extends Component {
 	}
 
-	public static class SystemAB extends IteratingSystem {
+	public static class SystemAB extends IteratingSystem implements
+			FamilyListener {
 		public SystemAB(Family family) {
 			super(family);
+
 		}
 
 		@Override
@@ -101,20 +105,19 @@ public class FamilyListenerTest {
 		}
 
 		@Override
-		public void entityAddedToSystem(Entity e) {
+		public void added(Entity e) {
 			FamilyListenerTest.entitesInPositionSystem++;
 		}
 
 		@Override
-		public void entityRemovedFromSystem(Entity e) {
-			// log(this.getClass().getSimpleName() + "= [" + e
-			// + "] removed from System.");
+		public void removed(Entity e) {
 			FamilyListenerTest.entitesInPositionSystem--;
 		}
 
 	}
 
-	public static class SystemA extends IteratingSystem {
+	public static class SystemA extends IteratingSystem implements
+			FamilyListener {
 
 		public SystemA(Family family) {
 			super(family);
@@ -126,26 +129,15 @@ public class FamilyListenerTest {
 		}
 
 		@Override
-		public void entityAddedToSystem(Entity e) {
+		public void added(Entity e) {
 			FamilyListenerTest.entitesInMovementSystem++;
 		}
 
 		@Override
-		public void entityRemovedFromSystem(Entity e) {
+		public void removed(Entity e) {
 			FamilyListenerTest.entitesInMovementSystem--;
 		}
 
-	}
-
-	public static void log(String string) {
-		log(string, false);
-	}
-
-	public static void log(String string, boolean err) {
-		if (err)
-			System.err.println(string);
-		else
-			System.out.println(string);
 	}
 
 }

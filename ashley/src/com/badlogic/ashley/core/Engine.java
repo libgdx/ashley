@@ -118,7 +118,7 @@ public class Engine {
 						.get(entry.key);
 				if (listeners != null) {
 					for (FamilyListener listener : listeners) {
-						listener.entityAddedToSystem(entity);
+						listener.added(entity);
 					}
 				}
 
@@ -152,7 +152,7 @@ public class Engine {
 							.get(entry.key);
 					if (listeners != null) {
 						for (FamilyListener listener : listeners) {
-							listener.entityRemovedFromSystem(entity);
+							listener.removed(entity);
 						}
 					}
 				}
@@ -301,7 +301,7 @@ public class Engine {
 							.get(entry.key);
 					if (listeners != null) {
 						for (FamilyListener listener : listeners) {
-							listener.entityAddedToSystem(entity);
+							listener.added(entity);
 						}
 					}
 				}
@@ -320,7 +320,7 @@ public class Engine {
 							.get(entry.key);
 					if (listeners != null) {
 						for (FamilyListener listener : listeners) {
-							listener.entityRemovedFromSystem(entity);
+							listener.removed(entity);
 						}
 					}
 				}

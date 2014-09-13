@@ -19,6 +19,9 @@ package com.badlogic.ashley.core;
 /**
  * Gets notified of {@link Family} related events.
  * 
+ * A system which implements this interface has to be 
+ * added manually as a {@link FamilyListener} to the engine.
+ * 
  * @author Christian May
  */
 public interface FamilyListener {
@@ -27,12 +30,12 @@ public interface FamilyListener {
 	 * 
 	 * @param entity
 	 */
-	public void entityAddedToSystem(Entity entity);
+	public void added(Entity entity);
 	
 	/**
 	 * Called whenever an {@link Entity} is removed from {@link Family}
 	 * 
 	 * @param entity
 	 */
-	public void entityRemovedFromSystem(Entity entity);
+	public void removed(Entity entity);
 }

@@ -20,7 +20,6 @@ import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.ashley.core.Family;
-import com.badlogic.ashley.core.FamilyListener;
 import com.badlogic.ashley.utils.ImmutableArray;
 
 /**
@@ -30,7 +29,7 @@ import com.badlogic.ashley.utils.ImmutableArray;
  * 
  * @author Stefan Bachmann
  */
-public abstract class IteratingSystem extends EntitySystem implements FamilyListener{
+public abstract class IteratingSystem extends EntitySystem {
 	/** The family describing this systems entities */
 	private Family family;
 	/** The entities used by this system */
@@ -59,15 +58,11 @@ public abstract class IteratingSystem extends EntitySystem implements FamilyList
 	@Override
 	public void addedToEngine(Engine engine) {
 		entities = engine.getEntitiesFor(family);
-		
-		engine.addFamilyListener(this.family, this);
 	}
 
 	@Override
 	public void removedFromEngine(Engine engine) {
 		entities = null;
-		
-		engine.removeFamilyListener(this.family, this);
 	}
 
 	@Override
@@ -75,14 +70,6 @@ public abstract class IteratingSystem extends EntitySystem implements FamilyList
 		for (int i = 0; i < entities.size(); ++i) {
 			processEntity(entities.get(i), deltaTime);
 		}
-	}
-
-	@Override
-	public void entityAddedToSystem(Entity entity) {
-	}
-
-	@Override
-	public void entityRemovedFromSystem(Entity entity) {
 	}
 
 	/**
