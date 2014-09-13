@@ -24,6 +24,8 @@ package com.badlogic.ashley.core;
 public abstract class EntitySystem {
 	/** Use this to set the priority of the system. Lower means it'll get executed first. */
 	public int priority;
+	
+	private boolean processing;
 
 	/**
 	 * Default constructor that will initialise an EntitySystem with priority 0.
@@ -38,6 +40,7 @@ public abstract class EntitySystem {
 	 */
 	public EntitySystem(int priority){
 		this.priority = priority;
+		this.processing = true;
 	}
 
 	/**
@@ -63,6 +66,14 @@ public abstract class EntitySystem {
      * @return Whether or not the system should be processed.
      */
     public boolean checkProcessing() {
-        return true;
+        return processing;
     }
+    
+    /**
+    *
+    * Sets whether or not the system should be processed by the {@link Engine}.
+    */
+   public void setProcessing(boolean processing) {
+       this.processing = processing;
+   }
 }
