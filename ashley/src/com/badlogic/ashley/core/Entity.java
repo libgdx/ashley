@@ -56,7 +56,7 @@ public class Entity {
 	 */
 	public Entity(){
 		components = new Bag<Component>();
-		componentsArray = new Array<Component>();
+		componentsArray = new Array<Component>(false, 16);
 		immutableComponentsArray = new ImmutableArray<Component>(componentsArray);
 		componentBits = new Bits();
 		familyBits = new Bits();
