@@ -62,6 +62,10 @@ public class Engine {
 	private Array<EntityListener> removalPendingListeners;
 	/** Whether or not the entity listeners are being notified of an event */
 	private boolean notifying;
+	/** A collection of entity family added/removed event listeners */
+	private ObjectMap<Family, Array<FamilyListener>> familyListeners;
+	/** FamilyListeners that await removal */
+	private Array<FamilyListener> removalPendingFamilyListeners;
 	
 	/** A listener for the Engine that's called every time a component is added. */
 	private final Listener<Entity> componentAdded;
@@ -77,6 +81,8 @@ public class Engine {
 		immutableFamilies = new ObjectMap<Family, ImmutableArray<Entity>>();
 		listeners = new Array<EntityListener>();
 		removalPendingListeners = new Array<EntityListener>();
+		familyListeners = new ObjectMap<Family, Array<FamilyListener>>();
+		removalPendingFamilyListeners = new Array<FamilyListener>();
 		notifying = false;
 		
 		componentAdded = new Listener<Entity>(){
@@ -104,6 +110,13 @@ public class Engine {
 			if(entry.key.matches(entity)){
 				entry.value.add(entity);
 				entity.getFamilyBits().set(entry.key.getIndex());
+				Array<FamilyListener> listeners = familyListeners
+						.get(entry.key);
+				if (listeners != null) {
+					for (FamilyListener listener : listeners) {
+						listener.added(entity);
+					}
+				}
 			}
 		}
 		
@@ -129,6 +142,13 @@ public class Engine {
 				if(entry.key.matches(entity)){
 					entry.value.removeValue(entity, true);
 					entity.getFamilyBits().clear(entry.key.getIndex());
+					Array<FamilyListener> listeners = familyListeners
+							.get(entry.key);
+					if (listeners != null) {
+						for (FamilyListener listener : listeners) {
+							listener.removed(entity);
+						}
+					}
 				}
 			}
 		}
@@ -233,6 +253,32 @@ public class Engine {
 	}
 	
 	/**
+	* Adds an {@link FamilyListener}
+	*/
+	public void addFamilyListener(Family family, FamilyListener listener) {
+		Array<FamilyListener> listeners = familyListeners.get(family);
+		if (listeners == null) {
+			listeners = new Array<FamilyListener>();
+			familyListeners.put(family, listeners);
+		}
+		listeners.add(listener);
+	}
+	
+	/**
+	 * Removes an {@link FamilyListener}
+	 */
+	public void removeFamilyListener(Family family, FamilyListener listener) {
+		if (notifying) {
+			removalPendingFamilyListeners.add(listener);
+		}
+		else {
+			Array<FamilyListener> listeners = familyListeners.get(family);
+			if (listeners != null)
+				listeners.removeValue(listener, true);
+		}
+	}
+
+	/**
 	 * Updates all the systems in this Engine.
 	 * @param deltaTime The time passed since the last frame.
 	 */
@@ -267,6 +313,12 @@ public class Engine {
 		}
 		
 		removalPendingListeners.clear();
+		
+		for (FamilyListener listener : removalPendingFamilyListeners) {
+			removalPendingFamilyListeners.removeValue(listener, true);
+		}
+		
+		removalPendingFamilyListeners.clear();
 	}
 	
 	private static class SystemComparator implements Comparator<EntitySystem>{
