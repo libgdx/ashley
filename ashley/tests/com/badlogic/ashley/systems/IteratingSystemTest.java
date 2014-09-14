@@ -19,14 +19,18 @@ package com.badlogic.ashley.systems;
 import org.junit.Test;
 
 import com.badlogic.ashley.core.Component;
+import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
+import com.badlogic.ashley.utils.ImmutableArray;
 
 import static org.junit.Assert.*;
 
 public class IteratingSystemTest {
+	private static final float deltaTime = 0.16f;
+	
     private static class ComponentA extends Component {}
     private static class ComponentB extends Component {}
     private static class ComponentC extends Component {}
@@ -43,11 +47,43 @@ public class IteratingSystemTest {
              ++numUpdates;
         }
     }
+    
+    private static class SpyComponent extends Component {
+    	public int updates = 0;
+    }
+    
+    private static class IndexComponent extends Component {
+    	public int index = 0;
+    }
+    
+    private static class IteratingComponentRemovalSystem extends IteratingSystem {
+
+    	private ComponentMapper<SpyComponent> sm;
+    	private ComponentMapper<IndexComponent> im;
+    	
+		public IteratingComponentRemovalSystem() {
+			super(Family.getFor(SpyComponent.class, IndexComponent.class));
+			
+			sm = ComponentMapper.getFor(SpyComponent.class);
+			im = ComponentMapper.getFor(IndexComponent.class);
+		}
+
+		@Override
+		public void processEntity(Entity entity, float deltaTime) {
+			if (im.get(entity).index % 2 == 0) {
+				entity.remove(SpyComponent.class);
+				entity.remove(IndexComponent.class);
+			}
+			else {
+				sm.get(entity).updates++;
+			}
+		}
+    	
+    }
 
     @Test
     @SuppressWarnings("unchecked")
     public void shouldIterateEntitiesWithCorrectFamily(){
-        final float delta = 0.15f;
         final Engine engine = new Engine();
 
         final Family family = Family.getFor(ComponentA.class, ComponentB.class);
@@ -59,21 +95,21 @@ public class IteratingSystemTest {
 
         //When entity has ComponentA
         e.add(new ComponentA());
-        engine.update(delta);
+        engine.update(deltaTime);
 
         assertEquals(0, system.numUpdates);
 
         //When entity has ComponentA and ComponentB
         system.numUpdates = 0;
         e.add(new ComponentB());
-        engine.update(delta);
+        engine.update(deltaTime);
 
         assertEquals(1, system.numUpdates);
 
         //When entity has ComponentA, ComponentB and ComponentC
         system.numUpdates = 0;
         e.add(new ComponentC());
-        engine.update(delta);
+        engine.update(deltaTime);
 
         assertEquals(1, system.numUpdates);
 
@@ -81,8 +117,40 @@ public class IteratingSystemTest {
         system.numUpdates = 0;
         e.remove(ComponentA.class);
         e.add(new ComponentC());
-        engine.update(delta);
+        engine.update(deltaTime);
 
         assertEquals(0, system.numUpdates);
+    }
+    
+    public void componentRemovalWhileIterating(){
+        Engine engine = new Engine();
+        ImmutableArray<Entity> entities = engine.getEntitiesFor(Family.getFor(SpyComponent.class, IndexComponent.class));
+        ComponentMapper<SpyComponent> sm = ComponentMapper.getFor(SpyComponent.class);
+        
+        engine.addSystem(new IteratingComponentRemovalSystem());
+        
+        final int numEntities = 10;
+        
+        for (int i = 0; i < numEntities; ++i) {
+        	Entity e = new Entity();
+        	e.add(new SpyComponent());
+        	
+        	IndexComponent in = new IndexComponent();
+        	in.index = i + 1;
+        	
+        	e.add(in);
+        	
+        	engine.addEntity(e);
+        }
+        
+        engine.update(deltaTime);
+        
+        assertEquals(numEntities / 2, entities.size());
+        
+        for (int i = 0; i < entities.size(); ++i) {
+        	Entity e = entities.get(i);
+        	
+        	assertEquals(1, sm.get(e).updates);
+        }
     }
 }
