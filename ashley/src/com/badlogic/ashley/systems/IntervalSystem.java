@@ -21,26 +21,26 @@ import com.badlogic.ashley.core.EntitySystem;
 /**
  * A simple {@link EntitySystem} that does not run its update logic every call
  * to {@link EntitySystem#update(float)}, but after a given interval. The actual
- * logic should be placed in {@link IntervalEntitySystem#updateInterval()}.
+ * logic should be placed in {@link IntervalSystem#updateInterval()}.
  * 
  * @author David Saltares
  */
-public abstract class IntervalEntitySystem extends EntitySystem {
+public abstract class IntervalSystem extends EntitySystem {
 	private float interval;
 	private float accumulator;
 	
 	/**
-	 * @param interval time in seconds between calls to {@link IntervalEntitySystem#updateInterval()}.
+	 * @param interval time in seconds between calls to {@link IntervalSystem#updateInterval()}.
 	 */
-	public IntervalEntitySystem(float interval){
+	public IntervalSystem(float interval){
 		this(interval, 0);
 	}
 	
 	/**
-	 * @param interval time in seconds between calls to {@link IntervalEntitySystem#updateInterval()}.
+	 * @param interval time in seconds between calls to {@link IntervalSystem#updateInterval()}.
 	 * @param priority
 	 */
-	public IntervalEntitySystem(float interval, int priority){
+	public IntervalSystem(float interval, int priority){
 		super(priority);
 		this.interval = interval;
 		this.accumulator = 0;

@@ -34,7 +34,7 @@ public class IntervalIteratingTest {
 		public int numUpdates = 0;
 	}
 	
-    private static class IntervalIteratingSystemSpy extends IntervalIteratingEntitySystem {
+    private static class IntervalIteratingSystemSpy extends IntervalIteratingSystem {
     	private ComponentMapper<IntervalComponentSpy> im;
     	
         public IntervalIteratingSystemSpy() {

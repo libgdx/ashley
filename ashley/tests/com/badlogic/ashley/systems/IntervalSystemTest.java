@@ -25,7 +25,7 @@ import static org.junit.Assert.*;
 public class IntervalSystemTest {
 	private static final float deltaTime = 0.1f;
 
-    private static class IntervalSystemSpy extends IntervalEntitySystem {
+    private static class IntervalSystemSpy extends IntervalSystem {
         public int numUpdates;
 
         public IntervalSystemSpy() {
