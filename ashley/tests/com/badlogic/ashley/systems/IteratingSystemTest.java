@@ -70,9 +70,42 @@ public class IteratingSystemTest {
 
 		@Override
 		public void processEntity(Entity entity, float deltaTime) {
-			if (im.get(entity).index % 2 == 0) {
+			int index = im.get(entity).index;
+			if (index % 2 == 0) {
 				entity.remove(SpyComponent.class);
 				entity.remove(IndexComponent.class);
+			}
+			else {
+				sm.get(entity).updates++;
+			}
+		}
+    	
+    }
+    
+    private static class IteratingRemovalSystem extends IteratingSystem {
+
+    	private Engine engine;
+    	private ComponentMapper<SpyComponent> sm;
+    	private ComponentMapper<IndexComponent> im;
+    	
+		public IteratingRemovalSystem() {
+			super(Family.getFor(SpyComponent.class, IndexComponent.class));
+			
+			sm = ComponentMapper.getFor(SpyComponent.class);
+			im = ComponentMapper.getFor(IndexComponent.class);
+		}
+		
+		@Override
+		public void addedToEngine(Engine engine) {
+			super.addedToEngine(engine);
+			this.engine = engine;
+		}
+
+		@Override
+		public void processEntity(Entity entity, float deltaTime) {
+			int index = im.get(entity).index;
+			if (index % 2 == 0) {
+				engine.removeEntity(entity);
 			}
 			else {
 				sm.get(entity).updates++;
@@ -122,6 +155,40 @@ public class IteratingSystemTest {
         assertEquals(0, system.numUpdates);
     }
     
+    @Test
+    public void entityRemovalWhileIterating(){
+        Engine engine = new Engine();
+        ImmutableArray<Entity> entities = engine.getEntitiesFor(Family.getFor(SpyComponent.class, IndexComponent.class));
+        ComponentMapper<SpyComponent> sm = ComponentMapper.getFor(SpyComponent.class);
+        
+        engine.addSystem(new IteratingRemovalSystem());
+        
+        final int numEntities = 10;
+        
+        for (int i = 0; i < numEntities; ++i) {
+        	Entity e = new Entity();
+        	e.add(new SpyComponent());
+        	
+        	IndexComponent in = new IndexComponent();
+        	in.index = i + 1;
+        	
+        	e.add(in);
+        	
+        	engine.addEntity(e);
+        }
+        
+        engine.update(deltaTime);
+        
+        assertEquals(numEntities / 2, entities.size());
+        
+        for (int i = 0; i < entities.size(); ++i) {
+        	Entity e = entities.get(i);
+        	
+        	assertEquals(1, sm.get(e).updates);
+        }
+    }
+    
+    @Test
     public void componentRemovalWhileIterating(){
         Engine engine = new Engine();
         ImmutableArray<Entity> entities = engine.getEntitiesFor(Family.getFor(SpyComponent.class, IndexComponent.class));

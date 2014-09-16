@@ -24,6 +24,7 @@ import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.ObjectMap.Entry;
+import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.SnapshotArray;
 
 /**
@@ -72,6 +73,11 @@ public class Engine {
 	/** Whether or not the engine is ticking */
 	private boolean updating;
 	
+	/** Mechanism to delay component addition/removal to avoid affecting system processing */
+	private ComponentOperationPool componentOperationsPool;
+ 	private Array<ComponentOperation> componentOperations;
+ 	private ComponentOperationHandler componentOperationHandler;
+	
 	public Engine(){
 		entities = new Array<Entity>(false, 16);
 		pendingRemovalEntities = new Array<Entity>(false, 16);
@@ -98,6 +104,32 @@ public class Engine {
 		};
 		
 		updating = false;
+		
+		componentOperationsPool = new ComponentOperationPool();
+		componentOperations = new Array<ComponentOperation>();
+		componentOperationHandler = new ComponentOperationHandler() {
+			public void add(Entity entity, Component component) {
+				if (updating) {
+					ComponentOperation operation = componentOperationsPool.obtain();
+					operation.makeAdd(entity, component);
+					componentOperations.add(operation);
+				}
+				else {
+					entity.addInternal(component);
+				}
+			}
+			
+			public void remove(Entity entity, Class<? extends Component> componentClass) {
+				if (updating) {
+					ComponentOperation operation = componentOperationsPool.obtain();
+					operation.makeRemove(entity, componentClass);
+					componentOperations.add(operation);
+				}
+				else {
+					entity.removeInternal(componentClass);
+				}
+			}
+		};
 	}
 	
 	/**
@@ -110,6 +142,7 @@ public class Engine {
 		
 		entity.componentAdded.add(componentAdded);
 		entity.componentRemoved.add(componentRemoved);
+		entity.componentOperationHandler = componentOperationHandler;
 		
 		Object[] items = listeners.begin();
 		for (int i = 0, n = listeners.size; i < n; i++) {
@@ -235,9 +268,11 @@ public class Engine {
             if (systems.get(i).checkProcessing()) {
                 systems.get(i).update(deltaTime);
             }
+            
+            processComponentOperations();
+            removePendingEntities();
 		}
 		
-		removePendingEntities();
 		updating = false;
 	}
 	
@@ -346,6 +381,63 @@ public class Engine {
 		}
 		
 		return entities;
+	}
+	
+	private void processComponentOperations() {
+		int numOperations = componentOperations.size;
+		
+		for (int i = 0; i < numOperations; ++i) {
+			ComponentOperation operation = componentOperations.get(i);
+			
+			if (operation.type == ComponentOperation.Type.Add) {
+				operation.entity.addInternal(operation.component);
+			}
+			else if (operation.type == ComponentOperation.Type.Remove) {
+				operation.entity.removeInternal(operation.componentClass);
+			}
+			
+			componentOperationsPool.free(operation);
+		}
+		
+		componentOperations.clear();
+	}
+	
+	static interface ComponentOperationHandler {
+		public void add(Entity entity, Component component);
+		public void remove(Entity entity, Class<? extends Component> componentClass);
+	}
+	
+	private static class ComponentOperation {
+		public enum Type {
+			Add,
+			Remove,
+		}
+		
+		public Type type;
+		public Entity entity;
+		public Component component;
+		public Class<? extends Component> componentClass;
+		
+		public void makeAdd(Entity entity, Component component) {
+			this.type = Type.Add;
+			this.entity = entity;
+			this.component = component;
+			this.componentClass = null;
+		}
+		
+		public void makeRemove(Entity entity, Class<? extends Component> componentClass) {
+			this.type = Type.Remove;
+			this.entity = entity;
+			this.component = null;
+			this.componentClass = componentClass;
+		}
+	}
+	
+	private static class ComponentOperationPool extends Pool<ComponentOperation> {
+		@Override
+		protected ComponentOperation newObject() {
+			return new ComponentOperation();
+		}		
 	}
 	
 	private static class SystemComparator implements Comparator<EntitySystem>{

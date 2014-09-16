@@ -16,6 +16,7 @@
 
 package com.badlogic.ashley.core;
 
+import com.badlogic.ashley.core.Engine.ComponentOperationHandler;
 import com.badlogic.ashley.signals.Signal;
 import com.badlogic.ashley.utils.Bag;
 import com.badlogic.ashley.utils.ImmutableArray;
@@ -51,6 +52,8 @@ public class Entity {
 	/** A Bits describing all the systems this entity was matched with. */
 	private Bits familyBits;
 	
+	ComponentOperationHandler componentOperationHandler;
+	
 	/**
 	 * Creates an empty Entity.
 	 */
@@ -80,23 +83,12 @@ public class Entity {
 	 * @return The Entity for easy chaining
 	 */
 	public Entity add(Component component){
-		Class<? extends Component> componentClass = component.getClass();
-		
-		for (int i = 0; i < componentsArray.size; ++i) {
-			if (componentsArray.get(i).getClass() == componentClass) {
-				componentsArray.removeIndex(i);
-				break;
-			}
+		if (componentOperationHandler != null) {
+			componentOperationHandler.add(this, component);
 		}
-		
-		int componentTypeIndex = ComponentType.getIndexFor(component.getClass()); 
-		
-		components.set(componentTypeIndex, component);
-		componentsArray.add(component);
-		
-		componentBits.set(componentTypeIndex);
-		
-		componentAdded.dispatch(this);
+		else {
+			addInternal(component);
+		}
 		return this;
 	}
 	
@@ -110,12 +102,11 @@ public class Entity {
 		int componentTypeIndex = componentType.getIndex();
 		Component removeComponent = components.get(componentTypeIndex);
 		
-		if(removeComponent != null){
-			components.set(componentTypeIndex, null);
-			componentsArray.removeValue(removeComponent, true);
-			componentBits.clear(componentTypeIndex);
-			
-			componentRemoved.dispatch(this);
+		if (componentOperationHandler != null) {
+			componentOperationHandler.remove(this, componentClass);
+		}
+		else {
+			removeInternal(componentClass);
 		}
 		
 		return removeComponent;
@@ -191,6 +182,43 @@ public class Entity {
 	 */
 	Bits getFamilyBits(){
 		return familyBits;
+	}
+	
+	Entity addInternal(Component component){
+		Class<? extends Component> componentClass = component.getClass();
+		
+		for (int i = 0; i < componentsArray.size; ++i) {
+			if (componentsArray.get(i).getClass() == componentClass) {
+				componentsArray.removeIndex(i);
+				break;
+			}
+		}
+		
+		int componentTypeIndex = ComponentType.getIndexFor(component.getClass()); 
+		
+		components.set(componentTypeIndex, component);
+		componentsArray.add(component);
+		
+		componentBits.set(componentTypeIndex);
+		
+		componentAdded.dispatch(this);
+		return this;
+	}
+
+	Component removeInternal(Class<? extends Component> componentClass){
+		ComponentType componentType = ComponentType.getFor(componentClass);
+		int componentTypeIndex = componentType.getIndex();
+		Component removeComponent = components.get(componentTypeIndex);
+		
+		if(removeComponent != null){
+			components.set(componentTypeIndex, null);
+			componentsArray.removeValue(removeComponent, true);
+			componentBits.clear(componentTypeIndex);
+			
+			componentRemoved.dispatch(this);
+		}
+		
+		return removeComponent;
 	}
 	
 	@Override
