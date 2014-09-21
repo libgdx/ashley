@@ -76,19 +76,6 @@ public class PooledEngine extends Engine {
 	}
 	
 	/**
-	 * Removes an {@link Entity} from this {@link Engine}
-	 */
-	@Override
-	public void removeEntity(Entity entity){
-		super.removeEntity(entity);
-		
-		if (ClassReflection.isAssignableFrom(PooledEntity.class, entity.getClass())) {
-			PooledEntity pooledEntity = (PooledEntity) entity;
-			entityPool.free(pooledEntity);
-		}
-	}
-	
-	/**
 	 * Retrieves a new {@link Component} from the {@link Engine} pool. It will be placed back in the
 	 * pool whenever it's removed from an {@link Entity} or the {@link Entity} itself it's removed.
 	 */
@@ -105,11 +92,21 @@ public class PooledEngine extends Engine {
 		componentPools.clear();
 	}
 	
+	@Override
+	protected void removeEntityInternal(Entity entity) {
+		super.removeEntityInternal(entity);
+		
+		if (ClassReflection.isAssignableFrom(PooledEntity.class, entity.getClass())) {
+			PooledEntity pooledEntity = (PooledEntity) entity;
+			entityPool.free(pooledEntity);
+		}
+	}
+	
 	private class PooledEntity extends Entity implements Poolable {
 		
 		@Override
-		public Component remove(Class<? extends Component> componentType){
-			Component component = super.remove(componentType);
+		Component removeInternal(Class<? extends Component> componentType){
+			Component component = super.removeInternal(componentType);
 			componentPools.free(component);
 			return component;
 		}
