@@ -610,7 +610,7 @@ public class EngineTests {
 	
 	@Test
 	public void entityRemovalListenerOrder() {
-		Engine engine = new PooledEngine();
+		Engine engine = new Engine();
 
         CombinedSystem combinedSystem = new CombinedSystem(engine);
 

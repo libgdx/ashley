@@ -311,7 +311,7 @@ public class Engine {
 		pendingRemovalEntities.clear();
 	}
 	
-	private void removeEntityInternal(Entity entity) {
+	protected void removeEntityInternal(Entity entity) {
 		entities.removeValue(entity, true);
 		
 		if(!entity.getFamilyBits().isEmpty()){
