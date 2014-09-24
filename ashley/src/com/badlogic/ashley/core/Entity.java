@@ -77,6 +77,14 @@ public class Entity {
 	public int getIndex(){
 		return index;
 	}
+
+
+	/**
+	 * Reset the index 
+	 */
+	public void resetIndex() {
+		index =  nextIndex++;
+	}
 	
 	/**
 	 * Adds a {@link Component} to this Entity. If a {@link Component} of the same type already exists, it'll be replaced.

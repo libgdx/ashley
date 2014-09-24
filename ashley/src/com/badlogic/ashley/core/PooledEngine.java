@@ -115,6 +115,7 @@ public class PooledEngine extends Engine {
 		public void reset() {
 			removeAll();
 			flags = 0;
+			resetIndex();
 		}
 	}
 	
