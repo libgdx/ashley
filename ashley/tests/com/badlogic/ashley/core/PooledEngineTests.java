@@ -4,6 +4,8 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
+import com.badlogic.ashley.signals.Listener;
+import com.badlogic.ashley.signals.Signal;
 import com.badlogic.ashley.utils.ImmutableArray;
 
 public class PooledEngineTests {
@@ -56,6 +58,15 @@ public class PooledEngineTests {
 		}
 	}
 	
+	public static class ComponentCounterListener implements Listener<Entity> {
+		public int totalCalls = 0;
+		
+		@Override
+		public void receive(Signal<Entity> signal, Entity object) {
+			totalCalls++;
+		}
+	}
+	
 	@Test
 	public void entityRemovalListenerOrder() {
 		PooledEngine engine = new PooledEngine();
@@ -86,20 +97,35 @@ public class PooledEngineTests {
 	public void resetEntityCorrectly() {
 		PooledEngine engine = new PooledEngine();
 		
-		Entity entity = engine.createEntity();
-		entity.add(engine.createComponent(PositionComponent.class));
-		engine.addEntity(entity);
+		ComponentCounterListener addedListener = new ComponentCounterListener();
+		ComponentCounterListener removedListener = new ComponentCounterListener();
 		
-		assertEquals(1, entity.componentAdded.countListeners());
-		assertEquals(1, entity.componentRemoved.countListeners());
-		assertNotNull(entity.componentOperationHandler);
-		assertEquals(1, entity.getComponents().size());
+		Entity[] entities = new Entity[10];
+		final int totalEntities = 10;
+		
+		for(int i = 0; i < totalEntities; i++) {
+			entities[i] = engine.createEntity();
+			entities[i].componentAdded.add(addedListener);
+			entities[i].componentRemoved.add(removedListener);
+			entities[i].add(engine.createComponent(PositionComponent.class));
+			engine.addEntity(entities[i]);
+			
+			assertNotNull(entities[i].componentOperationHandler);
+			assertEquals(1, entities[i].getComponents().size());
+		}
+		
+		assertEquals(totalEntities, addedListener.totalCalls);
+		assertEquals(0, removedListener.totalCalls);
 		
 		engine.removeAllEntities();
 		
-		assertEquals(0, entity.componentAdded.countListeners());
-		assertEquals(0, entity.componentRemoved.countListeners());
-		assertNull(entity.componentOperationHandler);
-		assertEquals(0, entity.getComponents().size());
+		assertEquals(totalEntities, addedListener.totalCalls);
+		assertEquals(totalEntities, removedListener.totalCalls);
+		
+		for(int i = 0; i < totalEntities; i++) {
+			assertEquals(0, entities[i].flags);
+			assertNull(entities[i].componentOperationHandler);
+			assertEquals(0, entities[i].getComponents().size());
+		}
 	}
 }
