@@ -329,6 +329,7 @@ public class Engine {
 		
 		entity.componentAdded.remove(componentAdded);
 		entity.componentRemoved.remove(componentRemoved);
+		entity.componentOperationHandler = null;
 		
 		Object[] items = listeners.begin();
 		for (int i = 0, n = listeners.size; i < n; i++) {
