@@ -59,4 +59,11 @@ public class Signal<T> {
 		}
 		listeners.end();
 	}
+	
+	/**
+	 * @return the number of listeners attached to this {@link Signal}.
+	 */
+	public int countListeners() {
+		return listeners.size;
+	}
 }

@@ -81,4 +81,23 @@ public class PooledEngineTests {
         
         engine.removeAllEntities();
 	}
+	
+	@Test
+	public void resetEntityCorrectly() {
+		PooledEngine engine = new PooledEngine();
+		
+		Entity entity = engine.createEntity();
+		entity.add(engine.createComponent(PositionComponent.class));
+		engine.addEntity(entity);
+		
+		assertEquals(entity.componentAdded.countListeners(), 1);
+		assertEquals(entity.componentRemoved.countListeners(), 1);
+		assertNotEquals(entity.componentOperationHandler, null);
+		
+		engine.removeAllEntities();
+		
+		assertEquals(entity.componentAdded.countListeners(), 0);
+		assertEquals(entity.componentRemoved.countListeners(), 0);
+		assertEquals(entity.componentOperationHandler, null);
+	}
 }
