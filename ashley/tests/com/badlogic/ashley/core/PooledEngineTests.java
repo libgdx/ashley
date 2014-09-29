@@ -90,14 +90,16 @@ public class PooledEngineTests {
 		entity.add(engine.createComponent(PositionComponent.class));
 		engine.addEntity(entity);
 		
-		assertEquals(entity.componentAdded.countListeners(), 1);
-		assertEquals(entity.componentRemoved.countListeners(), 1);
-		assertNotEquals(entity.componentOperationHandler, null);
+		assertEquals(1, entity.componentAdded.countListeners());
+		assertEquals(1, entity.componentRemoved.countListeners());
+		assertNotNull(entity.componentOperationHandler);
+		assertEquals(1, entity.getComponents().size());
 		
 		engine.removeAllEntities();
 		
-		assertEquals(entity.componentAdded.countListeners(), 0);
-		assertEquals(entity.componentRemoved.countListeners(), 0);
-		assertEquals(entity.componentOperationHandler, null);
+		assertEquals(0, entity.componentAdded.countListeners());
+		assertEquals(0, entity.componentRemoved.countListeners());
+		assertNull(entity.componentOperationHandler);
+		assertEquals(0, entity.getComponents().size());
 	}
 }
