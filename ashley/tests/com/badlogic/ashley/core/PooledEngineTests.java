@@ -100,18 +100,28 @@ public class PooledEngineTests {
 		ComponentCounterListener addedListener = new ComponentCounterListener();
 		ComponentCounterListener removedListener = new ComponentCounterListener();
 		
+		// force the engine to create a Family so family bits get set
+		ImmutableArray<Entity> familyEntities =
+				engine.getEntitiesFor(Family.getFor(PositionComponent.class));
+		
 		Entity[] entities = new Entity[10];
 		final int totalEntities = 10;
 		
 		for(int i = 0; i < totalEntities; i++) {
 			entities[i] = engine.createEntity();
+			
+			entities[i].flags = 5;
+			
 			entities[i].componentAdded.add(addedListener);
 			entities[i].componentRemoved.add(removedListener);
+			
 			entities[i].add(engine.createComponent(PositionComponent.class));
 			engine.addEntity(entities[i]);
 			
 			assertNotNull(entities[i].componentOperationHandler);
 			assertEquals(1, entities[i].getComponents().size());
+			assertFalse(entities[i].getFamilyBits().isEmpty());
+			assertTrue(familyEntities.contains(entities[i], true));
 		}
 		
 		assertEquals(totalEntities, addedListener.totalCalls);
@@ -126,6 +136,14 @@ public class PooledEngineTests {
 			assertEquals(0, entities[i].flags);
 			assertNull(entities[i].componentOperationHandler);
 			assertEquals(0, entities[i].getComponents().size());
+			assertTrue(entities[i].getFamilyBits().isEmpty());
+			assertFalse(familyEntities.contains(entities[i], true));
+			
+			entities[i].componentAdded.dispatch(entities[i]);
+			entities[i].componentRemoved.dispatch(entities[i]);
 		}
+		
+		assertEquals(totalEntities, addedListener.totalCalls);
+		assertEquals(totalEntities, removedListener.totalCalls);
 	}
 }

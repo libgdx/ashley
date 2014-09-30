@@ -103,7 +103,6 @@ public class PooledEngine extends Engine {
 	}
 	
 	private class PooledEntity extends Entity implements Poolable {
-		
 		@Override
 		Component removeInternal(Class<? extends Component> componentType){
 			Component component = super.removeInternal(componentType);
@@ -115,6 +114,8 @@ public class PooledEngine extends Engine {
 		public void reset() {
 			removeAll();
 			flags = 0;
+			componentAdded.removeAllListeners();
+			componentRemoved.removeAllListeners();
 		}
 	}
 	
