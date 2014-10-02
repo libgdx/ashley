@@ -64,6 +64,13 @@ public abstract class IntervalIteratingSystem extends IntervalSystem {
 	}
 	
 	/**
+	 * @return set of entities processed by the system
+	 */
+	public ImmutableArray<Entity> getEntities() {
+		return entities;
+	}
+	
+	/**
 	 * The user should place the entity processing logic here.
 	 * 
 	 * @param entity
