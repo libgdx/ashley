@@ -138,6 +138,7 @@ public class PooledEngineTests {
 			assertEquals(0, entities[i].getComponents().size());
 			assertTrue(entities[i].getFamilyBits().isEmpty());
 			assertFalse(familyEntities.contains(entities[i], true));
+			assertEquals(0L, entities[i].getId());
 			
 			entities[i].componentAdded.dispatch(entities[i]);
 			entities[i].componentRemoved.dispatch(entities[i]);

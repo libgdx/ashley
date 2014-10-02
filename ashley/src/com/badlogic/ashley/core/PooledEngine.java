@@ -113,6 +113,7 @@ public class PooledEngine extends Engine {
 		@Override
 		public void reset() {
 			removeAll();
+			id = 0L;
 			flags = 0;
 			componentAdded.removeAllListeners();
 			componentRemoved.removeAllListeners();
