@@ -71,6 +71,13 @@ public abstract class IteratingSystem extends EntitySystem {
 			processEntity(entities.get(i), deltaTime);
 		}
 	}
+	
+	/**
+	 * @return set of entities processed by the system
+	 */
+	public ImmutableArray<Entity> getEntities() {
+		return entities;
+	}
 
 	/**
 	 * This method is called on every entity on every update call of the EntitySystem. Override this to implement
