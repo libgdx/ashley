@@ -49,6 +49,13 @@ public class Signal<T> {
 	}
 	
 	/**
+	 * Removes all listeners attached to this {@link Signal}.
+	 */
+	public void removeAllListeners() {
+		listeners.clear();
+	}
+	
+	/**
 	 * Dispatches an event to all Listeners registered to this Signal
 	 * @param object The object to send off
 	 */

@@ -146,5 +146,29 @@ public class SignalTests {
         assertEquals(1, listenerA.count);
         assertEquals(1, listenerB.count);
 	}
+    
+    @Test
+    public void removeAll() {
+    	Dummy dummy = new Dummy();
+    	Signal<Dummy> signal = new Signal<Dummy>();
+    	
+    	ListenerMock listenerA = new ListenerMock();
+    	ListenerMock listenerB = new ListenerMock();
+    	
+    	signal.add(listenerA);
+    	signal.add(listenerB);
+    	
+    	signal.dispatch(dummy);
+    	
+        assertEquals(1, listenerA.count);
+        assertEquals(1, listenerB.count);
+    	
+    	signal.removeAllListeners();
+    	
+    	signal.dispatch(dummy);
+    	
+        assertEquals(1, listenerA.count);
+        assertEquals(1, listenerB.count);
+    }
 
 }

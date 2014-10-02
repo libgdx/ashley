@@ -4,6 +4,8 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
+import com.badlogic.ashley.signals.Listener;
+import com.badlogic.ashley.signals.Signal;
 import com.badlogic.ashley.utils.ImmutableArray;
 
 public class PooledEngineTests {
@@ -56,6 +58,15 @@ public class PooledEngineTests {
 		}
 	}
 	
+	public static class ComponentCounterListener implements Listener<Entity> {
+		public int totalCalls = 0;
+		
+		@Override
+		public void receive(Signal<Entity> signal, Entity object) {
+			totalCalls++;
+		}
+	}
+	
 	@Test
 	public void entityRemovalListenerOrder() {
 		PooledEngine engine = new PooledEngine();
@@ -80,5 +91,59 @@ public class PooledEngineTests {
         }
         
         engine.removeAllEntities();
+	}
+	
+	@Test
+	public void resetEntityCorrectly() {
+		PooledEngine engine = new PooledEngine();
+		
+		ComponentCounterListener addedListener = new ComponentCounterListener();
+		ComponentCounterListener removedListener = new ComponentCounterListener();
+		
+		// force the engine to create a Family so family bits get set
+		ImmutableArray<Entity> familyEntities =
+				engine.getEntitiesFor(Family.getFor(PositionComponent.class));
+		
+		Entity[] entities = new Entity[10];
+		final int totalEntities = 10;
+		
+		for(int i = 0; i < totalEntities; i++) {
+			entities[i] = engine.createEntity();
+			
+			entities[i].flags = 5;
+			
+			entities[i].componentAdded.add(addedListener);
+			entities[i].componentRemoved.add(removedListener);
+			
+			entities[i].add(engine.createComponent(PositionComponent.class));
+			engine.addEntity(entities[i]);
+			
+			assertNotNull(entities[i].componentOperationHandler);
+			assertEquals(1, entities[i].getComponents().size());
+			assertFalse(entities[i].getFamilyBits().isEmpty());
+			assertTrue(familyEntities.contains(entities[i], true));
+		}
+		
+		assertEquals(totalEntities, addedListener.totalCalls);
+		assertEquals(0, removedListener.totalCalls);
+		
+		engine.removeAllEntities();
+		
+		assertEquals(totalEntities, addedListener.totalCalls);
+		assertEquals(totalEntities, removedListener.totalCalls);
+		
+		for(int i = 0; i < totalEntities; i++) {
+			assertEquals(0, entities[i].flags);
+			assertNull(entities[i].componentOperationHandler);
+			assertEquals(0, entities[i].getComponents().size());
+			assertTrue(entities[i].getFamilyBits().isEmpty());
+			assertFalse(familyEntities.contains(entities[i], true));
+			
+			entities[i].componentAdded.dispatch(entities[i]);
+			entities[i].componentRemoved.dispatch(entities[i]);
+		}
+		
+		assertEquals(totalEntities, addedListener.totalCalls);
+		assertEquals(totalEntities, removedListener.totalCalls);
 	}
 }
