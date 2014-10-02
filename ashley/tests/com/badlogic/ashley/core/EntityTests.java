@@ -54,12 +54,12 @@ public class EntityTests {
 	public void uniqueIndex() {
 		int numEntities = 10000;
 		Array<Entity> entities = new Array<Entity>();
-		Set<Integer> ids = new HashSet<Integer>();
+		Set<Long> ids = new HashSet<Long>();
 		
 		for (int i = 0; i < numEntities; ++i) {
 			Entity entity = new Entity();
-			assertFalse(ids.contains(entity.getIndex()));
-			ids.add(entity.getIndex());
+			assertFalse(ids.contains(entity.getId()));
+			ids.add(entity.getId());
 			entities.add(entity);
 		}
 	}
