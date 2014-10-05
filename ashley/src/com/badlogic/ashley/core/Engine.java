@@ -89,47 +89,14 @@ public class Engine {
 		listeners = new SnapshotArray<EntityListener>(false, 16);
 		familyListeners = new ObjectMap<Family,SnapshotArray<EntityListener>>();
 		
-		componentAdded = new Listener<Entity>(){
-			@Override
-			public void receive(Signal<Entity> signal, Entity object) {
-				updateFamilyMembership(object);
-			} 
-		};
-		
-		componentRemoved = new Listener<Entity>(){
-			@Override
-			public void receive(Signal<Entity> signal, Entity object) {
-				updateFamilyMembership(object);
-			} 
-		};
+		componentAdded = new ComponentListener(this);
+		componentRemoved = new ComponentListener(this);
 		
 		updating = false;
 		
 		componentOperationsPool = new ComponentOperationPool();
 		componentOperations = new Array<ComponentOperation>();
-		componentOperationHandler = new ComponentOperationHandler() {
-			public void add(Entity entity, Component component) {
-				if (updating) {
-					ComponentOperation operation = componentOperationsPool.obtain();
-					operation.makeAdd(entity, component);
-					componentOperations.add(operation);
-				}
-				else {
-					entity.addInternal(component);
-				}
-			}
-			
-			public void remove(Entity entity, Class<? extends Component> componentClass) {
-				if (updating) {
-					ComponentOperation operation = componentOperationsPool.obtain();
-					operation.makeRemove(entity, componentClass);
-					componentOperations.add(operation);
-				}
-				else {
-					entity.removeInternal(componentClass);
-				}
-			}
-		};
+		componentOperationHandler = new ComponentOperationHandler(this);
 	}
 	
 	/**
@@ -403,9 +370,48 @@ public class Engine {
 		componentOperations.clear();
 	}
 	
-	static interface ComponentOperationHandler {
-		public void add(Entity entity, Component component);
-		public void remove(Entity entity, Class<? extends Component> componentClass);
+	private static class ComponentListener implements Listener<Entity> {
+		private Engine engine;
+		
+		public ComponentListener(Engine engine) {
+			this.engine = engine;
+		}
+		
+		
+		@Override
+		public void receive(Signal<Entity> signal, Entity object) {
+			engine.updateFamilyMembership(object);
+		}
+	}
+	
+	static class ComponentOperationHandler {
+		private Engine engine;
+		
+		public ComponentOperationHandler(Engine engine) {
+			this.engine = engine;
+		}
+		
+		public void add(Entity entity, Component component) {			
+			if (engine.updating) {
+				ComponentOperation operation = engine.componentOperationsPool.obtain();
+				operation.makeAdd(entity, component);
+				engine.componentOperations.add(operation);
+			}
+			else {
+				entity.addInternal(component);
+			}
+		}
+		
+		public void remove(Entity entity, Class<? extends Component> componentClass) {
+			if (engine.updating) {
+				ComponentOperation operation = engine.componentOperationsPool.obtain();
+				operation.makeRemove(entity, componentClass);
+				engine.componentOperations.add(operation);
+			}
+			else {
+				entity.removeInternal(componentClass);
+			}
+		}
 	}
 	
 	private static class ComponentOperation {

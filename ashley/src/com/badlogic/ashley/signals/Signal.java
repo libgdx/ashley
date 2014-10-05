@@ -29,7 +29,7 @@ public class Signal<T> {
 	private SnapshotArray<Listener<T>> listeners;
 
 	public Signal () {
-		listeners = new SnapshotArray<Listener<T>>(Listener.class);
+		listeners = new SnapshotArray<Listener<T>>();
 	}
 	
 	/**
@@ -60,9 +60,10 @@ public class Signal<T> {
 	 * @param object The object to send off
 	 */
 	public void dispatch(T object){
-		Listener<T>[] items = listeners.begin();
+		Object[] items = listeners.begin();
 		for (int i = 0, n = listeners.size; i < n; i++) {
-			items[i].receive(this, object);
+			Listener<T> listener = (Listener<T>)items[i];
+			listener.receive(this, object);
 		}
 		listeners.end();
 	}
