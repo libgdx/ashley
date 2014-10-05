@@ -39,8 +39,8 @@ public class Entity {
 	/** Will dispatch an event when a component is removed. */
 	public final Signal<Entity> componentRemoved;
 	
-	/** Unique entity index for fast retrieval */
-	protected Long id;
+	/** Unique entity id */
+	protected Long uuid;
 	/** A collection that holds all the components indexed by their {@link ComponentType} index */
 	private Bag<Component> components;
 	/** An auxiliary array for user access to all the components of an entity */
@@ -65,7 +65,7 @@ public class Entity {
 		familyBits = new Bits();
 		flags = 0;
 		
-		id = new Long(nextId++);
+		uuid = new Long(nextId++);
 		
 		componentAdded = new Signal<Entity>();
 		componentRemoved = new Signal<Entity>();
@@ -75,7 +75,7 @@ public class Entity {
 	 * @return The Entity's unique id.
 	 */
 	public long getId(){
-		return id;
+		return uuid;
 	}
 	
 	/**
@@ -223,7 +223,7 @@ public class Entity {
 	
 	@Override
 	public int hashCode() {
-		return id.hashCode();
+		return uuid.hashCode();
 	}
 
 	@Override
@@ -235,6 +235,6 @@ public class Entity {
 		if (!(obj instanceof Entity))
 			return false;
 		Entity other = (Entity) obj;
-        return id.equals(other.id);
+        return uuid.equals(other.uuid);
     }
 }
