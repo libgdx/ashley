@@ -79,15 +79,6 @@ public class Entity {
 	}
 	
 	/**
-	 * Internal use.
-	 * 
-	 * Creates a unique id
-	 */
-	void createId() {
-		uuid = new Long(nextId++);
-	}
-	
-	/**
 	 * Adds a {@link Component} to this Entity. If a {@link Component} of the same type already exists, it'll be replaced.
 	 * @return The Entity for easy chaining
 	 */
