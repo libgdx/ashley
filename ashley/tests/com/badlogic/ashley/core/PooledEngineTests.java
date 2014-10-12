@@ -7,6 +7,7 @@ import org.junit.Test;
 import com.badlogic.ashley.signals.Listener;
 import com.badlogic.ashley.signals.Signal;
 import com.badlogic.ashley.utils.ImmutableArray;
+import com.badlogic.gdx.utils.Array;
 
 public class PooledEngineTests {
 	private float deltaTime = 0.16f;
@@ -146,5 +147,34 @@ public class PooledEngineTests {
 		
 		assertEquals(totalEntities, addedListener.totalCalls);
 		assertEquals(totalEntities, removedListener.totalCalls);
+	}
+	
+	@Test
+	public void recycleEntity() {
+		PooledEngine engine = new PooledEngine();
+		
+		int numEntities = 200;
+		Array<Entity> entities = new Array<Entity>();
+		
+		for (int i = 0; i < numEntities; ++i) {
+			Entity entity = engine.createEntity();
+			engine.addEntity(entity);
+			entities.add(entity);
+			
+			assertNotEquals(0L, entity.getId());
+		}
+		
+		for (Entity entity : entities) {
+			engine.removeEntity(entity);
+			assertEquals(0L, entity.getId());
+		}
+		
+		for (int i = 0; i < numEntities; ++i) {
+			Entity entity = engine.createEntity();
+			engine.addEntity(entity);
+			entities.add(entity);
+			
+			assertNotEquals(0L, entity.getId());
+		}
 	}
 }

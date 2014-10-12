@@ -30,7 +30,7 @@ import com.badlogic.gdx.utils.Bits;
  * @author Stefan Bachmann
  */
 public class Entity {
-	private static long nextId;
+	protected static long nextId = 1;
 	
 	/** A flag that can be used to bit mask this entity. Up to the user to manage. */
 	public int flags;
@@ -40,7 +40,7 @@ public class Entity {
 	public final Signal<Entity> componentRemoved;
 	
 	/** Unique entity id */
-	protected Long uuid;
+	Long uuid;
 	/** A collection that holds all the components indexed by their {@link ComponentType} index */
 	private Bag<Component> components;
 	/** An auxiliary array for user access to all the components of an entity */
@@ -65,7 +65,7 @@ public class Entity {
 		familyBits = new Bits();
 		flags = 0;
 		
-		uuid = new Long(nextId++);
+		uuid = obtainId();
 		
 		componentAdded = new Signal<Entity>();
 		componentRemoved = new Signal<Entity>();
@@ -237,4 +237,8 @@ public class Entity {
 		Entity other = (Entity) obj;
         return uuid.equals(other.uuid);
     }
+	
+	static long obtainId() {
+		return nextId++;
+	}
 }
