@@ -20,6 +20,8 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
+import com.badlogic.ashley.systems.IteratingSystem;
+
 @SuppressWarnings("unchecked")
 public class FamilyTests {
 	
@@ -29,6 +31,29 @@ public class FamilyTests {
 	private static class ComponentD extends Component {}
 	private static class ComponentE extends Component {}
 	private static class ComponentF extends Component {}
+	
+	static class TestSystemA extends IteratingSystem {
+
+        public TestSystemA(String name) {
+            super(Family.getFor(ComponentType.getBitsFor(ComponentA.class),
+                    ComponentType.getBitsFor(), ComponentType.getBitsFor()));
+        }
+
+        @Override
+        public void processEntity(Entity e, float d) {
+        }
+    }
+
+    static class TestSystemB extends IteratingSystem {
+
+        public TestSystemB(String name) {
+            super(Family.getFor(ComponentB.class));
+        }
+
+        @Override
+        public void processEntity(Entity e, float d) {
+        }
+    }
 	
 	@Test
 	public void validFamily() {
@@ -129,6 +154,39 @@ public class FamilyTests {
 		assertNotEquals(family1.getIndex(), family9.getIndex());
 		assertNotEquals(family1.getIndex(), family10.getIndex());
 		assertNotEquals(family11.getIndex(), family12.getIndex());
+	}
+	
+	@Test
+	public void familyEqualityFiltering() {
+		Family family1 = Family.getFor(ComponentType.getBitsFor(ComponentA.class),
+									   ComponentType.getBitsFor(ComponentB.class),
+									   ComponentType.getBitsFor(ComponentC.class));
+		
+		Family family2 = Family.getFor(ComponentType.getBitsFor(ComponentB.class),
+									   ComponentType.getBitsFor(ComponentC.class),
+									   ComponentType.getBitsFor(ComponentA.class));
+		
+		Family family3 = Family.getFor(ComponentType.getBitsFor(ComponentC.class),
+									   ComponentType.getBitsFor(ComponentA.class),
+									   ComponentType.getBitsFor(ComponentB.class));
+		
+		Family family4 = Family.getFor(ComponentType.getBitsFor(ComponentA.class),
+									   ComponentType.getBitsFor(ComponentB.class),
+									   ComponentType.getBitsFor(ComponentC.class));
+
+		Family family5 = Family.getFor(ComponentType.getBitsFor(ComponentB.class),
+									   ComponentType.getBitsFor(ComponentC.class),
+									   ComponentType.getBitsFor(ComponentA.class));
+		
+		Family family6 = Family.getFor(ComponentType.getBitsFor(ComponentC.class),
+									   ComponentType.getBitsFor(ComponentA.class),
+									   ComponentType.getBitsFor(ComponentB.class));
+		
+		assertTrue(family1.equals(family4));
+		assertTrue(family2.equals(family5));
+		assertTrue(family3.equals(family6));
+		assertFalse(family1.equals(family2));
+		assertFalse(family1.equals(family3));
 	}
 	
 	@Test
@@ -237,4 +295,67 @@ public class FamilyTests {
 		assertFalse(family1.matches(entity));
 		assertTrue(family2.matches(entity));
 	}
+	
+	@Test
+	public void matchWithPooledEngine() {
+        PooledEngine engine = new PooledEngine();
+
+        engine.addSystem(new TestSystemA("A"));
+        engine.addSystem(new TestSystemB("B"));
+
+        Entity e = engine.createEntity();
+        e.add(new ComponentB());
+        e.add(new ComponentA());
+        engine.addEntity(e);
+
+        Family f = Family.getFor(
+                ComponentType.getBitsFor(ComponentB.class),
+                ComponentType.getBitsFor(),
+                ComponentType.getBitsFor(ComponentA.class));
+
+        assertFalse(f.matches(e));
+
+        engine.clearPools();
+    }
+
+	@Test
+    public void matchWithPooledEngineInverse() {
+        PooledEngine engine = new PooledEngine();
+
+        engine.addSystem(new TestSystemA("A"));
+        engine.addSystem(new TestSystemB("B"));
+
+        Entity e = engine.createEntity();
+        e.add(new ComponentB());
+        e.add(new ComponentA());
+        engine.addEntity(e);
+
+
+        Family f = Family.getFor(
+                ComponentType.getBitsFor(ComponentA.class),
+                ComponentType.getBitsFor(),
+                ComponentType.getBitsFor(ComponentB.class));
+
+        assertFalse(f.matches(e));
+        engine.clearPools();
+    }
+
+	@Test
+    public void matchWithoutSystems() {
+        PooledEngine engine = new PooledEngine();
+
+        Entity e = engine.createEntity();
+        e.add(new ComponentB());
+        e.add(new ComponentA());
+        engine.addEntity(e);
+
+        Family f = Family.getFor(
+                ComponentType.getBitsFor(ComponentB.class),
+                ComponentType.getBitsFor(),
+                ComponentType.getBitsFor(ComponentA.class));
+
+        assertFalse(f.matches(e));
+        engine.clearPools();
+    }
+
 }
