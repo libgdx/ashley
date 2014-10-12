@@ -71,6 +71,14 @@ public abstract class SortedIteratingSystem extends EntitySystem implements Enti
 		
 	@Override
 	public void addedToEngine(Engine engine) {
+		ImmutableArray<Entity> newEntities = engine.getEntitiesFor(family);
+		if(newEntities.size() > 0) {
+			for (int i = 0; i < newEntities.size(); ++i) {
+				entities.add(newEntities.get(i));
+			}
+			entities.sort(comparator);
+		}
+		resort = false;
 		engine.addEntityListener(family, this);
 	}
 
@@ -78,6 +86,7 @@ public abstract class SortedIteratingSystem extends EntitySystem implements Enti
 	public void removedFromEngine(Engine engine) {
 		engine.removeEntityListener(this);
 		entities.clear();
+		resort = false;
 	}
 
 	@Override
