@@ -72,7 +72,11 @@ public class PooledEngine extends Engine {
 	 * @return Clean {@link Entity} from the Engine pool. In order to add it to the {@link Engine}, use {@link #addEntity(Entity)}.
 	 */
 	public Entity createEntity() {
-		return entityPool.obtain();
+		Entity entity = entityPool.obtain();
+		if(entity.getId() == -1) {
+			entity.createId();
+		}
+		return entity;
 	}
 	
 	/**
@@ -117,7 +121,7 @@ public class PooledEngine extends Engine {
 		@Override
 		public void reset() {
 			removeAll();
-			uuid = 0L;
+			uuid = -1L;
 			flags = 0;
 			componentAdded.removeAllListeners();
 			componentRemoved.removeAllListeners();
