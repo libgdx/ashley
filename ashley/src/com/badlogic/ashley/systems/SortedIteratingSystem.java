@@ -21,9 +21,9 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntityListener;
 import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.ashley.core.Family;
-import java.util.ArrayList;
+import com.badlogic.ashley.utils.ImmutableArray;
+import com.badlogic.gdx.utils.Array;
 import java.util.Comparator;
-import java.util.List;
 
 /**
  * A simple EntitySystem that iterates over each entity in a specified order and calls processEntity() for
@@ -36,7 +36,9 @@ public abstract class SortedIteratingSystem extends EntitySystem implements Enti
 	/** The family describing this systems entities */
 	private Family family;
 	/** The entities used by this system */
-	private ArrayList<Entity> entities = new ArrayList();
+	private Array<Entity> entities;
+	/** The immutable entities used by this system */
+	private final ImmutableArray<Entity> immutableEntities;
 	/** Set to true if the entities list needs to be resorted */
 	private boolean resort;
 	/** The comparator to sort the entities */
@@ -62,6 +64,8 @@ public abstract class SortedIteratingSystem extends EntitySystem implements Enti
 		super(priority);
 		
 		this.family = family;
+		entities = new Array<Entity>(false, 16);
+		immutableEntities = new ImmutableArray<Entity>(entities);
 		this.comparator = comparator;
 	}
 		
@@ -84,7 +88,7 @@ public abstract class SortedIteratingSystem extends EntitySystem implements Enti
 
 	@Override
 	public void entityRemoved(Entity entity) {
-		entities.remove(entity);
+		entities.removeValue(entity, true);
 	}
 
 	@Override
@@ -93,8 +97,7 @@ public abstract class SortedIteratingSystem extends EntitySystem implements Enti
 			entities.sort(comparator);
 			resort = false;
 		}
-
-		for (int i = 0; i < entities.size(); ++i) {
+		for (int i = 0; i < entities.size; ++i) {
 			processEntity(entities.get(i), deltaTime);
 		}
 	}
@@ -102,8 +105,12 @@ public abstract class SortedIteratingSystem extends EntitySystem implements Enti
 	/**
 	 * @return set of entities processed by the system
 	 */
-	public List<Entity> getEntities() {
-		return entities;
+	public ImmutableArray<Entity> getEntities() {
+		if (resort) {
+			entities.sort(comparator);
+			resort = false;
+		}
+		return immutableEntities;
 	}
 
 	/**
