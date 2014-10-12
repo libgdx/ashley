@@ -134,33 +134,23 @@ public class Family {
 		if (!(obj instanceof Family))
 			return false;
 		Family other = (Family) obj;
-		if (all == null) {
-			if (other.all != null)
-				return false;
-		} else if (!all.equals(other.all))
-			return false;
-		if (one == null) {
-			if (other.one != null)
-				return false;
-		} else if (!one.equals(other.one))
-			return false;
-		if (exclude == null) {
-			if (other.exclude != null)
-				return false;
-		} else if (!exclude.equals(other.exclude))
-			return false;
-		
-		return index == other.index;
+		return index == other.index && 
+			   all.equals(other.all) &&
+			   one.equals(other.one) &&
+			   exclude.equals(other.exclude); 
 	}
 	
 	private static String getFamilyHash(Bits all, Bits one, Bits exclude) {
 		StringBuilder builder = new StringBuilder();
-		builder.append("all:");
-		builder.append(getBitsString(all));
-		builder.append(",one:");
-		builder.append(getBitsString(one));
-		builder.append(",exclude:");
-		builder.append(getBitsString(exclude));
+		if (!all.isEmpty()) {
+			builder.append("{all:").append(getBitsString(all)).append("}");
+		}
+		if (!one.isEmpty()) {
+			builder.append("{one:").append(getBitsString(one)).append("}");
+		}
+		if (!exclude.isEmpty()) {
+			builder.append("{exclude:").append(getBitsString(exclude)).append("}");
+		}
 		return builder.toString();
 	}
 	
