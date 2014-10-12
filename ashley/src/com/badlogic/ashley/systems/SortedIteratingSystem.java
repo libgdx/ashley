@@ -68,6 +68,14 @@ public abstract class SortedIteratingSystem extends EntitySystem implements Enti
 		immutableEntities = new ImmutableArray<Entity>(entities);
 		this.comparator = comparator;
 	}
+	
+	/**
+	 * Call this if the entities need to be sorted.
+	 * The actual sorting will be delayed until the entities are processed.
+	 */
+	public void forceResort() {
+		resort = true;
+	}
 		
 	@Override
 	public void addedToEngine(Engine engine) {
