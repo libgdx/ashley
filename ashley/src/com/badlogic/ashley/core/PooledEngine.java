@@ -21,7 +21,6 @@ import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.Pool.Poolable;
 import com.badlogic.gdx.utils.ReflectionPool;
-import com.badlogic.gdx.utils.reflect.ClassReflection;
 
 
 /**
@@ -95,10 +94,9 @@ public class PooledEngine extends Engine {
 	@Override
 	protected void removeEntityInternal(Entity entity) {
 		super.removeEntityInternal(entity);
-		
-		if (ClassReflection.isAssignableFrom(PooledEntity.class, entity.getClass())) {
-			PooledEntity pooledEntity = (PooledEntity) entity;
-			entityPool.free(pooledEntity);
+
+		if (entity instanceof PooledEntity) {
+			entityPool.free((PooledEntity)entity);
 		}
 	}
 	
