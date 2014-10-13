@@ -60,16 +60,16 @@ public class SortedIteratingSystemTest {
 		entity.add(new OrderComponent(name, zLayer));
 		return entity;
 	}
-    
-    public static class OrderComponent extends Component {
-        public String name;
-        public int zLayer;
+	
+	public static class OrderComponent extends Component {
+		public String name;
+		public int zLayer;
 
-        public OrderComponent(String name, int zLayer) {
-            this.name = name;
-            this.zLayer = zLayer;
-        }
-    }
+		public OrderComponent(String name, int zLayer) {
+			this.name = name;
+			this.zLayer = zLayer;
+		}
+	}
 	
 	public static class OrderSystem extends SortedIteratingSystem {
 		public OrderSystem() {
