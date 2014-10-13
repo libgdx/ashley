@@ -47,10 +47,10 @@ public class SortedIteratingSystemTest {
 		engine.addEntity(d);
 		engine.update(0);
 		
-		a.getComponent(OrderComponent.class).zLayer = 3;
-		b.getComponent(OrderComponent.class).zLayer = 2;
-		c.getComponent(OrderComponent.class).zLayer = 1;
-		d.getComponent(OrderComponent.class).zLayer = 0;
+		mapper.get(a).zLayer = 3;
+		mapper.get(b).zLayer = 2;
+		mapper.get(c).zLayer = 1;
+		mapper.get(d).zLayer = 0;
 		orderSystem.forceSort();
 		engine.update(0);
 	}
