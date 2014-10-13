@@ -29,6 +29,8 @@ import java.util.Comparator;
  * A simple EntitySystem that iterates over each entity in a specified order and calls processEntity() for
  * each entity every time the EntitySystem is updated. This is really just a convenience class as rendering
  * systems tend to iterate over a list of entities in a sorted manner.
+ *
+ * Adding entities will cause the entity list to be resorted. Call forceSort() if you changed your sorting criteria.
  * 
  * @author Santo Pfingsten
  */
@@ -40,7 +42,7 @@ public abstract class SortedIteratingSystem extends EntitySystem implements Enti
 	/** The immutable entities used by this system */
 	private final ImmutableArray<Entity> immutableEntities;
 	/** Set to true if the entities list needs to be resorted */
-	private boolean resort;
+	private boolean sort;
 	/** The comparator to sort the entities */
 	private Comparator<Entity> comparator;
 	
@@ -70,11 +72,11 @@ public abstract class SortedIteratingSystem extends EntitySystem implements Enti
 	}
 	
 	/**
-	 * Call this if the entities need to be sorted.
+	 * Call this if the sorting criteria have changed.
 	 * The actual sorting will be delayed until the entities are processed.
 	 */
-	public void forceResort() {
-		resort = true;
+	public void forceSort() {
+		sort = true;
 	}
 		
 	@Override
@@ -86,7 +88,7 @@ public abstract class SortedIteratingSystem extends EntitySystem implements Enti
 			}
 			entities.sort(comparator);
 		}
-		resort = false;
+		sort = false;
 		engine.addEntityListener(family, this);
 	}
 
@@ -94,13 +96,13 @@ public abstract class SortedIteratingSystem extends EntitySystem implements Enti
 	public void removedFromEngine(Engine engine) {
 		engine.removeEntityListener(this);
 		entities.clear();
-		resort = false;
+		sort = false;
 	}
 
 	@Override
 	public void entityAdded(Entity entity) {
 		entities.add(entity);
-		resort = true;
+		sort = true;
 	}
 
 	@Override
@@ -110,9 +112,9 @@ public abstract class SortedIteratingSystem extends EntitySystem implements Enti
 
 	@Override
 	public void update(float deltaTime) {
-		if (resort) {
+		if (sort) {
 			entities.sort(comparator);
-			resort = false;
+			sort = false;
 		}
 		for (int i = 0; i < entities.size; ++i) {
 			processEntity(entities.get(i), deltaTime);
@@ -123,9 +125,9 @@ public abstract class SortedIteratingSystem extends EntitySystem implements Enti
 	 * @return set of entities processed by the system
 	 */
 	public ImmutableArray<Entity> getEntities() {
-		if (resort) {
+		if (sort) {
 			entities.sort(comparator);
-			resort = false;
+			sort = false;
 		}
 		return immutableEntities;
 	}
