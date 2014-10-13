@@ -26,24 +26,19 @@ import com.badlogic.gdx.utils.Array;
 import java.util.Comparator;
 
 /**
- * A simple EntitySystem that iterates over each entity in a specified order and calls processEntity() for
- * each entity every time the EntitySystem is updated. This is really just a convenience class as rendering
- * systems tend to iterate over a list of entities in a sorted manner.
+ * A simple EntitySystem that processes each entity of a given family in the order specified by a comparator
+ * and calls processEntity() for each entity every time the EntitySystem is updated. This is really just a
+ * convenience class as rendering systems tend to iterate over a list of entities in a sorted manner.
  *
  * Adding entities will cause the entity list to be resorted. Call forceSort() if you changed your sorting criteria.
  * 
  * @author Santo Pfingsten
  */
 public abstract class SortedIteratingSystem extends EntitySystem implements EntityListener {
-	/** The family describing this systems entities */
 	private Family family;
-	/** The entities used by this system */
-	private Array<Entity> entities;
-	/** The immutable entities used by this system */
-	private final ImmutableArray<Entity> immutableEntities;
-	/** Set to true if the entities list needs to be resorted */
-	private boolean sort;
-	/** The comparator to sort the entities */
+	private Array<Entity> sortedEntities;
+	private final ImmutableArray<Entity> entities;
+	private boolean shouldSort;
 	private Comparator<Entity> comparator;
 	
 	/**
@@ -66,8 +61,8 @@ public abstract class SortedIteratingSystem extends EntitySystem implements Enti
 		super(priority);
 		
 		this.family = family;
-		entities = new Array<Entity>(false, 16);
-		immutableEntities = new ImmutableArray<Entity>(entities);
+		sortedEntities = new Array<Entity>(false, 16);
+		entities = new ImmutableArray<Entity>(sortedEntities);
 		this.comparator = comparator;
 	}
 	
@@ -76,48 +71,53 @@ public abstract class SortedIteratingSystem extends EntitySystem implements Enti
 	 * The actual sorting will be delayed until the entities are processed.
 	 */
 	public void forceSort() {
-		sort = true;
+		shouldSort = true;
 	}
+
+    private void sort() {
+        if (shouldSort) {
+            sortedEntities.sort(comparator);
+            shouldSort = false;
+        }
+    }
 		
 	@Override
 	public void addedToEngine(Engine engine) {
 		ImmutableArray<Entity> newEntities = engine.getEntitiesFor(family);
+		sortedEntities.clear();
 		if(newEntities.size() > 0) {
 			for (int i = 0; i < newEntities.size(); ++i) {
-				entities.add(newEntities.get(i));
+				sortedEntities.add(newEntities.get(i));
 			}
-			entities.sort(comparator);
+			sortedEntities.sort(comparator);
 		}
-		sort = false;
+		shouldSort = false;
 		engine.addEntityListener(family, this);
 	}
 
 	@Override
 	public void removedFromEngine(Engine engine) {
 		engine.removeEntityListener(this);
-		entities.clear();
-		sort = false;
+		sortedEntities.clear();
+		shouldSort = false;
 	}
 
 	@Override
 	public void entityAdded(Entity entity) {
-		entities.add(entity);
-		sort = true;
+		sortedEntities.add(entity);
+		shouldSort = true;
 	}
 
 	@Override
 	public void entityRemoved(Entity entity) {
-		entities.removeValue(entity, true);
+		sortedEntities.removeValue(entity, true);
 	}
 
 	@Override
 	public void update(float deltaTime) {
-		if (sort) {
-			entities.sort(comparator);
-			sort = false;
-		}
-		for (int i = 0; i < entities.size; ++i) {
-			processEntity(entities.get(i), deltaTime);
+        sort();
+		for (int i = 0; i < sortedEntities.size; ++i) {
+			processEntity(sortedEntities.get(i), deltaTime);
 		}
 	}
 	
@@ -125,11 +125,8 @@ public abstract class SortedIteratingSystem extends EntitySystem implements Enti
 	 * @return set of entities processed by the system
 	 */
 	public ImmutableArray<Entity> getEntities() {
-		if (sort) {
-			entities.sort(comparator);
-			sort = false;
-		}
-		return immutableEntities;
+        sort();
+		return entities;
 	}
 
 	/**

@@ -246,8 +246,8 @@ public class SortedIteratingSystemTest {
 		Engine engine = new Engine();
 		
 		final Family family = Family.getFor(OrderComponent.class);
-		final SortedIteratingSystemMock orderSystem = new SortedIteratingSystemMock(family);
-		engine.addSystem(orderSystem);
+		final SortedIteratingSystemMock system = new SortedIteratingSystemMock(family);
+		engine.addSystem(system);
 		
 		Entity a = createOrderEntity("A", 0);
 		Entity b = createOrderEntity("B", 1);
@@ -257,27 +257,27 @@ public class SortedIteratingSystemTest {
 		engine.addEntity(a);
 		engine.addEntity(b);
 		engine.addEntity(c);
-		orderSystem.expectedNames.addLast("A");
-		orderSystem.expectedNames.addLast("B");
-		orderSystem.expectedNames.addLast("C");
+		system.expectedNames.addLast("A");
+		system.expectedNames.addLast("B");
+		system.expectedNames.addLast("C");
 		engine.update(0);
 		
 		engine.addEntity(d);
-		orderSystem.expectedNames.addLast("A");
-		orderSystem.expectedNames.addLast("B");
-		orderSystem.expectedNames.addLast("D");
-		orderSystem.expectedNames.addLast("C");
+		system.expectedNames.addLast("A");
+		system.expectedNames.addLast("B");
+		system.expectedNames.addLast("D");
+		system.expectedNames.addLast("C");
 		engine.update(0);
 		
 		orderMapper.get(a).zLayer = 3;
 		orderMapper.get(b).zLayer = 2;
 		orderMapper.get(c).zLayer = 1;
 		orderMapper.get(d).zLayer = 0;
-		orderSystem.forceSort();
-		orderSystem.expectedNames.addLast("D");
-		orderSystem.expectedNames.addLast("C");
-		orderSystem.expectedNames.addLast("B");
-		orderSystem.expectedNames.addLast("A");
+		system.forceSort();
+		system.expectedNames.addLast("D");
+		system.expectedNames.addLast("C");
+		system.expectedNames.addLast("B");
+		system.expectedNames.addLast("A");
 		engine.update(0);
 	}
 	
