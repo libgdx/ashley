@@ -40,7 +40,7 @@ public class Entity {
 	public final Signal<Entity> componentRemoved;
 	
 	/** Unique entity id */
-	Long uuid;
+	long uuid;
 	/** A collection that holds all the components indexed by their {@link ComponentType} index */
 	private Bag<Component> components;
 	/** An auxiliary array for user access to all the components of an entity */
@@ -223,7 +223,7 @@ public class Entity {
 	
 	@Override
 	public int hashCode() {
-		return uuid.hashCode();
+		return Long.hashCode(uuid);
 	}
 
 	@Override
@@ -235,7 +235,7 @@ public class Entity {
 		if (!(obj instanceof Entity))
 			return false;
 		Entity other = (Entity) obj;
-        return uuid.equals(other.uuid);
+        return uuid == other.uuid;
     }
 	
 	static long obtainId() {
