@@ -376,11 +376,9 @@ public class Engine {
 		while (entityOperations.size > 0) {
 			EntityOperation operation = entityOperations.removeIndex(entityOperations.size - 1);
 			
-			if (operation.type == EntityOperation.Type.Add) {
-				addEntityInternal(operation.entity);
-			}
-			else if (operation.type == EntityOperation.Type.Remove) {
-				removeEntityInternal(operation.entity);
+			switch(operation.type) {
+				case Add: addEntityInternal(operation.entity); break;
+				case Remove: removeEntityInternal(operation.entity); break;
 			}
 			
 			entityOperationPool.free(operation);
@@ -395,11 +393,9 @@ public class Engine {
 		for (int i = 0; i < numOperations; ++i) {
 			ComponentOperation operation = componentOperations.get(i);
 			
-			if (operation.type == ComponentOperation.Type.Add) {
-				operation.entity.addInternal(operation.component);
-			}
-			else if (operation.type == ComponentOperation.Type.Remove) {
-				operation.entity.removeInternal(operation.componentClass);
+			switch(operation.type) {
+				case Add: operation.entity.addInternal(operation.component); break;
+				case Remove: operation.entity.removeInternal(operation.componentClass); break;
 			}
 			
 			componentOperationsPool.free(operation);
