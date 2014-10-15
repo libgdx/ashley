@@ -235,12 +235,13 @@ public class Engine {
 	public void update(float deltaTime){
 		updating = true;
 		for(int i=0; i<systems.size; i++){
-            if (systems.get(i).checkProcessing()) {
-                systems.get(i).update(deltaTime);
-            }
-            
-            processComponentOperations();
-            processPendingEntityOperations();
+			EntitySystem system = systems.get(i);
+			if (system.checkProcessing()) {
+				system.update(deltaTime);
+			}
+			
+			processComponentOperations();
+			processPendingEntityOperations();
 		}
 		
 		updating = false;
