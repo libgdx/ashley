@@ -129,8 +129,6 @@ public class Family {
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (obj == null)
-			return false;
 		if (!(obj instanceof Family))
 			return false;
 		Family other = (Family) obj;
