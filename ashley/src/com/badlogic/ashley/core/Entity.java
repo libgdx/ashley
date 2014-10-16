@@ -35,9 +35,11 @@ public class Entity {
 	/** A flag that can be used to bit mask this entity. Up to the user to manage. */
 	public int flags;
 	/** Will dispatch an event when a component is added. */
-	public final Signal<Entity> componentAdded;
+	public final Signal<EntityEvent> componentAdded;
 	/** Will dispatch an event when a component is removed. */
-	public final Signal<Entity> componentRemoved;
+	public final Signal<EntityEvent> componentRemoved;
+	/** Reusable object for component events */
+	private EntityEvent event;
 	
 	/** Unique entity id */
 	long uuid;
@@ -67,8 +69,9 @@ public class Entity {
 		
 		uuid = obtainId();
 		
-		componentAdded = new Signal<Entity>();
-		componentRemoved = new Signal<Entity>();
+		componentAdded = new Signal<EntityEvent>();
+		componentRemoved = new Signal<EntityEvent>();
+		event = new EntityEvent();
 	}
 	
 	/**
@@ -201,7 +204,11 @@ public class Entity {
 		
 		componentBits.set(componentTypeIndex);
 		
-		componentAdded.dispatch(this);
+		event.setEntity(this);
+		event.setComponent(component);
+		componentAdded.dispatch(event);
+		event.free();
+		
 		return this;
 	}
 
@@ -215,7 +222,10 @@ public class Entity {
 			componentsArray.removeValue(removeComponent, true);
 			componentBits.clear(componentTypeIndex);
 			
-			componentRemoved.dispatch(this);
+			event.setEntity(this);
+			event.setComponent(removeComponent);
+			componentRemoved.dispatch(event);
+			event.free();
 		}
 		
 		return removeComponent;
@@ -223,7 +233,7 @@ public class Entity {
 	
 	@Override
 	public int hashCode() {
-		return Long.hashCode(uuid);
+		return ((Long) uuid).hashCode();
 	}
 
 	@Override

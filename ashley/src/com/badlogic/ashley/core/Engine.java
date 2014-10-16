@@ -68,9 +68,9 @@ public class Engine {
 	private ObjectMap<Family,SnapshotArray<EntityListener>> familyListeners;
 	
 	/** A listener for the Engine that's called every time a component is added. */
-	private final Listener<Entity> componentAdded;
+	private final Listener<EntityEvent> componentAdded;
 	/** A listener for the Engine that's called every time a component is removed. */
-	private final Listener<Entity> componentRemoved;
+	private final Listener<EntityEvent> componentRemoved;
 	
 	/** Whether or not the engine is ticking */
 	private boolean updating;
@@ -405,7 +405,7 @@ public class Engine {
 		componentOperations.clear();
 	}
 	
-	private static class ComponentListener implements Listener<Entity> {
+	private static class ComponentListener implements Listener<EntityEvent> {
 		private Engine engine;
 		
 		public ComponentListener(Engine engine) {
@@ -413,8 +413,8 @@ public class Engine {
 		}
 		
 		@Override
-		public void receive(Signal<Entity> signal, Entity object) {
-			engine.updateFamilyMembership(object);
+		public void receive(Signal<EntityEvent> signal, EntityEvent event) {
+			engine.updateFamilyMembership(event.getEntity());
 		}
 	}
 	

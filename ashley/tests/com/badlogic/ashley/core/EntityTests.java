@@ -34,16 +34,16 @@ public class EntityTests {
 	
 	private static class ComponentB extends Component {}
 	
-	private static class EntityListenerMock implements Listener<Entity> {
+	private static class EntityListenerMock implements Listener<EntityEvent> {
 
 		public int counter = 0;
 		
 		@Override
-		public void receive(Signal<Entity> signal, Entity object) {
+		public void receive(Signal<EntityEvent> signal, EntityEvent event) {
 			++counter;
 			
 			assertNotNull(signal);
-			assertNotNull(object);
+			assertNotNull(event);
 		}
 	}
 	
