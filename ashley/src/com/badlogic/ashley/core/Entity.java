@@ -230,8 +230,6 @@ public class Entity {
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (obj == null)
-			return false;
 		if (!(obj instanceof Entity))
 			return false;
 		Entity other = (Entity) obj;

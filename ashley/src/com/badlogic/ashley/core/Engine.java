@@ -188,8 +188,7 @@ public class Engine {
 	 * Returns immutable collection of entities for the specified {@link Family}. Will return the same instance every time.
 	 */
 	public ImmutableArray<Entity> getEntitiesFor(Family family){
-		registerFamily(family);
-		return immutableFamilies.get(family);
+		return registerFamily(family);
 	}
 	
 	/**
@@ -236,12 +235,13 @@ public class Engine {
 	public void update(float deltaTime){
 		updating = true;
 		for(int i=0; i<systems.size; i++){
-            if (systems.get(i).checkProcessing()) {
-                systems.get(i).update(deltaTime);
-            }
-            
-            processComponentOperations();
-            processPendingEntityOperations();
+			EntitySystem system = systems.get(i);
+			if (system.checkProcessing()) {
+				system.update(deltaTime);
+			}
+			
+			processComponentOperations();
+			processPendingEntityOperations();
 		}
 		
 		updating = false;
@@ -353,13 +353,14 @@ public class Engine {
 		}
 	}
 	
-	private Array<Entity> registerFamily(Family family) {
-		Array<Entity> entities = families.get(family);
+	private ImmutableArray<Entity> registerFamily(Family family) {
+		ImmutableArray<Entity> immutableEntities = immutableFamilies.get(family);
 		
-		if (entities == null) {
-			entities = new Array<Entity>(false, 16);
+		if (immutableEntities == null) {
+			Array<Entity> entities = new Array<Entity>(false, 16);
+			immutableEntities = new ImmutableArray<Entity>(entities);
 			families.put(family, entities);
-			immutableFamilies.put(family, new ImmutableArray<Entity>(entities));
+			immutableFamilies.put(family, immutableEntities);
 			
 			for(Entity e : this.entities){
 				if(family.matches(e)) {
@@ -369,18 +370,16 @@ public class Engine {
 			}
 		}
 		
-		return entities;
+		return immutableEntities;
 	}
 	
 	private void processPendingEntityOperations() {
 		while (entityOperations.size > 0) {
 			EntityOperation operation = entityOperations.removeIndex(entityOperations.size - 1);
 			
-			if (operation.type == EntityOperation.Type.Add) {
-				addEntityInternal(operation.entity);
-			}
-			else if (operation.type == EntityOperation.Type.Remove) {
-				removeEntityInternal(operation.entity);
+			switch(operation.type) {
+				case Add: addEntityInternal(operation.entity); break;
+				case Remove: removeEntityInternal(operation.entity); break;
 			}
 			
 			entityOperationPool.free(operation);
@@ -395,11 +394,9 @@ public class Engine {
 		for (int i = 0; i < numOperations; ++i) {
 			ComponentOperation operation = componentOperations.get(i);
 			
-			if (operation.type == ComponentOperation.Type.Add) {
-				operation.entity.addInternal(operation.component);
-			}
-			else if (operation.type == ComponentOperation.Type.Remove) {
-				operation.entity.removeInternal(operation.componentClass);
+			switch(operation.type) {
+				case Add: operation.entity.addInternal(operation.component); break;
+				case Remove: operation.entity.removeInternal(operation.componentClass); break;
 			}
 			
 			componentOperationsPool.free(operation);
