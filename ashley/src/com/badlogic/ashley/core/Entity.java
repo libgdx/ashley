@@ -30,8 +30,6 @@ import com.badlogic.gdx.utils.Bits;
  * @author Stefan Bachmann
  */
 public class Entity {
-	protected static long nextId = 1;
-	
 	/** A flag that can be used to bit mask this entity. Up to the user to manage. */
 	public int flags;
 	/** Will dispatch an event when a component is added. */
@@ -64,8 +62,6 @@ public class Entity {
 		componentBits = new Bits();
 		familyBits = new Bits();
 		flags = 0;
-		
-		uuid = obtainId();
 		
 		componentAdded = new Signal<Entity>();
 		componentRemoved = new Signal<Entity>();
@@ -235,8 +231,4 @@ public class Entity {
 		Entity other = (Entity) obj;
         return uuid == other.uuid;
     }
-	
-	static long obtainId() {
-		return nextId++;
-	}
 }

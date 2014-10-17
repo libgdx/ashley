@@ -76,6 +76,7 @@ public class Engine {
 	private boolean updating;
 	
 	private boolean notifying;
+	private long nextEntityId = 1;
 	
 	/** Mechanism to delay component addition/removal to avoid affecting system processing */
 	private ComponentOperationPool componentOperationsPool;
@@ -105,10 +106,15 @@ public class Engine {
 		componentOperationHandler = new ComponentOperationHandler(this);
 	}
 	
+	private long obtainEntityId() {
+		return nextEntityId++;
+	}
+	
 	/**
 	 * Adds an entity to this Engine.
 	 */
 	public void addEntity(Entity entity){
+		entity.uuid = obtainEntityId();
 		if (notifying) {
 			EntityOperation operation = entityOperationPool.obtain();
 			operation.entity = entity;

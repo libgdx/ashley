@@ -129,17 +129,6 @@ public class PooledEngine extends Engine {
 		}
 		
 		@Override
-		public PooledEntity obtain() {
-			PooledEntity entity = super.obtain();
-			
-			if (entity.uuid == 0L) {
-				entity.uuid = Entity.obtainId();
-			}
-			
-			return entity;
-		}
-		
-		@Override
 		protected PooledEntity newObject() {
 			return new PooledEntity();
 		}
