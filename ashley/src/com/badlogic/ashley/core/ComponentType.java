@@ -55,7 +55,7 @@ public final class ComponentType {
      * @param componentType The {@link Component} class
      * @return A ComponentType matching the Component Class
      */
-    public static ComponentType getFor(Class<? extends Component> componentType) {
+    public static synchronized ComponentType getFor(Class<? extends Component> componentType) {
         ComponentType type = componentTypes.get(componentType);
 
         if (type == null) {
