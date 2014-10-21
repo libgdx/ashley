@@ -29,95 +29,95 @@ import java.util.NoSuchElementException;
  */
 public class ImmutableArray<T> implements Iterable<T> {
 
-    private final Array<T> array;
+        private final Array<T> array;
 
-    public ImmutableArray(Array<T> array) {
-        this.array = array;
-    }
+        public ImmutableArray(Array<T> array) {
+                this.array = array;
+        }
 
-    public int size() {
-        return array.size;
-    }
+        public int size() {
+                return array.size;
+        }
 
-    public T get(int index) {
-        return array.get(index);
-    }
+        public T get(int index) {
+                return array.get(index);
+        }
 
-    public boolean contains(T value, boolean identity) {
-        return array.contains(value, identity);
-    }
+        public boolean contains(T value, boolean identity) {
+                return array.contains(value, identity);
+        }
 
-    public int indexOf(T value, boolean identity) {
-        return array.indexOf(value, identity);
-    }
+        public int indexOf(T value, boolean identity) {
+                return array.indexOf(value, identity);
+        }
 
-    public int lastIndexOf(T value, boolean identity) {
-        return array.lastIndexOf(value, identity);
-    }
+        public int lastIndexOf(T value, boolean identity) {
+                return array.lastIndexOf(value, identity);
+        }
 
-    public T peek() {
-        return array.peek();
-    }
+        public T peek() {
+                return array.peek();
+        }
 
-    public T first() {
-        return array.first();
-    }
+        public T first() {
+                return array.first();
+        }
 
-    public T random() {
-        return array.random();
-    }
+        public T random() {
+                return array.random();
+        }
 
-    public T[] toArray() {
-        return array.toArray();
-    }
+        public T[] toArray() {
+                return array.toArray();
+        }
 
-    public <V> V[] toArray(Class<?> type) {
-        return array.toArray(type);
-    }
+        public <V> V[] toArray(Class<?> type) {
+                return array.toArray(type);
+        }
 
-    public boolean equals(Object object) {
-        return array.equals(object);
-    }
+        public boolean equals(Object object) {
+                return array.equals(object);
+        }
 
-    public String toString() {
-        return array.toString();
-    }
+        public String toString() {
+                return array.toString();
+        }
 
-    public String toString(String separator) {
-        return array.toString(separator);
-    }
-
-    @Override
-    public Iterator<T> iterator() {
-        return new ImmutableArrayIterator<T>(this);
-    }
-
-    public static class ImmutableArrayIterator<T> implements Iterator<T> {
-
-        private final ImmutableArray<T> array;
-        private int counter;
-
-        ImmutableArrayIterator(ImmutableArray<T> array) {
-            this.array = array;
-            counter = 0;
+        public String toString(String separator) {
+                return array.toString(separator);
         }
 
         @Override
-        public boolean hasNext() {
-            if (this.array.size() > counter) {
-                return true;
-            } else {
-                return false;
-            }
+        public Iterator<T> iterator() {
+                return new ImmutableArrayIterator<T>(this);
         }
 
-        @Override
-        public T next() {
-            if (!hasNext()) {
-                throw new NoSuchElementException();
-            }
-            return array.get(counter++);
-        }
+        public static class ImmutableArrayIterator<T> implements Iterator<T> {
 
-    }
+                private final ImmutableArray<T> array;
+                private int counter;
+
+                ImmutableArrayIterator(ImmutableArray<T> array) {
+                        this.array = array;
+                        counter = 0;
+                }
+
+                @Override
+                public boolean hasNext() {
+                        if (this.array.size() > counter) {
+                                return true;
+                        } else {
+                                return false;
+                        }
+                }
+
+                @Override
+                public T next() {
+                        if (!hasNext()) {
+                                throw new NoSuchElementException();
+                        }
+                        return array.get(counter++);
+                }
+
+        }
 }

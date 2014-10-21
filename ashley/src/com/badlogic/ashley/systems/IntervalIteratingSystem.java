@@ -13,7 +13,7 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
  * License for the specific language governing permissions and limitations under
  * the License.
- *****************************************************************************
+ * ****************************************************************************
  */
 package com.badlogic.ashley.systems;
 
@@ -32,54 +32,54 @@ import com.badlogic.ashley.utils.ImmutableArray;
  */
 public abstract class IntervalIteratingSystem extends IntervalSystem {
 
-    private Family family;
-    private ImmutableArray<Entity> entities;
+        private Family family;
+        private ImmutableArray<Entity> entities;
 
-    /**
-     * @param family represents the collection of family the system should
-     * process
-     * @param interval time in seconds between calls to
-     * {@link IntervalIteratingSystem#updateInterval()}.
-     */
-    public IntervalIteratingSystem(Family family, float interval) {
-        this(family, interval, 0);
-    }
-
-    /**
-     * @param family represents the collection of family the system should
-     * process
-     * @param interval time in seconds between calls to
-     * {@link IntervalIteratingSystem#updateInterval()}.
-     * @param priority
-     */
-    public IntervalIteratingSystem(Family family, float interval, int priority) {
-        super(interval, priority);
-        this.family = family;
-    }
-
-    @Override
-    public void addedToEngine(Engine engine) {
-        entities = engine.getEntitiesFor(family);
-    }
-
-    @Override
-    protected void updateInterval() {
-        for (Entity e : entities) {
-            processEntity(e);
+        /**
+         * @param family represents the collection of family the system should
+         * process
+         * @param interval time in seconds between calls to
+         * {@link IntervalIteratingSystem#updateInterval()}.
+         */
+        public IntervalIteratingSystem(Family family, float interval) {
+                this(family, interval, 0);
         }
-    }
 
-    /**
-     * @return set of entities processed by the system
-     */
-    public ImmutableArray<Entity> getEntities() {
-        return entities;
-    }
+        /**
+         * @param family represents the collection of family the system should
+         * process
+         * @param interval time in seconds between calls to
+         * {@link IntervalIteratingSystem#updateInterval()}.
+         * @param priority
+         */
+        public IntervalIteratingSystem(Family family, float interval, int priority) {
+                super(interval, priority);
+                this.family = family;
+        }
 
-    /**
-     * The user should place the entity processing logic here.
-     *
-     * @param entity
-     */
-    protected abstract void processEntity(Entity entity);
+        @Override
+        public void addedToEngine(Engine engine) {
+                entities = engine.getEntitiesFor(family);
+        }
+
+        @Override
+        protected void updateInterval() {
+                for (Entity e : entities) {
+                        processEntity(e);
+                }
+        }
+
+        /**
+         * @return set of entities processed by the system
+         */
+        public ImmutableArray<Entity> getEntities() {
+                return entities;
+        }
+
+        /**
+         * The user should place the entity processing logic here.
+         *
+         * @param entity
+         */
+        protected abstract void processEntity(Entity entity);
 }
