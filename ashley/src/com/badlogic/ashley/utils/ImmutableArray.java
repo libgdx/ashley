@@ -76,13 +76,29 @@ public class ImmutableArray<T> implements Iterable<T> {
         }
 
         public boolean equals(Object object) {
-                return array.equals(object);
+                if (object instanceof ImmutableArray) {
+                        return array.equals(((ImmutableArray) object).array);
+                }
+                return false;
         }
 
+        /**
+         * Collects all element in a string, enclosed by Brackets ([]) and
+         * separated by commas
+         *
+         * @return String representation of the array
+         */
         public String toString() {
                 return array.toString();
         }
 
+        /**
+         * Collects all element in a string, enclosed by Brackets ([]) and
+         * separated by the given parameter
+         *
+         * @param separator The string used to separate the objects
+         * @return String representation of the array
+         */
         public String toString(String separator) {
                 return array.toString(separator);
         }

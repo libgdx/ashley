@@ -173,12 +173,13 @@ public class Bag<E> implements Collection<E> {
         /**
          * Set element at specified index in the bag.
          */
-        public void set(int index, E e) {
+        public E set(int index, E e) {
                 if (index >= data.length) {
                         grow(index * 2);
                 }
                 size = index + 1;
                 data[index] = e;
+                return data[index];
         }
 
         /**
@@ -228,12 +229,22 @@ public class Bag<E> implements Collection<E> {
                                         return data[counter++];
                                 }
                         }
+
+                        @Override
+                        public void remove() {
+                                for (int i = counter; i < size - 1; i++) {
+                                        data[i] = data[i + 1];
+                                }
+                                --size;
+                                --counter;
+                        }
+
                 };
         }
 
         @Override
         public Object[] toArray() {
-                return data;
+                return data.clone();
         }
 
         @Override
@@ -259,12 +270,17 @@ public class Bag<E> implements Collection<E> {
                 if (this.size < newSize) {
                         grow(newSize);
                 }
+
                 for (E entity : c) {
                         if (!this.add(entity)) {
                                 return false;
                         }
                 }
                 return true;
+        }
+
+        public boolean addAll(E... params) {
+                return addAll(params);
         }
 
         @Override
@@ -279,7 +295,14 @@ public class Bag<E> implements Collection<E> {
 
         @Override
         public boolean retainAll(Collection<?> c) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                int sizeCounter = 0;
+                for (Iterator<? extends Object> iterator = iterator(); iterator.hasNext();) {
+                        if (!c.contains(iterator.next())) {
+                                iterator.remove();
+                        } else {
+                                ++sizeCounter;
+                        }
+                }
+                return true;
         }
-
 }

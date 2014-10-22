@@ -9,6 +9,7 @@ import com.badlogic.gdx.utils.Array;
 import java.util.Iterator;
 import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -108,12 +109,11 @@ public class ImmutableArrayTest {
                 System.out.println("lastIndexOf");
                 Object value = null;
                 boolean identity = false;
-                ImmutableArray instance = null;
-                int expResult = 0;
-                int result = instance.lastIndexOf(value, identity);
+                Integer[] intArr = {0, 1, 1, 3, 4};
+                ImmutableArray<Integer> instance = new ImmutableArray<Integer>(new Array<Integer>(intArr));
+                int expResult = 2;
+                int result = instance.lastIndexOf(1, identity);
                 assertEquals(expResult, result);
-                // TODO review the generated test code and remove the default call to fail.
-                fail("The test case is a prototype.");
         }
 
         /**
@@ -122,12 +122,11 @@ public class ImmutableArrayTest {
         @Test
         public void testPeek() {
                 System.out.println("peek");
-                ImmutableArray instance = null;
-                Object expResult = null;
+                Integer[] intArr = {0, 1, 1, 3, 4};
+                ImmutableArray<Integer> instance = new ImmutableArray<Integer>(new Array<Integer>(intArr));
+                Object expResult = 4;
                 Object result = instance.peek();
                 assertEquals(expResult, result);
-                // TODO review the generated test code and remove the default call to fail.
-                fail("The test case is a prototype.");
         }
 
         /**
@@ -136,12 +135,11 @@ public class ImmutableArrayTest {
         @Test
         public void testFirst() {
                 System.out.println("first");
-                ImmutableArray instance = null;
-                Object expResult = null;
+                Integer[] intArr = {0, 1, 1, 3, 4};
+                ImmutableArray<Integer> instance = new ImmutableArray<Integer>(new Array<Integer>(intArr));
+                Object expResult = 0;
                 Object result = instance.first();
                 assertEquals(expResult, result);
-                // TODO review the generated test code and remove the default call to fail.
-                fail("The test case is a prototype.");
         }
 
         /**
@@ -150,12 +148,15 @@ public class ImmutableArrayTest {
         @Test
         public void testRandom() {
                 System.out.println("random");
-                ImmutableArray instance = null;
+                Integer[] intArr = {0, 1, 1, 3, 4};
+                ImmutableArray<Integer> instance = new ImmutableArray<Integer>(new Array<Integer>(intArr));
                 Object expResult = null;
                 Object result = instance.random();
-                assertEquals(expResult, result);
-                // TODO review the generated test code and remove the default call to fail.
-                fail("The test case is a prototype.");
+                Assert.assertNotNull(result);
+                intArr = new Integer[0];
+                instance = new ImmutableArray<Integer>(new Array<Integer>(intArr));
+                result = instance.random();
+                Assert.assertNull(result);
         }
 
         /**
@@ -164,12 +165,11 @@ public class ImmutableArrayTest {
         @Test
         public void testToArray_0args() {
                 System.out.println("toArray");
-                ImmutableArray instance = null;
-                Object[] expResult = null;
+                Integer[] intArr = {0, 1, 1, 3, 4};
+                ImmutableArray<Integer> instance = new ImmutableArray<Integer>(new Array<Integer>(intArr));
+                Object[] expResult = {0, 1, 1, 3, 4};
                 Object[] result = instance.toArray();
                 assertArrayEquals(expResult, result);
-                // TODO review the generated test code and remove the default call to fail.
-                fail("The test case is a prototype.");
         }
 
         /**
@@ -178,13 +178,11 @@ public class ImmutableArrayTest {
         @Test
         public void testToArray_Class() {
                 System.out.println("toArray");
-                Class type = null;
-                ImmutableArray instance = null;
-                Object[] expResult = null;
-                Object[] result = instance.toArray(type);
+                Integer[] intArr = {0, 1, 1, 3, 4};
+                ImmutableArray<Integer> instance = new ImmutableArray<Integer>(new Array<Integer>(intArr));
+                Number[] expResult = {0, 1, 1, 3, 4};
+                Object[] result = instance.toArray(Number.class);
                 assertArrayEquals(expResult, result);
-                // TODO review the generated test code and remove the default call to fail.
-                fail("The test case is a prototype.");
         }
 
         /**
@@ -193,27 +191,33 @@ public class ImmutableArrayTest {
         @Test
         public void testEquals() {
                 System.out.println("equals");
-                Object object = null;
-                ImmutableArray instance = null;
-                boolean expResult = false;
-                boolean result = instance.equals(object);
+                Integer[] intArr1 = {0, 1, 1, 3, 4};
+                ImmutableArray<Integer> instance1 = new ImmutableArray<Integer>(new Array<Integer>(intArr1));
+                ImmutableArray<Integer> instance2 = new ImmutableArray<Integer>(new Array<Integer>(intArr1));
+                boolean expResult = true;
+                boolean result = instance1.equals(instance2);
                 assertEquals(expResult, result);
-                // TODO review the generated test code and remove the default call to fail.
-                fail("The test case is a prototype.");
+                Integer[] intArr2 = {0, 1};
+                instance2 = new ImmutableArray<Integer>(new Array<Integer>(intArr2));
+                expResult = false;
+                result = instance1.equals(instance2);
+                assertEquals(expResult, result);
+                Integer something = 3;
+                assertEquals(false, instance1.equals(something));
         }
 
         /**
          * Test of toString method, of class ImmutableArray.
          */
         @Test
+
         public void testToString_0args() {
                 System.out.println("toString");
-                ImmutableArray instance = null;
-                String expResult = "";
+                Integer[] intArr = {0, 1, 1, 3, 4};
+                ImmutableArray<Integer> instance = new ImmutableArray<Integer>(new Array<Integer>(intArr));
+                String expResult = "[0, 1, 1, 3, 4]";
                 String result = instance.toString();
                 assertEquals(expResult, result);
-                // TODO review the generated test code and remove the default call to fail.
-                fail("The test case is a prototype.");
         }
 
         /**
@@ -222,13 +226,13 @@ public class ImmutableArrayTest {
         @Test
         public void testToString_String() {
                 System.out.println("toString");
-                String separator = "";
-                ImmutableArray instance = null;
-                String expResult = "";
+                String separator = "|";
+                System.out.println("toString");
+                Integer[] intArr = {0, 1, 1, 3, 4};
+                ImmutableArray<Integer> instance = new ImmutableArray<Integer>(new Array<Integer>(intArr));
+                String expResult = "0|1|1|3|4";
                 String result = instance.toString(separator);
                 assertEquals(expResult, result);
-                // TODO review the generated test code and remove the default call to fail.
-                fail("The test case is a prototype.");
         }
 
         /**
@@ -237,12 +241,21 @@ public class ImmutableArrayTest {
         @Test
         public void testIterator() {
                 System.out.println("iterator");
-                ImmutableArray instance = null;
-                Iterator expResult = null;
-                Iterator result = instance.iterator();
-                assertEquals(expResult, result);
-                // TODO review the generated test code and remove the default call to fail.
-                fail("The test case is a prototype.");
+                Integer[] intArr = {0, 1, 1, 3, 4};
+                ImmutableArray<Integer> instance = new ImmutableArray<Integer>(new Array<Integer>(intArr));
+                Iterator iterator = instance.iterator();
+                int i = 0;
+                for (Integer it : instance) {
+                        ++i;
+                }
+                assertEquals(intArr.length, i);
+                iterator = instance.iterator();
+                try {
+                        iterator.remove();
+                        fail("Expected expection didn't occure");
+                } catch (UnsupportedOperationException e) {
+
+                }
         }
 
 }
