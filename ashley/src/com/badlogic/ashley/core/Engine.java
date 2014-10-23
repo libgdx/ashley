@@ -357,7 +357,7 @@ public class Engine {
 		ImmutableArray<Entity> immutableEntities = immutableFamilies.get(family);
 		
 		if (immutableEntities == null) {
-			Array<Entity> entities = new Array<Entity>(false, 16);
+			Array<Entity> entities = new Array<Entity>(false, 16, Entity.class);
 			immutableEntities = new ImmutableArray<Entity>(entities);
 			families.put(family, entities);
 			immutableFamilies.put(family, immutableEntities);
