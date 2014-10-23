@@ -88,6 +88,6 @@ public class ImmutableArray<T> implements Iterable<T> {
 
     @Override
     public Iterator<T> iterator() {
-        return array.iterator();
+        return new Array.ArrayIterator<T>(array, false);
     }
 }
