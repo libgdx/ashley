@@ -128,7 +128,7 @@ public class EngineTests {
 		@Override
 		public void addedToEngine(Engine engine) {
 			this.engine = engine;
-			entities = engine.getEntitiesFor(Family.getFor(CounterComponent.class));
+			entities = engine.getEntitiesFor(Family.all(CounterComponent.class).get());
 		}
 
 		@Override
@@ -294,7 +294,7 @@ public class EngineTests {
 	public void entitiesForFamily() {
 		Engine engine = new Engine();
 		
-		Family family = Family.getFor(ComponentA.class, ComponentB.class);
+		Family family = Family.all(ComponentA.class, ComponentB.class).get();
 		ImmutableArray<Entity> familyEntities = engine.getEntitiesFor(family);
 		
 		assertEquals(0, familyEntities.size());
@@ -340,7 +340,7 @@ public class EngineTests {
 		
 		engine.addEntity(entity);
 		
-		ImmutableArray<Entity> entities = engine.getEntitiesFor(Family.getFor(ComponentA.class));
+		ImmutableArray<Entity> entities = engine.getEntitiesFor(Family.all(ComponentA.class).get());
 		
 		assertEquals(1, entities.size());
 		assertTrue(entities.contains(entity, true));
@@ -355,7 +355,7 @@ public class EngineTests {
 	public void entitiesForFamilyAfter() {
 		Engine engine = new Engine();
 		
-		Family family = Family.getFor(ComponentA.class, ComponentB.class);
+		Family family = Family.all(ComponentA.class, ComponentB.class).get();
 		ImmutableArray<Entity> familyEntities = engine.getEntitiesFor(family);
 		
 		assertEquals(0, familyEntities.size());
@@ -395,7 +395,7 @@ public class EngineTests {
 	public void entitiesForFamilyWithRemoval() {
 		Engine engine = new Engine();
 		
-		Family family = Family.getFor(ComponentA.class, ComponentB.class);
+		Family family = Family.all(ComponentA.class, ComponentB.class).get();
 		ImmutableArray<Entity> familyEntities = engine.getEntitiesFor(family);
 		
 		Entity entity1 = new Entity();
@@ -443,11 +443,9 @@ public class EngineTests {
 		Engine engine = new Engine();
 
 		
-		ImmutableArray<Entity> entitiesWithComponentAOnly = engine.getEntitiesFor(Family.getFor(ComponentType.getBitsFor(ComponentA.class),
-				  																  				new Bits(),
-				  																  				ComponentType.getBitsFor(ComponentB.class)));
+		ImmutableArray<Entity> entitiesWithComponentAOnly = engine.getEntitiesFor(Family.all(ComponentA.class).exclude(ComponentB.class).get());
 		
-		ImmutableArray<Entity> entitiesWithComponentB = engine.getEntitiesFor(Family.getFor(ComponentB.class));
+		ImmutableArray<Entity> entitiesWithComponentB = engine.getEntitiesFor(Family.all(ComponentB.class).get());
 		
 		Entity entity1 = new Entity();
 		Entity entity2 = new Entity();
@@ -481,7 +479,7 @@ public class EngineTests {
 			engine.addEntity(entity);
 		}
 		
-		ImmutableArray<Entity> entities = engine.getEntitiesFor(Family.getFor(CounterComponent.class));
+		ImmutableArray<Entity> entities = engine.getEntitiesFor(Family.all(CounterComponent.class).get());
 		
 		for (int i = 0; i < entities.size(); ++i) {
 			assertEquals(0, entities.get(i).getComponent(CounterComponent.class).counter);
@@ -501,8 +499,8 @@ public class EngineTests {
 		EntityListenerMock listenerA = new EntityListenerMock();
 		EntityListenerMock listenerB = new EntityListenerMock();
 		
-		Family familyA = Family.getFor(ComponentA.class);
-		Family familyB = Family.getFor(ComponentB.class);
+		Family familyA = Family.all(ComponentA.class).get();
+		Family familyB = Family.all(ComponentB.class).get();
 		
 		engine.addEntityListener(familyA, listenerA);
 		engine.addEntityListener(familyB, listenerB);

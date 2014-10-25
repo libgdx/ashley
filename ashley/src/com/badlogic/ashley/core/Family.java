@@ -24,10 +24,11 @@ import com.badlogic.gdx.utils.ObjectMap;
  * Represents a group of {@link Component}s. It is used to describe what {@link Entity} objects an
  * {@link EntitySystem} should process.
  * 
- * Example: {@code Family.getFor(PositionComponent.class, VelocityComponent.class)}
+ * Example: {@code Family.all(PositionComponent.class, VelocityComponent.class).get()}
  * 
- * Families can't be instantiate directly but must be accessed via {@code Family.getFor()}, this is
- * to avoid duplicate families that describe the same components.
+ * Families can't be instantiated directly but must be accessed via a builder ( start with
+ * {@code Family.all()}, {@code Family.one()} or {@code Family.exclude()}), this is to avoid
+ * duplicate families that describe the same components.
  * 
  * @author Stefan Bachmann
  */
@@ -35,6 +36,8 @@ public class Family {
 	/** The hashmap holding all families */
 	private static ObjectMap<String, Family> families = new ObjectMap<String, Family>();
 	private static int familyIndex = 0;
+	private static final Builder builder = new Builder();
+    private static final Bits zeroBits = new Bits();
 	
 	/** Must contain all the components in the set */
 	private final Bits all;
@@ -88,10 +91,12 @@ public class Family {
 	/**
 	 * @return The family matching the specified {@link Component} classes as a descriptor. Each set of component types will
 	 * always return the same Family instance.
+	 * @deprecated Use builder functionality instead ({@link Family#all}, {@link Family#one}, {@link Family#exclude})
 	 */
 	@SafeVarargs
+	@Deprecated
 	public static Family getFor(Class<? extends Component> ...componentTypes){
-		return getFor(ComponentType.getBitsFor(componentTypes), new Bits(), new Bits());
+		return getFor(ComponentType.getBitsFor(componentTypes), zeroBits, zeroBits);
 	}
 	
 	/**
@@ -102,7 +107,9 @@ public class Family {
 	 * @param one entities will have to contain at least one of the components in the set.See {@link ComponentType#getBitsFor(Class<? extends Component> ...)}.
 	 * @param exclude entities cannot contain any of the components in the set. See {@link ComponentType#getBitsFor(Class<? extends Component> ...)}.
 	 * @return The family
+	 * @deprecated Use builder functionality instead ({@link Family#all}, {@link Family#one}, {@link Family#exclude})
 	 */
+	@Deprecated
 	public static Family getFor(Bits all, Bits one, Bits exclude){
 		String hash = getFamilyHash(all, one, exclude);
 		Family family = families.get(hash, null);
@@ -114,13 +121,94 @@ public class Family {
 		return family;
 	}
 
+	/**
+	 * @param componentTypes entities will have to contain all of the specified components.
+	 * @return A Builder singleton instance to get a family
+	 */
+	public static Builder all(Class<? extends Component> ...componentTypes) {
+		return builder.reset().all(componentTypes);
+	}
+	
+	/**
+	 * @param componentTypes entities will have to contain at least one of the specified components.
+	 * @return A Builder singleton instance to get a family
+	 */
+	public static Builder one(Class<? extends Component> ...componentTypes) {
+		return builder.reset().one(componentTypes);
+	}
+	
+	/**
+	 * @param componentTypes entities cannot contain any of the specified components.
+	 * @return A Builder singleton instance to get a family
+	 */
+	public static Builder exclude(Class<? extends Component> ...componentTypes) {
+		return builder.reset().exclude(componentTypes);
+	}
+	
+	public static class Builder {
+		private Bits all = zeroBits;
+		private Bits one = zeroBits;
+		private Bits exclude = zeroBits;
+
+		/**
+		 * Resets the builder instance
+		 * @return A Builder singleton instance to get a family
+		 */
+		public Builder reset() {
+			all = zeroBits;
+			one = zeroBits;
+			exclude = zeroBits;
+			return this;
+		}
+
+		/**
+		 * @param componentTypes entities will have to contain all of the specified components.
+		 * @return A Builder singleton instance to get a family
+		 */
+		public Builder all(Class<? extends Component> ...componentTypes) {
+			all = ComponentType.getBitsFor(componentTypes);
+			return this;
+		}
+
+		/**
+		 * @param componentTypes entities will have to contain at least one of the specified components.
+		 * @return A Builder singleton instance to get a family
+		 */
+		public Builder one(Class<? extends Component> ...componentTypes) {
+			one = ComponentType.getBitsFor(componentTypes);
+			return this;
+		}
+
+		/**
+		 * @param componentTypes entities cannot contain any of the specified components.
+		 * @return A Builder singleton instance to get a family
+		 */
+		public Builder exclude(Class<? extends Component> ...componentTypes) {
+			exclude = ComponentType.getBitsFor(componentTypes);
+			return this;
+		}
+
+		/**
+		 * @return A family for the configured component types
+		 */
+		public Family get() {
+			String hash = getFamilyHash(all, one, exclude);
+			Family family = families.get(hash, null);
+			if(family == null){
+				family = new Family(all, one, exclude);
+				families.put(hash, family);
+			}
+			return family;
+		}
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((all == null) ? 0 : all.hashCode());
-		result = prime * result + ((one == null) ? 0 : one.hashCode());
-		result = prime * result + ((exclude == null) ? 0 : exclude.hashCode());
+		result = prime * result + all.hashCode();
+		result = prime * result + one.hashCode();
+		result = prime * result + exclude.hashCode();
 		result = prime * result + index;
 		return result;
 	}

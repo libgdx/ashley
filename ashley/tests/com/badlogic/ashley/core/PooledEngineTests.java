@@ -103,7 +103,7 @@ public class PooledEngineTests {
 		
 		// force the engine to create a Family so family bits get set
 		ImmutableArray<Entity> familyEntities =
-				engine.getEntitiesFor(Family.getFor(PositionComponent.class));
+				engine.getEntitiesFor(Family.all(PositionComponent.class).get());
 		
 		Entity[] entities = new Entity[10];
 		final int totalEntities = 10;
