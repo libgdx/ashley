@@ -119,6 +119,7 @@ public class PooledEngine extends Engine {
 			flags = 0;
 			componentAdded.removeAllListeners();
 			componentRemoved.removeAllListeners();
+			scheduledForRemoval = false;
 		}
 	}
 	

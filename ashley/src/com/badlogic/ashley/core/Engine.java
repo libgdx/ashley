@@ -125,6 +125,10 @@ public class Engine {
 	 */
 	public void removeEntity(Entity entity){
 		if (updating || notifying) {
+			if(entity.scheduledForRemoval) {
+				return;
+			}
+			entity.scheduledForRemoval = true;
 			EntityOperation operation = entityOperationPool.obtain();
 			operation.entity = entity;
 			operation.type = EntityOperation.Type.Remove;
@@ -273,6 +277,7 @@ public class Engine {
 	}
 	
 	protected void removeEntityInternal(Entity entity) {
+		entity.scheduledForRemoval = false;
 		entities.removeValue(entity, true);
 		
 		if(!entity.getFamilyBits().isEmpty()){
