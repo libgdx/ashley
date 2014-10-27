@@ -29,6 +29,7 @@ import java.util.Iterator;
  */
 public class ImmutableArray<T> implements Iterable<T> {
 	private final Array<T> array;
+    private Array.ArrayIterator<T> immutableIterator;
 	
 	public ImmutableArray(Array<T> array) {
 		this.array = array;
@@ -88,6 +89,8 @@ public class ImmutableArray<T> implements Iterable<T> {
 
     @Override
     public Iterator<T> iterator() {
-        return new Array.ArrayIterator<T>(array, false);
+        if (immutableIterator == null) immutableIterator = new Array.ArrayIterator<T>(array, false);
+        immutableIterator.reset();
+        return immutableIterator;
     }
 }
