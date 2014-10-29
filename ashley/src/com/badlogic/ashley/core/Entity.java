@@ -51,6 +51,7 @@ public class Entity {
 	private Bits componentBits;
 	/** A Bits describing all the systems this entity was matched with. */
 	private Bits familyBits;
+	boolean scheduledForRemoval;
 	
 	ComponentOperationHandler componentOperationHandler;
 	
@@ -238,5 +239,12 @@ public class Entity {
 	
 	static long obtainId() {
 		return nextId++;
+	}
+
+	/**
+	 * @return true if the entity is scheduled to be removed
+	 */
+	public boolean isScheduledForRemoval() {
+		return scheduledForRemoval;
 	}
 }
