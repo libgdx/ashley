@@ -305,7 +305,6 @@ public class Engine {
 		}
 		listeners.end();
 		notifying = false;
-		processPendingEntityOperations();
 	}
 	
 	protected void addEntityInternal(Entity entity) {
