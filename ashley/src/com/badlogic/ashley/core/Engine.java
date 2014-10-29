@@ -143,8 +143,18 @@ public class Engine {
 	 * Removes all entities registered with this Engine.
 	 */
 	public void removeAllEntities() {
-		while(entities.size > 0) {
-			removeEntity(entities.first());
+		if (updating || notifying) {
+			for(Entity entity: entities) {
+				entity.scheduledForRemoval = true;
+			}
+			EntityOperation operation = entityOperationPool.obtain();
+			operation.type = EntityOperation.Type.RemoveAll;
+			entityOperations.add(operation);
+		}
+		else {
+			while(entities.size > 0) {
+				removeEntity(entities.first());
+			}
 		}
 	}
 	
@@ -305,7 +315,6 @@ public class Engine {
 		}
 		listeners.end();
 		notifying = false;
-		processPendingEntityOperations();
 	}
 	
 	protected void addEntityInternal(Entity entity) {
@@ -325,7 +334,6 @@ public class Engine {
 		}
 		listeners.end();
 		notifying = false;
-		processPendingEntityOperations();
 	}
 	
 	private void notifyFamilyListenersAdd(Family family, Entity entity) {
@@ -385,6 +393,11 @@ public class Engine {
 			switch(operation.type) {
 				case Add: addEntityInternal(operation.entity); break;
 				case Remove: removeEntityInternal(operation.entity); break;
+				case RemoveAll:
+					while(entities.size > 0) {
+						removeEntityInternal(entities.first());
+					}
+					break;
 			}
 			
 			entityOperationPool.free(operation);
@@ -497,6 +510,7 @@ public class Engine {
 		public enum Type {
 			Add,
 			Remove,
+			RemoveAll
 		}
 		
 		public Type type;
