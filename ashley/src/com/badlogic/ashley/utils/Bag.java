@@ -17,7 +17,7 @@
  */
 package com.badlogic.ashley.utils;
 
-import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -211,10 +211,11 @@ public class Bag<E> implements Collection<E> {
 
                 return new Iterator<E>() {
                         private int counter;
+                        private E current;
 
                         @Override
                         public boolean hasNext() {
-                                if (counter < data.length) {
+                                if (counter < size()) {
                                         return true;
                                 } else {
                                         return false;
@@ -226,17 +227,14 @@ public class Bag<E> implements Collection<E> {
                                 if (!hasNext()) {
                                         throw new NoSuchElementException();
                                 } else {
-                                        return data[counter++];
+                                        current = data[counter++];
+                                        return current;
                                 }
                         }
 
                         @Override
                         public void remove() {
-                                for (int i = counter; i < size - 1; i++) {
-                                        data[i] = data[i + 1];
-                                }
-                                --size;
-                                --counter;
+                                E removed = Bag.this.remove(--counter);
                         }
 
                 };
@@ -244,14 +242,16 @@ public class Bag<E> implements Collection<E> {
 
         @Override
         public Object[] toArray() {
-                return data.clone();
+                Object[] objectArra = new Object[size];
+                System.arraycopy(data, 0, objectArra, size, size);
+                return objectArra;
         }
 
         @Override
         public <T> T[] toArray(T[] a) {
-                T[] array = (T[]) Array.newInstance(a.getClass(), data.length);
-                System.arraycopy(data, 0, array, 0, size);
-                return array;
+                return (T[]) Arrays.copyOf(data, size, a.getClass());
+//                System.arraycopy(data, 0, array, 0, size);
+//                return array;
         }
 
         @Override
@@ -280,14 +280,14 @@ public class Bag<E> implements Collection<E> {
         }
 
         public boolean addAll(E... params) {
-                return addAll(params);
+                return addAll(Arrays.asList(params));
         }
 
         @Override
         public boolean removeAll(Collection<?> c) {
                 for (Object toRemove : c) {
-                        if (!remove(toRemove)) {
-                                return false;
+                        while (contains(toRemove)) {
+                                remove(toRemove);
                         }
                 }
                 return true;
@@ -295,14 +295,16 @@ public class Bag<E> implements Collection<E> {
 
         @Override
         public boolean retainAll(Collection<?> c) {
-                int sizeCounter = 0;
-                for (Iterator<? extends Object> iterator = iterator(); iterator.hasNext();) {
-                        if (!c.contains(iterator.next())) {
-                                iterator.remove();
+                for (Iterator<E> iterator = iterator(); iterator.hasNext();) {
+                        E entry = iterator.next();
+                        if (c.contains(entry)) {
+                                continue;
                         } else {
-                                ++sizeCounter;
+                                iterator.remove();
                         }
+
                 }
+
                 return true;
         }
 }

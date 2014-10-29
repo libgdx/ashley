@@ -6,13 +6,13 @@
 package com.badlogic.ashley.utils;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
+import java.util.Arrays;
+import java.util.List;
 import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -48,13 +48,14 @@ public class BagTest {
         @Test
         public void testRemove_int() {
                 System.out.println("remove");
-                int index = 0;
-                Bag instance = new Bag();
-                Object expResult = null;
-                Object result = instance.remove(index);
+                Bag<Integer> instance = new Bag<Integer>();
+                instance.add(10);
+                instance.add(12);
+                instance.add(22);
+                instance.add(7);
+                Integer expResult = 22;
+                Integer result = instance.remove(2);
                 assertEquals(expResult, result);
-                // TODO review the generated test code and remove the default call to fail.
-                fail("The test case is a prototype.");
         }
 
         /**
@@ -63,12 +64,14 @@ public class BagTest {
         @Test
         public void testRemoveLast() {
                 System.out.println("removeLast");
-                Bag instance = new Bag();
-                Object expResult = null;
-                Object result = instance.removeLast();
+                Bag<Integer> instance = new Bag<Integer>();
+                instance.add(10);
+                instance.add(12);
+                instance.add(22);
+                instance.add(7);
+                Integer expResult = 7;
+                Integer result = instance.removeLast();
                 assertEquals(expResult, result);
-                // TODO review the generated test code and remove the default call to fail.
-                fail("The test case is a prototype.");
         }
 
         /**
@@ -77,13 +80,16 @@ public class BagTest {
         @Test
         public void testRemove_Object() {
                 System.out.println("remove");
-                Object e = null;
-                Bag instance = new Bag();
-                boolean expResult = false;
-                boolean result = instance.remove(e);
-                assertEquals(expResult, result);
-                // TODO review the generated test code and remove the default call to fail.
-                fail("The test case is a prototype.");
+                Bag<Integer> instance = new Bag<Integer>();
+                instance.add(10);
+                instance.add(12);
+                instance.add(22);
+                instance.add(7);
+                Integer expResult = 22;
+                boolean result = instance.remove(expResult);
+                Assert.assertTrue(result);
+                Assert.assertFalse(instance.contains(expResult));
+                assertEquals(3, instance.size());
         }
 
         /**
@@ -92,13 +98,16 @@ public class BagTest {
         @Test
         public void testContains() {
                 System.out.println("contains");
-                Object e = null;
-                Bag instance = new Bag();
-                boolean expResult = false;
-                boolean result = instance.contains(e);
-                assertEquals(expResult, result);
-                // TODO review the generated test code and remove the default call to fail.
-                fail("The test case is a prototype.");
+                Bag<Integer> instance = new Bag<Integer>();
+                instance.add(10);
+                instance.add(12);
+                instance.add(22);
+                instance.add(7);
+                Integer expResult = 22;
+                Assert.assertTrue(instance.contains(22));
+                Assert.assertFalse(instance.contains(0));
+                Assert.assertFalse(instance.contains(null));
+
         }
 
         /**
@@ -107,13 +116,13 @@ public class BagTest {
         @Test
         public void testGet() {
                 System.out.println("get");
-                int index = 0;
-                Bag instance = new Bag();
-                Object expResult = null;
-                Object result = instance.get(index);
-                assertEquals(expResult, result);
-                // TODO review the generated test code and remove the default call to fail.
-                fail("The test case is a prototype.");
+                Bag<Integer> instance = new Bag<Integer>();
+                instance.add(10);
+                instance.add(12);
+                instance.add(22);
+                instance.add(7);
+                Object result = instance.get(2);
+                assertEquals(22, result);
         }
 
         /**
@@ -126,8 +135,13 @@ public class BagTest {
                 int expResult = 0;
                 int result = instance.size();
                 assertEquals(expResult, result);
-                // TODO review the generated test code and remove the default call to fail.
-                fail("The test case is a prototype.");
+                instance.add(12);
+                instance.add(10);
+                assertEquals(2, instance.size());
+                instance.remove(12);
+                assertEquals(1, instance.size());
+                instance.remove(0);
+                assertEquals(0, instance.size());
         }
 
         /**
@@ -136,12 +150,8 @@ public class BagTest {
         @Test
         public void testGetCapacity() {
                 System.out.println("getCapacity");
-                Bag instance = new Bag();
-                int expResult = 0;
-                int result = instance.getCapacity();
-                assertEquals(expResult, result);
-                // TODO review the generated test code and remove the default call to fail.
-                fail("The test case is a prototype.");
+                Bag<Integer> instance = new Bag<Integer>();
+                assertEquals(64, instance.getCapacity());
         }
 
         /**
@@ -151,12 +161,14 @@ public class BagTest {
         public void testIsIndexWithinBounds() {
                 System.out.println("isIndexWithinBounds");
                 int index = 0;
-                Bag instance = new Bag();
-                boolean expResult = false;
+                Bag<Integer> instance = new Bag<Integer>();
+                instance.add(1);
+                instance.add(2);
+                boolean expResult = true;
                 boolean result = instance.isIndexWithinBounds(index);
-                assertEquals(expResult, result);
-                // TODO review the generated test code and remove the default call to fail.
-                fail("The test case is a prototype.");
+                Assert.assertTrue(instance.isIndexWithinBounds(0));
+                Assert.assertTrue(instance.isIndexWithinBounds(1));
+                Assert.assertFalse(instance.isIndexWithinBounds(64));
         }
 
         /**
@@ -166,11 +178,17 @@ public class BagTest {
         public void testIsEmpty() {
                 System.out.println("isEmpty");
                 Bag instance = new Bag();
-                boolean expResult = false;
+                boolean expResult = true;
                 boolean result = instance.isEmpty();
                 assertEquals(expResult, result);
-                // TODO review the generated test code and remove the default call to fail.
-                fail("The test case is a prototype.");
+                instance.add(1);
+                expResult = false;
+                result = instance.isEmpty();
+                assertEquals(expResult, result);
+                instance.remove(1);
+                expResult = true;
+                result = instance.isEmpty();
+                assertEquals(expResult, result);
         }
 
         /**
@@ -179,13 +197,15 @@ public class BagTest {
         @Test
         public void testAdd() {
                 System.out.println("add");
-                Object e = null;
-                Bag instance = new Bag();
-                boolean expResult = false;
-                boolean result = instance.add(e);
-                assertEquals(expResult, result);
-                // TODO review the generated test code and remove the default call to fail.
-                fail("The test case is a prototype.");
+                Bag<Integer> instance = new Bag<Integer>();
+                instance.add(10);
+                Assert.assertTrue(instance.contains(10));
+                Assert.assertEquals(1, instance.size());
+                instance.add(12);
+                instance.add(22);
+                instance.add(7);
+                Assert.assertTrue(instance.contains(10));
+                Assert.assertTrue(instance.contains(12));
         }
 
         /**
@@ -194,14 +214,16 @@ public class BagTest {
         @Test
         public void testSet() {
                 System.out.println("set");
-                int index = 0;
-                Object e = null;
-                Bag instance = new Bag();
-                Object expResult = null;
-                Object result = instance.set(index, e);
-                assertEquals(expResult, result);
-                // TODO review the generated test code and remove the default call to fail.
-                fail("The test case is a prototype.");
+                Bag<Integer> instance = new Bag<Integer>();
+                instance.add(10);
+                instance.add(12);
+                instance.add(22);
+                instance.add(7);
+                Integer replacement = 15;
+                instance.set(1, replacement);
+                assertEquals(replacement, instance.get(1));
+                instance.set(200, replacement);
+                assertEquals(replacement, instance.get(200));
         }
 
         /**
@@ -210,24 +232,14 @@ public class BagTest {
         @Test
         public void testClear() {
                 System.out.println("clear");
-                Bag instance = new Bag();
+                Bag<Integer> instance = new Bag<Integer>();
+                instance.add(10);
+                instance.add(12);
+                instance.add(22);
+                instance.add(7);
+                assertEquals(4, instance.size());
                 instance.clear();
-                // TODO review the generated test code and remove the default call to fail.
-                fail("The test case is a prototype.");
-        }
-
-        /**
-         * Test of iterator method, of class Bag.
-         */
-        @Test
-        public void testIterator() {
-                System.out.println("iterator");
-                Bag instance = new Bag();
-                Iterator expResult = null;
-                Iterator result = instance.iterator();
-                assertEquals(expResult, result);
-                // TODO review the generated test code and remove the default call to fail.
-                fail("The test case is a prototype.");
+                assertEquals(0, instance.size());
         }
 
         /**
@@ -237,11 +249,9 @@ public class BagTest {
         public void testToArray_0args() {
                 System.out.println("toArray");
                 Bag instance = new Bag();
-                Object[] expResult = null;
+                Object[] expResult = new Object[0];
                 Object[] result = instance.toArray();
                 assertArrayEquals(expResult, result);
-                // TODO review the generated test code and remove the default call to fail.
-                fail("The test case is a prototype.");
         }
 
         /**
@@ -250,13 +260,14 @@ public class BagTest {
         @Test
         public void testToArray_GenericType() {
                 System.out.println("toArray");
-                Object[] a = null;
-                Bag instance = new Bag();
-                Object[] expResult = null;
-                Object[] result = instance.toArray(a);
-                assertArrayEquals(expResult, result);
-                // TODO review the generated test code and remove the default call to fail.
-                fail("The test case is a prototype.");
+                Bag<Integer> instance = new Bag<Integer>();
+                instance.add(10);
+                instance.add(12);
+                instance.add(22);
+                instance.add(7);
+                Number[] nbr = new Number[0];
+                nbr = instance.toArray(nbr);
+                assertEquals(4, nbr.length);
         }
 
         /**
@@ -265,13 +276,14 @@ public class BagTest {
         @Test
         public void testContainsAll() {
                 System.out.println("containsAll");
-                Collection c = null;
-                Bag instance = new Bag();
-                boolean expResult = false;
-                boolean result = instance.containsAll(c);
-                assertEquals(expResult, result);
-                // TODO review the generated test code and remove the default call to fail.
-                fail("The test case is a prototype.");
+                List<Integer> list = new ArrayList<Integer>(Arrays.asList(12, 43, 56, 32));
+                Bag<Integer> instance = new Bag<Integer>();
+                instance.add(10);
+                instance.add(12);
+                instance.add(22);
+                instance.add(7);
+                instance.addAll(list);
+                Assert.assertTrue(instance.containsAll(list));
         }
 
         /**
@@ -280,13 +292,15 @@ public class BagTest {
         @Test
         public void testAddAll() {
                 System.out.println("addAll");
-                Collection c = null;
-                Bag instance = new Bag();
-                boolean expResult = false;
-                boolean result = instance.addAll(c);
-                assertEquals(expResult, result);
-                // TODO review the generated test code and remove the default call to fail.
-                fail("The test case is a prototype.");
+                List<Integer> list = new ArrayList<Integer>(Arrays.asList(12, 43, 56, 32));
+                Bag<Integer> instance = new Bag<Integer>();
+                instance.add(10);
+                instance.add(12);
+                instance.add(22);
+                instance.add(7);
+                assertEquals(4, instance.size());
+                instance.addAll(list);
+                assertEquals(8, instance.size());
         }
 
         /**
@@ -295,13 +309,17 @@ public class BagTest {
         @Test
         public void testRemoveAll() {
                 System.out.println("removeAll");
-                Collection c = null;
-                Bag instance = new Bag();
-                boolean expResult = false;
-                boolean result = instance.removeAll(c);
-                assertEquals(expResult, result);
-                // TODO review the generated test code and remove the default call to fail.
-                fail("The test case is a prototype.");
+                List<Integer> list = new ArrayList<Integer>(Arrays.asList(12, 43, 56, 32));
+                Bag<Integer> instance = new Bag<Integer>();
+                instance.add(10);
+                instance.add(12);
+                instance.add(22);
+                instance.add(7);
+                assertEquals(4, instance.size());
+                instance.addAll(list);
+                assertEquals(8, instance.size());
+                instance.removeAll(list);
+                assertEquals(3, instance.size());
         }
 
         /**
@@ -310,14 +328,13 @@ public class BagTest {
         @Test
         public void testRetainAll() {
                 System.out.println("retainAll");
-                Collection c = null;
                 Bag<Integer> instance = new Bag<Integer>();
                 ArrayList<Integer> retainList = new ArrayList<Integer>();
                 retainList.add(2);
                 instance.addAll(1, 2, 2, 3, 4, 5);
-                instance.retainAll(retainList);
+//                instance.retainAll(retainList);
                 boolean expResult = false;
-                boolean result = instance.retainAll(c);
+                boolean result = instance.retainAll(retainList);
                 assertEquals(2, instance.size());
         }
 
