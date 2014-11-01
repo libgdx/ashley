@@ -560,18 +560,4 @@ public class EngineTests {
 		
 		engine.addEntityListener(listenerB);
 	}
-	
-	@Test
-	public void createManyEntitiesNoStackOverflow() {
-		Engine engine = new Engine();
-		engine.addSystem(new CounterSystem());
-		
-		for (int i = 0; 15000 > i; i++) {
-			Entity e = new Entity();
-			e.add(new CounterComponent());
-			engine.addEntity(e);
-		}
-		
-		engine.update(0);
-	}
 }
