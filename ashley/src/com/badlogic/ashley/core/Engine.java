@@ -315,7 +315,6 @@ public class Engine {
 		}
 		listeners.end();
 		notifying = false;
-		processPendingEntityOperations();
 	}
 	
 	protected void addEntityInternal(Entity entity) {
@@ -335,7 +334,6 @@ public class Engine {
 		}
 		listeners.end();
 		notifying = false;
-		processPendingEntityOperations();
 	}
 	
 	private void notifyFamilyListenersAdd(Family family, Entity entity) {
