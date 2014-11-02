@@ -49,6 +49,7 @@ public class Entity {
 	private Bits componentBits;
 	/** A Bits describing all the systems this entity was matched with. */
 	private Bits familyBits;
+	boolean scheduledForRemoval;
 	
 	ComponentOperationHandler componentOperationHandler;
 	
@@ -231,4 +232,11 @@ public class Entity {
 		Entity other = (Entity) obj;
         return uuid == other.uuid;
     }
+
+	/**
+	 * @return true if the entity is scheduled to be removed
+	 */
+	public boolean isScheduledForRemoval() {
+		return scheduledForRemoval;
+	}
 }
