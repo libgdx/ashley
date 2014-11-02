@@ -18,6 +18,8 @@ package com.badlogic.ashley.utils;
 
 import com.badlogic.gdx.utils.Array;
 
+import java.util.Iterator;
+
 
 /**
  * Wrapper class to treat {@link Array} objects as if they were immutable.
@@ -25,8 +27,9 @@ import com.badlogic.gdx.utils.Array;
  * 
  * @author David Saltares
  */
-public class ImmutableArray<T> {
+public class ImmutableArray<T> implements Iterable<T> {
 	private final Array<T> array;
+    private Array.ArrayIterator<T> immutableIterator;
 	
 	public ImmutableArray(Array<T> array) {
 		this.array = array;
@@ -83,4 +86,11 @@ public class ImmutableArray<T> {
 	public String toString (String separator) {
 		return array.toString(separator); 
 	}
+
+    @Override
+    public Iterator<T> iterator() {
+        if (immutableIterator == null) immutableIterator = new Array.ArrayIterator<T>(array, false);
+        immutableIterator.reset();
+        return immutableIterator;
+    }
 }
