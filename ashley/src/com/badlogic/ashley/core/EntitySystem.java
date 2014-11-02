@@ -61,19 +61,19 @@ public abstract class EntitySystem {
 	 */
 	public void update(float deltaTime) {}
 
-    /**
-     *
-     * @return Whether or not the system should be processed.
-     */
-    public boolean checkProcessing() {
-        return processing;
-    }
-    
-    /**
-    *
-    * Sets whether or not the system should be processed by the {@link Engine}.
-    */
+	/**
+	 *
+	 * @return Whether or not the system should be processed.
+	 */
+	public boolean checkProcessing() {
+		return processing;
+	}
+	
+	/**
+	*
+	* Sets whether or not the system should be processed by the {@link Engine}.
+	*/
    public void setProcessing(boolean processing) {
-       this.processing = processing;
+	   this.processing = processing;
    }
 }

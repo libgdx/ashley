@@ -37,7 +37,7 @@ public class Family {
 	private static ObjectMap<String, Family> families = new ObjectMap<String, Family>();
 	private static int familyIndex = 0;
 	private static final Builder builder = new Builder();
-    private static final Bits zeroBits = new Bits();
+	private static final Bits zeroBits = new Bits();
 	
 	/** Must contain all the components in the set */
 	private final Bits all;
