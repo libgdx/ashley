@@ -16,7 +16,10 @@
 
 package com.badlogic.ashley.utils;
 
+import java.util.Iterator;
+
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Array.ArrayIterable;
 
 
 /**
@@ -25,8 +28,9 @@ import com.badlogic.gdx.utils.Array;
  * 
  * @author David Saltares
  */
-public class ImmutableArray<T> {
+public class ImmutableArray<T> implements Iterable<T> {
 	private final Array<T> array;
+	private ArrayIterable<T> iterable;
 	
 	public ImmutableArray(Array<T> array) {
 		this.array = array;
@@ -82,5 +86,14 @@ public class ImmutableArray<T> {
 
 	public String toString (String separator) {
 		return array.toString(separator); 
+	}
+
+	@Override
+	public Iterator<T> iterator() {
+		if (iterable == null) {
+			iterable = new ArrayIterable<T>(array, false);
+		}
+		
+		return iterable.iterator();
 	}
 }
