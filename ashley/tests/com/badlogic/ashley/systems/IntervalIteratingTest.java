@@ -38,7 +38,7 @@ public class IntervalIteratingTest {
     	private ComponentMapper<IntervalComponentSpy> im;
     	
         public IntervalIteratingSystemSpy() {
-            super(Family.getFor(IntervalComponentSpy.class), deltaTime * 2.0f);
+            super(Family.all(IntervalComponentSpy.class).get(), deltaTime * 2.0f);
             
             im = ComponentMapper.getFor(IntervalComponentSpy.class);
         }
@@ -53,7 +53,7 @@ public class IntervalIteratingTest {
     public void intervalSystem(){
         Engine engine = new Engine();
         IntervalIteratingSystemSpy intervalSystemSpy = new IntervalIteratingSystemSpy();
-        ImmutableArray<Entity> entities = engine.getEntitiesFor(Family.getFor(IntervalComponentSpy.class));
+        ImmutableArray<Entity> entities = engine.getEntitiesFor(Family.all(IntervalComponentSpy.class).get());
         ComponentMapper<IntervalComponentSpy> im = ComponentMapper.getFor(IntervalComponentSpy.class);
         
         engine.addSystem(intervalSystemSpy);
