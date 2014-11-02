@@ -230,8 +230,8 @@ public class Entity {
 		if (!(obj instanceof Entity))
 			return false;
 		Entity other = (Entity) obj;
-        return uuid == other.uuid;
-    }
+		return uuid == other.uuid;
+	}
 
 	/**
 	 * @return true if the entity is scheduled to be removed

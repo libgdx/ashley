@@ -34,25 +34,25 @@ public class FamilyTests {
 	
 	static class TestSystemA extends IteratingSystem {
 
-        public TestSystemA(String name) {
-            super(Family.all(ComponentA.class).get());
-        }
+		public TestSystemA(String name) {
+			super(Family.all(ComponentA.class).get());
+		}
 
-        @Override
-        public void processEntity(Entity e, float d) {
-        }
-    }
+		@Override
+		public void processEntity(Entity e, float d) {
+		}
+	}
 
-    static class TestSystemB extends IteratingSystem {
+	static class TestSystemB extends IteratingSystem {
 
-        public TestSystemB(String name) {
-            super(Family.all(ComponentB.class).get());
-        }
+		public TestSystemB(String name) {
+			super(Family.all(ComponentB.class).get());
+		}
 
-        @Override
-        public void processEntity(Entity e, float d) {
-        }
-    }
+		@Override
+		public void processEntity(Entity e, float d) {
+		}
+	}
 	
 	@Test
 	public void validFamily() {
@@ -234,12 +234,12 @@ public class FamilyTests {
 	@Test
 	public void familyFiltering() {
 		Family family1 = Family.all(ComponentA.class, ComponentB.class)
-                .one(ComponentC.class, ComponentD.class)
-                .exclude(ComponentE.class, ComponentF.class).get();
+				.one(ComponentC.class, ComponentD.class)
+				.exclude(ComponentE.class, ComponentF.class).get();
 		
 		Family family2 = Family.all(ComponentC.class, ComponentD.class)
-                .one(ComponentA.class, ComponentB.class)
-                .exclude(ComponentE.class, ComponentF.class).get();
+				.one(ComponentA.class, ComponentB.class)
+				.exclude(ComponentE.class, ComponentF.class).get();
 		
 		Entity entity = new Entity();
 		
@@ -280,55 +280,55 @@ public class FamilyTests {
 	
 	@Test
 	public void matchWithPooledEngine() {
-        PooledEngine engine = new PooledEngine();
+		PooledEngine engine = new PooledEngine();
 
-        engine.addSystem(new TestSystemA("A"));
-        engine.addSystem(new TestSystemB("B"));
+		engine.addSystem(new TestSystemA("A"));
+		engine.addSystem(new TestSystemB("B"));
 
-        Entity e = engine.createEntity();
-        e.add(new ComponentB());
-        e.add(new ComponentA());
-        engine.addEntity(e);
+		Entity e = engine.createEntity();
+		e.add(new ComponentB());
+		e.add(new ComponentA());
+		engine.addEntity(e);
 
-        Family f = Family.all(ComponentB.class).exclude(ComponentA.class).get();
+		Family f = Family.all(ComponentB.class).exclude(ComponentA.class).get();
 
-        assertFalse(f.matches(e));
+		assertFalse(f.matches(e));
 
-        engine.clearPools();
-    }
-
-	@Test
-    public void matchWithPooledEngineInverse() {
-        PooledEngine engine = new PooledEngine();
-
-        engine.addSystem(new TestSystemA("A"));
-        engine.addSystem(new TestSystemB("B"));
-
-        Entity e = engine.createEntity();
-        e.add(new ComponentB());
-        e.add(new ComponentA());
-        engine.addEntity(e);
-
-
-        Family f = Family.all(ComponentA.class).exclude(ComponentB.class).get();
-
-        assertFalse(f.matches(e));
-        engine.clearPools();
-    }
+		engine.clearPools();
+	}
 
 	@Test
-    public void matchWithoutSystems() {
-        PooledEngine engine = new PooledEngine();
+	public void matchWithPooledEngineInverse() {
+		PooledEngine engine = new PooledEngine();
 
-        Entity e = engine.createEntity();
-        e.add(new ComponentB());
-        e.add(new ComponentA());
-        engine.addEntity(e);
+		engine.addSystem(new TestSystemA("A"));
+		engine.addSystem(new TestSystemB("B"));
 
-        Family f = Family.all(ComponentB.class).exclude(ComponentA.class).get();
+		Entity e = engine.createEntity();
+		e.add(new ComponentB());
+		e.add(new ComponentA());
+		engine.addEntity(e);
 
-        assertFalse(f.matches(e));
-        engine.clearPools();
-    }
+
+		Family f = Family.all(ComponentA.class).exclude(ComponentB.class).get();
+
+		assertFalse(f.matches(e));
+		engine.clearPools();
+	}
+
+	@Test
+	public void matchWithoutSystems() {
+		PooledEngine engine = new PooledEngine();
+
+		Entity e = engine.createEntity();
+		e.add(new ComponentB());
+		e.add(new ComponentA());
+		engine.addEntity(e);
+
+		Family f = Family.all(ComponentB.class).exclude(ComponentA.class).get();
+
+		assertFalse(f.matches(e));
+		engine.clearPools();
+	}
 
 }

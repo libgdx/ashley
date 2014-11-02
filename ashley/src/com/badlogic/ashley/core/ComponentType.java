@@ -51,46 +51,46 @@ public final class ComponentType {
 		return index;
 	}
 	
-    /**
-     * @param componentType The {@link Component} class
-     * @return A ComponentType matching the Component Class
-     */
-    public static ComponentType getFor(Class<? extends Component> componentType) {
-        ComponentType type = componentTypes.get(componentType);
+	/**
+	 * @param componentType The {@link Component} class
+	 * @return A ComponentType matching the Component Class
+	 */
+	public static ComponentType getFor(Class<? extends Component> componentType) {
+		ComponentType type = componentTypes.get(componentType);
 
-        if (type == null) {
-        	type = new ComponentType();
-	    	componentTypes.put(componentType, type);
-        }
+		if (type == null) {
+			type = new ComponentType();
+			componentTypes.put(componentType, type);
+		}
 
-        return type;
-    }
+		return type;
+	}
 
-    /**
-     * Quick helper method. The same could be done via {@link ComponentType.getFor(Class<? extends Component>)}.
-     * @param componentType The {@link Component} class
-     * @return The index for the specified {@link Component} Class
-     */
-    public static int getIndexFor(Class<? extends Component> componentType) {
-    	return getFor(componentType).getIndex();
-    }
-    
-    /**
+	/**
+	 * Quick helper method. The same could be done via {@link ComponentType.getFor(Class<? extends Component>)}.
+	 * @param componentType The {@link Component} class
+	 * @return The index for the specified {@link Component} Class
+	 */
+	public static int getIndexFor(Class<? extends Component> componentType) {
+		return getFor(componentType).getIndex();
+	}
+	
+	/**
 	 * @param componentTypes list of {@link Component} classes
 	 * @return Bits representing the collection of components for quick comparison and matching. See {@link Family#getFor(Bits, Bits, Bits)}.
 	 */
 	public static Bits getBitsFor(Class<? extends Component> ...componentTypes) {
 		Bits bits = new Bits();
 
-        int typesLength = componentTypes.length;
-        for(int i = 0; i < typesLength; i++){
-            bits.set(ComponentType.getIndexFor(componentTypes[i]));
-        }
-        
-        return bits;
+		int typesLength = componentTypes.length;
+		for(int i = 0; i < typesLength; i++){
+			bits.set(ComponentType.getIndexFor(componentTypes[i]));
+		}
+		
+		return bits;
 	}
-    
-    @Override
+	
+	@Override
 	public int hashCode() {
 		return index;
 	}
@@ -104,6 +104,6 @@ public final class ComponentType {
 		if (getClass() != obj.getClass())
 			return false;
 		ComponentType other = (ComponentType) obj;
-        return index == other.index;
-    }
+		return index == other.index;
+	}
 }

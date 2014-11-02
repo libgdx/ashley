@@ -100,26 +100,26 @@ public class PooledEngineTests {
 	public void entityRemovalListenerOrder() {
 		PooledEngine engine = new PooledEngine();
 
-        CombinedSystem combinedSystem = new CombinedSystem(engine);
+		CombinedSystem combinedSystem = new CombinedSystem(engine);
 
-        engine.addSystem(combinedSystem);
-        engine.addEntityListener(Family
-                .getFor(PositionComponent.class), new MyPositionListener());
+		engine.addSystem(combinedSystem);
+		engine.addEntityListener(Family
+				.getFor(PositionComponent.class), new MyPositionListener());
 
 
-        for (int i = 0; i < 10; i++) {
-            Entity entity = engine.createEntity();
-            entity.add(engine.createComponent(PositionComponent.class));
-            engine.addEntity(entity);
-        }
+		for (int i = 0; i < 10; i++) {
+			Entity entity = engine.createEntity();
+			entity.add(engine.createComponent(PositionComponent.class));
+			engine.addEntity(entity);
+		}
 
-        assertEquals(10, combinedSystem.allEntities.size());
+		assertEquals(10, combinedSystem.allEntities.size());
 
-        for (int i = 0; i < 10; i++) {
-        	engine.update(deltaTime);
-        }
-        
-        engine.removeAllEntities();
+		for (int i = 0; i < 10; i++) {
+			engine.update(deltaTime);
+		}
+		
+		engine.removeAllEntities();
 	}
 	
 	@Test
