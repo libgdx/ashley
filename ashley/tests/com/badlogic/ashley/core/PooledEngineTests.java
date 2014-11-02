@@ -68,6 +68,34 @@ public class PooledEngineTests {
 		}
 	}
 	
+	private static class RemoveEntityTwiceSystem extends EntitySystem {
+		private ImmutableArray<Entity> entities;
+		private PooledEngine engine;
+		
+		@Override
+		public void addedToEngine(Engine engine) {
+			entities = engine.getEntitiesFor(Family.getFor(PositionComponent.class));
+			this.engine = (PooledEngine)engine;
+		}
+
+		@Override
+		public void update(float deltaTime) {
+			Entity entity;
+			for(int i=0; i<10; i++) {
+				entity = engine.createEntity();
+				assertEquals(0, entity.flags);
+				entity.flags = 1;
+				entity.add(engine.createComponent(PositionComponent.class));
+				engine.addEntity(entity);
+			}
+			for (int i = 0; i < entities.size(); ++i) {
+				entity = entities.get(i);
+				engine.removeEntity(entity);
+				engine.removeEntity(entity);
+			}
+		}
+	}
+	
 	@Test
 	public void entityRemovalListenerOrder() {
 		PooledEngine engine = new PooledEngine();
@@ -175,6 +203,16 @@ public class PooledEngineTests {
 			entities.add(entity);
 			
 			assertNotEquals(0L, entity.getId());
+		}
+	}
+	
+	@Test
+	public void removeEntityTwice() {
+		PooledEngine engine = new PooledEngine();
+		engine.addSystem(new RemoveEntityTwiceSystem());
+		
+		for(int j=0; j<2; j++) {
+			engine.update(0);
 		}
 	}
 }
