@@ -30,9 +30,7 @@ import com.badlogic.ashley.utils.ImmutableArray;
  * @author Stefan Bachmann
  */
 public abstract class IteratingSystem extends EntitySystem {
-	/** The family describing this systems entities */
 	private Family family;
-	/** The entities used by this system */
 	private ImmutableArray<Entity> entities;
 	
 	/**

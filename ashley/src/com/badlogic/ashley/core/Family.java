@@ -33,19 +33,14 @@ import com.badlogic.gdx.utils.ObjectMap;
  * @author Stefan Bachmann
  */
 public class Family {
-	/** The hashmap holding all families */
 	private static ObjectMap<String, Family> families = new ObjectMap<String, Family>();
 	private static int familyIndex = 0;
 	private static final Builder builder = new Builder();
     private static final Bits zeroBits = new Bits();
-	
-	/** Must contain all the components in the set */
+    
 	private final Bits all;
-	/** Must contain at least one of the components in the set */
 	private final Bits one;
-	/** Cannot contain any of the components in the set */
 	private final Bits exclude;
-	/** Each family has a unique index, used for bitmasking */
 	private final int index;
 	
 	/** Private constructor, use static method Family.getFamilyFor() */

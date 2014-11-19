@@ -46,42 +46,26 @@ import com.badlogic.gdx.utils.SnapshotArray;
 public class Engine {
 	private static SystemComparator comparator = new SystemComparator();
 	
-	/** An unordered array that holds all entities in the Engine */
 	private Array<Entity> entities;
-	/** An unoredered array that keeps track of entities pending operations for safe in-loop removal */
 	private Array<EntityOperation> entityOperations;
-	/** Pool of entity operations */
 	private EntityOperationPool entityOperationPool;
-	/** An unordered list of EntitySystem */
 	private Array<EntitySystem> systems;
-	/** An unordered and immutable list of EntitySystem */
 	private ImmutableArray<EntitySystem> immutableSystems;
-	/** A hashmap that organises EntitySystems by class for easy retrieval */
 	private ObjectMap<Class<?>, EntitySystem> systemsByClass;
-	/** A hashmap that organises all entities into family buckets */
 	private ObjectMap<Family, Array<Entity>> families;
-	/** A hashmap that organises all entities into immutable family buckets */
 	private ObjectMap<Family, ImmutableArray<Entity>> immutableFamilies;
-	/** A collection of entity added/removed event listeners */
 	private SnapshotArray<EntityListener> listeners;
-	/** Entity added/removed event listeners per family */
 	private ObjectMap<Family,SnapshotArray<EntityListener>> familyListeners;
-	
-	/** A listener for the Engine that's called every time a component is added. */
-	private final Listener<Entity> componentAdded;
-	/** A listener for the Engine that's called every time a component is removed. */
-	private final Listener<Entity> componentRemoved;
-	
-	/** Whether or not the engine is ticking */
-	private boolean updating;
-	
-	private boolean notifying;
-	private long nextEntityId = 1;
-	
-	/** Mechanism to delay component addition/removal to avoid affecting system processing */
 	private ComponentOperationPool componentOperationsPool;
  	private Array<ComponentOperation> componentOperations;
  	private ComponentOperationHandler componentOperationHandler;
+	private boolean updating;
+	private boolean notifying;
+	private long nextEntityId = 1;
+	
+	private final Listener<Entity> componentAdded;
+	private final Listener<Entity> componentRemoved;
+	
 	
 	public Engine(){
 		entities = new Array<Entity>(false, 16);

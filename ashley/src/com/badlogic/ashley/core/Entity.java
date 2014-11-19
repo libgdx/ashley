@@ -37,21 +37,15 @@ public class Entity {
 	/** Will dispatch an event when a component is removed. */
 	public final Signal<Entity> componentRemoved;
 	
-	/** Unique entity id */
 	long uuid;
-	/** A collection that holds all the components indexed by their {@link ComponentType} index */
-	private Bag<Component> components;
-	/** An auxiliary array for user access to all the components of an entity */
-	private Array<Component> componentsArray;
-	/** A wrapper around componentsArray so users cannot modify it */
-	private ImmutableArray<Component> immutableComponentsArray;
-	/** A Bits describing all the components in this entity. For quick matching. */
-	private Bits componentBits;
-	/** A Bits describing all the systems this entity was matched with. */
-	private Bits familyBits;
 	boolean scheduledForRemoval;
-	
 	ComponentOperationHandler componentOperationHandler;
+	
+	private Bag<Component> components;
+	private Array<Component> componentsArray;
+	private ImmutableArray<Component> immutableComponentsArray;
+	private Bits componentBits;
+	private Bits familyBits;
 	
 	/**
 	 * Creates an empty Entity.
