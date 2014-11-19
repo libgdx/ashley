@@ -27,12 +27,12 @@ public class CollisionSystem extends EntitySystem {
 	ImmutableArray<Entity> entities;
 
 	@Override
-	public void addedToEngine(Engine engine) {
+	public void addedToEngine (Engine engine) {
 		entities = engine.getEntitiesFor(Family.getFor(RadiusComponent.class));
 	}
-	
+
 	@Override
-	public void update(float deltaTime) {
-		
+	public void update (float deltaTime) {
+
 	}
 }

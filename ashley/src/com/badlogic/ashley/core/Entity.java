@@ -24,9 +24,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Bits;
 
 /**
- * Simple containers of {@link Component}s that give them "data". The component's data
- * is then processed by {@link EntitySystem}s.
- * 
+ * Simple containers of {@link Component}s that give them "data". The component's data is then processed by {@link EntitySystem}s.
  * @author Stefan Bachmann
  */
 public class Entity {
@@ -36,201 +34,179 @@ public class Entity {
 	public final Signal<Entity> componentAdded;
 	/** Will dispatch an event when a component is removed. */
 	public final Signal<Entity> componentRemoved;
-	
+
 	long uuid;
 	boolean scheduledForRemoval;
 	ComponentOperationHandler componentOperationHandler;
-	
+
 	private Bag<Component> components;
 	private Array<Component> componentsArray;
 	private ImmutableArray<Component> immutableComponentsArray;
 	private Bits componentBits;
 	private Bits familyBits;
-	
-	/**
-	 * Creates an empty Entity.
-	 */
-	public Entity(){
+
+	/** Creates an empty Entity. */
+	public Entity () {
 		components = new Bag<Component>();
 		componentsArray = new Array<Component>(false, 16);
 		immutableComponentsArray = new ImmutableArray<Component>(componentsArray);
 		componentBits = new Bits();
 		familyBits = new Bits();
 		flags = 0;
-		
+
 		componentAdded = new Signal<Entity>();
 		componentRemoved = new Signal<Entity>();
 	}
-	
-	/**
-	 * @return The Entity's unique id.
-	 */
-	public long getId(){
+
+	/** @return The Entity's unique id. */
+	public long getId () {
 		return uuid;
 	}
-	
+
 	/**
 	 * Adds a {@link Component} to this Entity. If a {@link Component} of the same type already exists, it'll be replaced.
 	 * @return The Entity for easy chaining
 	 */
-	public Entity add(Component component){
+	public Entity add (Component component) {
 		if (componentOperationHandler != null) {
 			componentOperationHandler.add(this, component);
-		}
-		else {
+		} else {
 			addInternal(component);
 		}
 		return this;
 	}
-	
+
 	/**
-	 * Removes the {@link Component} of the specified type. Since there is only ever one component of one type, we
-	 * don't need an instance reference.
+	 * Removes the {@link Component} of the specified type. Since there is only ever one component of one type, we don't need an
+	 * instance reference.
 	 * @return The removed {@link Component}, or null if the Entity did no contain such a component.
 	 */
-	public Component remove(Class<? extends Component> componentClass){
+	public Component remove (Class<? extends Component> componentClass) {
 		ComponentType componentType = ComponentType.getFor(componentClass);
 		int componentTypeIndex = componentType.getIndex();
 		Component removeComponent = components.get(componentTypeIndex);
-		
+
 		if (componentOperationHandler != null) {
 			componentOperationHandler.remove(this, componentClass);
-		}
-		else {
+		} else {
 			removeInternal(componentClass);
 		}
-		
+
 		return removeComponent;
 	}
-	
-	/**
-	 * Removes all the {@link Component}'s from the Entity.
-	 */
-	public void removeAll() {
-		while(componentsArray.size > 0) {
+
+	/** Removes all the {@link Component}'s from the Entity. */
+	public void removeAll () {
+		while (componentsArray.size > 0) {
 			removeInternal(componentsArray.get(0).getClass());
 		}
 	}
-	
-	/**
-	 * @return immutable collection with all the Entity {@link Component}s.
-	 */
-	public ImmutableArray<Component> getComponents() {
+
+	/** @return immutable collection with all the Entity {@link Component}s. */
+	public ImmutableArray<Component> getComponents () {
 		return immutableComponentsArray;
 	}
-	
+
 	/**
-	 * Retrieve a component from this {@link Entity} by class.
-	 * 
-	 * <em>Note:</em> the preferred way of retrieving {@link Component}s is using {@link ComponentMapper}s. This method
-	 * is provided for convenience; using a ComponentMapper provides O(1) access to components while this method
-	 * provides only O(logn).
-	 * 
+	 * Retrieve a component from this {@link Entity} by class. <em>Note:</em> the preferred way of retrieving {@link Component}s is
+	 * using {@link ComponentMapper}s. This method is provided for convenience; using a ComponentMapper provides O(1) access to
+	 * components while this method provides only O(logn).
 	 * @param componentClass the class of the component to be retrieved.
-	 * @return the instance of the specified {@link Component} attached to this {@link Entity}, or null if no such {@link Component} exists.
+	 * @return the instance of the specified {@link Component} attached to this {@link Entity}, or null if no such
+	 *         {@link Component} exists.
 	 */
-	public <T extends Component> T getComponent(Class<T> componentClass){
+	public <T extends Component> T getComponent (Class<T> componentClass) {
 		return getComponent(ComponentType.getFor(componentClass));
 	}
-	
+
 	/**
 	 * Internal use.
-	 * 
 	 * @return The {@link Component} object for the specified class, null if the Entity does not have any components for that class.
 	 */
 	@SuppressWarnings("unchecked")
-	<T extends Component> T getComponent(ComponentType componentType) {
+	<T extends Component> T getComponent (ComponentType componentType) {
 		int componentTypeIndex = componentType.getIndex();
-		
+
 		if (componentTypeIndex < components.getCapacity()) {
 			return (T)components.get(componentType.getIndex());
-		}
-		else {
+		} else {
 			return null;
 		}
 	}
 
 	/**
 	 * Internal use.
-	 * 
 	 * @return Whether or not the Entity has a {@link Component} for the specified class.
 	 */
-	boolean hasComponent(ComponentType componentType) {
+	boolean hasComponent (ComponentType componentType) {
 		return componentBits.get(componentType.getIndex());
 	}
-	
+
 	/**
 	 * Internal use.
-	 * 
 	 * @return This Entity's component bits, describing all the {@link Component}s it contains.
 	 */
-	Bits getComponentBits(){
+	Bits getComponentBits () {
 		return componentBits;
 	}
-	
-	/**
-	 * @return This Entity's {@link Family} bits, describing all the {@link EntitySystem}s it currently is being processed by.
-	 */
-	Bits getFamilyBits(){
+
+	/** @return This Entity's {@link Family} bits, describing all the {@link EntitySystem}s it currently is being processed by. */
+	Bits getFamilyBits () {
 		return familyBits;
 	}
-	
-	Entity addInternal(Component component){
+
+	Entity addInternal (Component component) {
 		Class<? extends Component> componentClass = component.getClass();
-		
+
 		for (int i = 0; i < componentsArray.size; ++i) {
 			if (componentsArray.get(i).getClass() == componentClass) {
 				componentsArray.removeIndex(i);
 				break;
 			}
 		}
-		
-		int componentTypeIndex = ComponentType.getIndexFor(component.getClass()); 
-		
+
+		int componentTypeIndex = ComponentType.getIndexFor(component.getClass());
+
 		components.set(componentTypeIndex, component);
 		componentsArray.add(component);
-		
+
 		componentBits.set(componentTypeIndex);
-		
+
 		componentAdded.dispatch(this);
 		return this;
 	}
 
-	Component removeInternal(Class<? extends Component> componentClass){
+	Component removeInternal (Class<? extends Component> componentClass) {
 		ComponentType componentType = ComponentType.getFor(componentClass);
 		int componentTypeIndex = componentType.getIndex();
 		Component removeComponent = components.get(componentTypeIndex);
-		
-		if(removeComponent != null){
+
+		if (removeComponent != null) {
 			components.set(componentTypeIndex, null);
 			componentsArray.removeValue(removeComponent, true);
 			componentBits.clear(componentTypeIndex);
-			
+
 			componentRemoved.dispatch(this);
 		}
-		
+
 		return removeComponent;
 	}
-	
+
 	@Override
-	public int hashCode() {
+	public int hashCode () {
 		return (int)(uuid ^ (uuid >>> 32));
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!(obj instanceof Entity))
-			return false;
-		Entity other = (Entity) obj;
-        return uuid == other.uuid;
-    }
+	public boolean equals (Object obj) {
+		if (this == obj) return true;
+		if (!(obj instanceof Entity)) return false;
+		Entity other = (Entity)obj;
+		return uuid == other.uuid;
+	}
 
-	/**
-	 * @return true if the entity is scheduled to be removed
-	 */
-	public boolean isScheduledForRemoval() {
+	/** @return true if the entity is scheduled to be removed */
+	public boolean isScheduledForRemoval () {
 		return scheduledForRemoval;
 	}
 }

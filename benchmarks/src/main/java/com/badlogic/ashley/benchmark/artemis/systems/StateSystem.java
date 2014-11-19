@@ -25,18 +25,18 @@ import com.badlogic.ashley.benchmark.artemis.components.StateComponent;
 
 public class StateSystem extends EntityProcessingSystem {
 	@Mapper ComponentMapper<StateComponent> sm;
-	
-	public StateSystem() {
+
+	public StateSystem () {
 		super(Aspect.getAspectForAll(StateComponent.class));
 	}
 
 	@Override
-	protected void initialize() {
+	protected void initialize () {
 		sm = world.getMapper(StateComponent.class);
 	};
 
 	@Override
-	protected void process(Entity entity) {
+	protected void process (Entity entity) {
 		sm.get(entity).time += world.getDelta();
 	}
 }

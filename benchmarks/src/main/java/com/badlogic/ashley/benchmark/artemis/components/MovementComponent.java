@@ -16,7 +16,6 @@
 
 package com.badlogic.ashley.benchmark.artemis.components;
 
-
 import com.artemis.Component;
 import com.badlogic.gdx.math.Vector2;
 
