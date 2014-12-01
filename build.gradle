@@ -24,13 +24,13 @@ ext {
 }
 
 /** needed to disable Java 8 doclint which throws errors **/
-if (JavaVersion.current().isJava8Compatible()) {
+//if (JavaVersion.current().isJava8Compatible()) {
     allprojects {
 	tasks.withType(Javadoc) {
 	    options.addStringOption('Xdoclint:none', '-quiet')
 	}
     }
-}
+//}
 
 project(":ashley") {
     apply from : '../publish.gradle'

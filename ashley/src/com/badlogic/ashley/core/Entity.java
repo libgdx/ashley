@@ -233,7 +233,7 @@ public class Entity {
 	
 	@Override
 	public int hashCode() {
-		return ((Long) uuid).hashCode();
+	    return (int)(uuid ^ (uuid >>> 32));
 	}
 
 	@Override

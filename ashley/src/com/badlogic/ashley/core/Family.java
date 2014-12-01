@@ -89,7 +89,6 @@ public class Family {
 	 * @return The family matching the specified {@link Component} classes as a descriptor. Each set of component types will
 	 * always return the same Family instance.
 	 */
-	@SafeVarargs
 	public static Family getFor(Class<? extends Component> ...componentTypes){
 		return getFor(ComponentType.getBitsFor(componentTypes), new Bits(), new Bits());
 	}
