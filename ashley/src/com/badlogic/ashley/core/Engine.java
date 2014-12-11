@@ -16,8 +16,6 @@
 
 package com.badlogic.ashley.core;
 
-import java.util.Comparator;
-
 import com.badlogic.ashley.signals.Listener;
 import com.badlogic.ashley.signals.Signal;
 import com.badlogic.ashley.utils.ImmutableArray;
@@ -26,6 +24,9 @@ import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.ObjectMap.Entry;
 import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.SnapshotArray;
+
+import java.util.Comparator;
+import java.util.Iterator;
 
 /**
  * The heart of the Entity framework. It is responsible for keeping track of {@link Entity} and managing {@link EntitySystem}
@@ -48,6 +49,7 @@ public class Engine {
 	private Array<EntitySystem> systems;
 	private ImmutableArray<EntitySystem> immutableSystems;
 	private ObjectMap<Class<?>, EntitySystem> systemsByClass;
+	private ObjectMap<SystemCategory, Array<EntitySystem>> systemsByCategory;
 	private ObjectMap<Family, Array<Entity>> families;
 	private ObjectMap<Family, ImmutableArray<Entity>> immutableFamilies;
 	private SnapshotArray<EntityListener> listeners;
@@ -69,6 +71,7 @@ public class Engine {
 		systems = new Array<EntitySystem>(false, 16);
 		immutableSystems = new ImmutableArray<EntitySystem>(systems);
 		systemsByClass = new ObjectMap<Class<?>, EntitySystem>();
+		systemsByCategory = new ObjectMap<SystemCategory, Array<EntitySystem>>();
 		families = new ObjectMap<Family, Array<Entity>>();
 		immutableFamilies = new ObjectMap<Family, ImmutableArray<Entity>>();
 		listeners = new SnapshotArray<EntityListener>(false, 16);
@@ -147,11 +150,39 @@ public class Engine {
 		}
 	}
 
+	/** Adds the {@link EntitySystem} to the Engine based on the {@link SystemCategory}. */
+	public void addSystemByCategory(SystemCategory systemCategory, EntitySystem entitySystem) {
+		if(!systemsByCategory.containsKey(systemCategory)) {
+			systemsByCategory.put(systemCategory, new Array<EntitySystem>());
+		}
+
+		Array<EntitySystem> entitySystems = systemsByCategory.get(systemCategory);
+		entitySystems.add(entitySystem);
+
+		addSystem(entitySystem);
+	}
+
 	/** Removes the {@link EntitySystem} from this Engine. */
-	public void removeSystem (EntitySystem system) {
+	public void removeSystem(EntitySystem system) {
 		if (systems.removeValue(system, true)) {
 			systemsByClass.remove(system.getClass());
+			removeSystemFromCategories(system);
 			system.removedFromEngine(this);
+		}
+	}
+
+	/** Removes the {@link EntitySystem} from any categories. */
+	private void removeSystemFromCategories(EntitySystem entitySystem) {
+		ObjectMap.Values<Array<EntitySystem>> values = systemsByCategory.values();
+
+		Iterator<Array<EntitySystem>> iterator = values.iterator();
+
+		while(iterator.hasNext()) {
+			Array<EntitySystem> entitySystems = iterator.next();
+
+			if(entitySystems.contains(entitySystem, true)) {
+				entitySystems.removeValue(entitySystem, true);
+			}
 		}
 	}
 
@@ -164,6 +195,11 @@ public class Engine {
 	/** @return immutable array of all entity systems managed by the {@link Engine}. */
 	public ImmutableArray<EntitySystem> getSystems () {
 		return immutableSystems;
+	}
+
+	/** Returns all {@link EntitySystem} in the given {@link SystemCategory} */
+	public Array<EntitySystem> getSystemsByCategory (SystemCategory systemCategory) {
+		return systemsByCategory.get(systemCategory);
 	}
 
 	/** Returns immutable collection of entities for the specified {@link Family}. Will return the same instance every time. */
@@ -211,15 +247,38 @@ public class Engine {
 		updating = true;
 		for (int i = 0; i < systems.size; i++) {
 			EntitySystem system = systems.get(i);
-			if (system.checkProcessing()) {
-				system.update(deltaTime);
-			}
 
-			processComponentOperations();
-			processPendingEntityOperations();
+			updateSystem(system, deltaTime);
 		}
 
 		updating = false;
+	}
+
+	/**
+	 * Updates all the systems in the given category.
+	 * @param systemCategory The category of the systems to update.
+	 * @param deltaTime The time passed since the last frame.
+	 */
+	public void update (SystemCategory systemCategory, float deltaTime) {
+		updating = true;
+
+		Array<EntitySystem> systems = getSystemsByCategory(systemCategory);
+
+		for(EntitySystem entitySystem : systems) {
+			updateSystem(entitySystem, deltaTime);
+		}
+
+		updating = false;
+	}
+
+	/** Updates a single {@link EntitySystem} */
+	private void updateSystem(EntitySystem system, float deltaTime) {
+		if (system.checkProcessing()) {
+			system.update(deltaTime);
+		}
+
+		processComponentOperations();
+		processPendingEntityOperations();
 	}
 
 	private void updateFamilyMembership (Entity entity) {
