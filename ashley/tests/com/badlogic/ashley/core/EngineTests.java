@@ -233,9 +233,7 @@ public class EngineTests {
 		assertEquals(2, engine.getSystems().size());
 
 		engine.removeSystem(systemA);
-		assertEquals(0, engine.getSystemsByCategory(TestSystemCategory.TEST_CATEGORY_1).size);
 		engine.removeSystem(systemB);
-		assertEquals(0, engine.getSystemsByCategory(TestSystemCategory.TEST_CATEGORY_2).size);
 
 		assertEquals(0, engine.getSystemsByCategory(TestSystemCategory.TEST_CATEGORY_1).size);
 		assertEquals(0, engine.getSystemsByCategory(TestSystemCategory.TEST_CATEGORY_2).size);
