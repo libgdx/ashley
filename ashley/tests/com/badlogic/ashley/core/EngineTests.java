@@ -16,13 +16,11 @@
 
 package com.badlogic.ashley.core;
 
-import static org.junit.Assert.*;
-
-import org.junit.Test;
-
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.Bits;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 @SuppressWarnings("unchecked")
 public class EngineTests {
@@ -201,6 +199,47 @@ public class EngineTests {
 		assertNull(engine.getSystem(EntitySystemMockB.class));
 		assertEquals(1, systemA.removedCalls);
 		assertEquals(1, systemB.removedCalls);
+	}
+
+	private static enum TestSystemCategory implements SystemCategory {
+		TEST_CATEGORY_1,
+		TEST_CATEGORY_2,
+		TEST_CATEGORY_3
+	}
+
+	@Test
+	public void addAndRemoveSystemByCategory() {
+		Engine engine = new Engine();
+		EntitySystemMockA systemA = new EntitySystemMockA();
+		EntitySystemMockB systemB = new EntitySystemMockB();
+
+		assertNull(engine.getSystemsByCategory(TestSystemCategory.TEST_CATEGORY_1));
+		assertNull(engine.getSystemsByCategory(TestSystemCategory.TEST_CATEGORY_2));
+
+		engine.addSystemByCategory(TestSystemCategory.TEST_CATEGORY_1, systemA);
+		engine.addSystemByCategory(TestSystemCategory.TEST_CATEGORY_2, systemB);
+
+		assertNotNull(engine.getSystem(EntitySystemMockA.class));
+		assertNotNull(engine.getSystem(EntitySystemMockB.class));
+		assertNotNull(engine.getSystemsByCategory(TestSystemCategory.TEST_CATEGORY_1));
+		assertNotNull(engine.getSystemsByCategory(TestSystemCategory.TEST_CATEGORY_2));
+
+		assertNull(engine.getSystemsByCategory(TestSystemCategory.TEST_CATEGORY_3));
+
+		assertEquals(1, engine.getSystemsByCategory(TestSystemCategory.TEST_CATEGORY_1).size);
+		assertEquals(1, engine.getSystemsByCategory(TestSystemCategory.TEST_CATEGORY_2).size);
+		assertEquals(1, systemA.addedCalls);
+		assertEquals(1, systemB.addedCalls);
+		assertEquals(2, engine.getSystems().size());
+
+		engine.removeSystem(systemA);
+		engine.removeSystem(systemB);
+
+		assertEquals(0, engine.getSystemsByCategory(TestSystemCategory.TEST_CATEGORY_1).size);
+		assertEquals(0, engine.getSystemsByCategory(TestSystemCategory.TEST_CATEGORY_2).size);
+		assertEquals(1, systemA.removedCalls);
+		assertEquals(1, systemB.removedCalls);
+		assertEquals(0, engine.getSystems().size());
 	}
 
 	@Test
