@@ -158,14 +158,17 @@ public class Entity {
 	Entity addInternal (Component component) {
 		Class<? extends Component> componentClass = component.getClass();
 
-		for (int i = 0; i < componentsArray.size; ++i) {
-			if (componentsArray.get(i).getClass() == componentClass) {
-				componentsArray.removeIndex(i);
-				break;
-			}
+		Component oldComponent = getComponent(componentClass);
+		
+		if (component == oldComponent) {
+			return this;
 		}
-
-		int componentTypeIndex = ComponentType.getIndexFor(component.getClass());
+		
+		if (oldComponent != null) {
+			removeInternal(componentClass);
+		}
+		
+		int componentTypeIndex = ComponentType.getIndexFor(componentClass);
 
 		components.set(componentTypeIndex, component);
 		componentsArray.add(component);
