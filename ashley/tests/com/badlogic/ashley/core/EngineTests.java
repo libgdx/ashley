@@ -592,4 +592,31 @@ public class EngineTests {
 		
 		assertEquals(null, engine.getById(entityId));
 	}
+	
+	@Test
+	public void getEntities () {
+		int numEntities = 10;
+		
+		Engine engine = new Engine();
+		
+		Array<Entity> entities = new Array<Entity>();
+		
+		for (int i = 0; i < numEntities; ++i) {
+			Entity entity = new Entity();
+			entities.add(entity);
+			engine.addEntity(entity);
+		}
+		
+		ImmutableArray<Entity> engineEntities = engine.getEntities();
+		
+		assertEquals(entities.size, engineEntities.size());
+		
+		for (int i = 0; i < numEntities; ++i) {
+			assertEquals(entities.get(i), engineEntities.get(i));
+		}
+		
+		engine.removeAllEntities();
+		
+		assertEquals(0, engineEntities.size());
+	}
 }

@@ -44,6 +44,7 @@ public class Engine {
 	private static SystemComparator comparator = new SystemComparator();
 
 	private Array<Entity> entities;
+	private ImmutableArray<Entity> immutableEntities;
 	private LongMap<Entity> entitiesById;
 	private Array<EntityOperation> entityOperations;
 	private EntityOperationPool entityOperationPool;
@@ -66,6 +67,7 @@ public class Engine {
 
 	public Engine () {
 		entities = new Array<Entity>(false, 16);
+		immutableEntities = new ImmutableArray<Entity>(entities);
 		entitiesById = new LongMap<Entity>();
 		entityOperations = new Array<EntityOperation>(false, 16);
 		entityOperationPool = new EntityOperationPool();
@@ -136,6 +138,10 @@ public class Engine {
 	
 	public Entity getById(long id) {
 		return entitiesById.get(id);
+	}
+	
+	public ImmutableArray<Entity> getEntities() {
+		return immutableEntities;
 	}
 
 	/** Adds the {@link EntitySystem} to this Engine. */
