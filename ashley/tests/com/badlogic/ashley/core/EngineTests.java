@@ -586,11 +586,11 @@ public class EngineTests {
 		
 		assertNotEquals(0L, entityId);
 		
-		assertEquals(entity, engine.getById(entityId));
+		assertEquals(entity, engine.getEntity(entityId));
 		
 		engine.removeEntity(entity);
 		
-		assertEquals(null, engine.getById(entityId));
+		assertEquals(null, engine.getEntity(entityId));
 	}
 	
 	@Test

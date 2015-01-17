@@ -22,6 +22,7 @@ import com.badlogic.ashley.signals.Listener;
 import com.badlogic.ashley.signals.Signal;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.LongMap;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.ObjectMap.Entry;
 import com.badlogic.gdx.utils.Pool;
@@ -46,33 +47,26 @@ import com.badlogic.gdx.utils.SnapshotArray;
 public class Engine {
 	private static SystemComparator comparator = new SystemComparator();
 	
-	/** An unordered array that holds all entities in the Engine */
 	private Array<Entity> entities;
-	/** An unoredered array that keeps track of entities pending operations for safe in-loop removal */
+	private ImmutableArray<Entity> immutableEntities;
+	private LongMap<Entity> entitiesById;
+	
 	private Array<EntityOperation> entityOperations;
-	/** Pool of entity operations */
 	private EntityOperationPool entityOperationPool;
-	/** An unordered list of EntitySystem */
+	
 	private Array<EntitySystem> systems;
-	/** An unordered and immutable list of EntitySystem */
 	private ImmutableArray<EntitySystem> immutableSystems;
-	/** A hashmap that organises EntitySystems by class for easy retrieval */
 	private ObjectMap<Class<?>, EntitySystem> systemsByClass;
-	/** A hashmap that organises all entities into family buckets */
+	
 	private ObjectMap<Family, Array<Entity>> families;
-	/** A hashmap that organises all entities into immutable family buckets */
 	private ObjectMap<Family, ImmutableArray<Entity>> immutableFamilies;
-	/** A collection of entity added/removed event listeners */
+	
 	private SnapshotArray<EntityListener> listeners;
-	/** Entity added/removed event listeners per family */
 	private ObjectMap<Family,SnapshotArray<EntityListener>> familyListeners;
 	
-	/** A listener for the Engine that's called every time a component is added. */
 	private final Listener<Entity> componentAdded;
-	/** A listener for the Engine that's called every time a component is removed. */
 	private final Listener<Entity> componentRemoved;
 	
-	/** Whether or not the engine is ticking */
 	private boolean updating;
 	
 	private boolean notifying;
@@ -85,6 +79,8 @@ public class Engine {
 	
 	public Engine(){
 		entities = new Array<Entity>(false, 16);
+		immutableEntities = new ImmutableArray<Entity>(entities);
+		entitiesById = new LongMap<Entity>();
 		entityOperations = new Array<EntityOperation>(false, 16);
 		entityOperationPool = new EntityOperationPool();
 		systems = new Array<EntitySystem>(false, 16);
@@ -162,6 +158,14 @@ public class Engine {
 				removeEntity(entities.first());
 			}
 		}
+	}
+	
+	public Entity getEntity(long id) {
+		return entitiesById.get(id);
+	}
+	
+	public ImmutableArray<Entity> getEntities() {
+		return immutableEntities;
 	}
 	
 	/**
@@ -270,7 +274,7 @@ public class Engine {
 	private void updateFamilyMembership(Entity entity){
 		for (Entry<Family, Array<Entity>> entry : families.entries()) {
 			Family family = entry.key;
-			Array<Entity> entities = entry.value;
+			Array<Entity> familyEntities = entry.value;
 			int familyIndex = family.getIndex();
 			
 			
@@ -278,13 +282,13 @@ public class Engine {
 			boolean matches = family.matches(entity);
 			
 			if (!belongsToFamily && matches) {
-				entities.add(entity);
+				familyEntities.add(entity);
 				entity.getFamilyBits().set(familyIndex);
 				
 				notifyFamilyListenersAdd(family, entity);
 			}
 			else if (belongsToFamily && !matches) {
-				entities.removeValue(entity, true);
+				familyEntities.removeValue(entity, true);
 				entity.getFamilyBits().clear(familyIndex);
 				
 				notifyFamilyListenersRemove(family, entity);
@@ -295,14 +299,15 @@ public class Engine {
 	protected void removeEntityInternal(Entity entity) {
 		entity.scheduledForRemoval = false;
 		entities.removeValue(entity, true);
+		entitiesById.remove(entity.getId());
 		
 		if(!entity.getFamilyBits().isEmpty()){
 			for (Entry<Family, Array<Entity>> entry : families.entries()) {
 				Family family = entry.key;
-				Array<Entity> entities = entry.value;
+				Array<Entity> familyEntities = entry.value;
 				
 				if(family.matches(entity)){
-					entities.removeValue(entity, true);
+					familyEntities.removeValue(entity, true);
 					entity.getFamilyBits().clear(family.getIndex());
 					notifyFamilyListenersRemove(family, entity);
 				}
@@ -325,6 +330,7 @@ public class Engine {
 	
 	protected void addEntityInternal(Entity entity) {
 		entities.add(entity);
+		entitiesById.put(entity.getId(), entity);
 		
 		updateFamilyMembership(entity);
 		
@@ -376,14 +382,14 @@ public class Engine {
 		ImmutableArray<Entity> immutableEntities = immutableFamilies.get(family);
 		
 		if (immutableEntities == null) {
-			Array<Entity> entities = new Array<Entity>(false, 16);
-			immutableEntities = new ImmutableArray<Entity>(entities);
-			families.put(family, entities);
+			Array<Entity> familyEntities = new Array<Entity>(false, 16);
+			immutableEntities = new ImmutableArray<Entity>(familyEntities);
+			families.put(family, familyEntities);
 			immutableFamilies.put(family, immutableEntities);
 			
 			for(Entity e : this.entities){
 				if(family.matches(e)) {
-					entities.add(e);
+					familyEntities.add(e);
 					e.getFamilyBits().set(family.getIndex());
 				}
 			}
