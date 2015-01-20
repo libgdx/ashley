@@ -67,7 +67,7 @@ public class Engine {
 	private final Listener<Entity> componentAdded;
 	private final Listener<Entity> componentRemoved;
 	
-	private boolean updating;
+	protected boolean updating;
 	
 	private boolean notifying;
 	private long nextEntityId = 1;
@@ -398,7 +398,7 @@ public class Engine {
 		return immutableEntities;
 	}
 	
-	private void processPendingEntityOperations() {
+	protected void processPendingEntityOperations() {
 		while (entityOperations.size > 0) {
 			EntityOperation operation = entityOperations.removeIndex(entityOperations.size - 1);
 			
@@ -418,7 +418,7 @@ public class Engine {
 		entityOperations.clear();
 	}
 	
-	private void processComponentOperations() {
+	protected void processComponentOperations() {
 		for (int i = 0; i < componentOperations.size; ++i) {
 			ComponentOperation operation = componentOperations.get(i);
 			
