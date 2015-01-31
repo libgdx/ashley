@@ -476,7 +476,7 @@ public class Engine {
 		}
 	}
 	
-	private static class ComponentOperation {
+	private static class ComponentOperation implements Pool.Poolable {
 		public enum Type {
 			Add,
 			Remove,
@@ -500,6 +500,12 @@ public class Engine {
 			this.component = null;
 			this.componentClass = componentClass;
 		}
+
+		@Override
+		public void reset() {
+			entity = null;
+			component = null;
+		}
 	}
 	
 	private static class ComponentOperationPool extends Pool<ComponentOperation> {
@@ -516,7 +522,7 @@ public class Engine {
 		}
 	}
 	
-	private static class EntityOperation {
+	private static class EntityOperation implements Pool.Poolable {
 		public enum Type {
 			Add,
 			Remove,
@@ -525,6 +531,11 @@ public class Engine {
 		
 		public Type type;
 		public Entity entity;
+
+		@Override
+		public void reset() {
+			entity = null;
+		}
 	}
 	
 	private static class EntityOperationPool extends Pool<EntityOperation> {
