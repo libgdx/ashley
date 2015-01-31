@@ -500,6 +500,12 @@ public class Engine {
 			this.component = null;
 			this.componentClass = componentClass;
 		}
+
+		@Override
+		public void reset() {
+			entity = null;
+			component = null;
+		}
 	}
 	
 	private static class ComponentOperationPool extends Pool<ComponentOperation> {
@@ -525,6 +531,11 @@ public class Engine {
 		
 		public Type type;
 		public Entity entity;
+
+		@Override
+		public void reset() {
+			entity = null;
+		}
 	}
 	
 	private static class EntityOperationPool extends Pool<EntityOperation> {
