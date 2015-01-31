@@ -86,7 +86,7 @@ public class SortedIteratingSystemTest {
 		private ComponentMapper<IndexComponent> im;
 
 		public IteratingComponentRemovalSystem () {
-			super(Family.getFor(SpyComponent.class, IndexComponent.class), comparator);
+			super(Family.all(SpyComponent.class, IndexComponent.class).get(), comparator);
 
 			sm = ComponentMapper.getFor(SpyComponent.class);
 			im = ComponentMapper.getFor(IndexComponent.class);
@@ -112,7 +112,7 @@ public class SortedIteratingSystemTest {
 		private ComponentMapper<IndexComponent> im;
 
 		public IteratingRemovalSystem () {
-			super(Family.getFor(SpyComponent.class, IndexComponent.class), comparator);
+			super(Family.all(SpyComponent.class, IndexComponent.class).get(), comparator);
 
 			sm = ComponentMapper.getFor(SpyComponent.class);
 			im = ComponentMapper.getFor(IndexComponent.class);
@@ -141,7 +141,7 @@ public class SortedIteratingSystemTest {
 	public void shouldIterateEntitiesWithCorrectFamily () {
 		final Engine engine = new Engine();
 
-		final Family family = Family.getFor(OrderComponent.class, ComponentB.class);
+		final Family family = Family.all(OrderComponent.class, ComponentB.class).get();
 		final SortedIteratingSystemMock system = new SortedIteratingSystemMock(family);
 		final Entity e = new Entity();
 
@@ -171,7 +171,7 @@ public class SortedIteratingSystemTest {
 	@Test
 	public void entityRemovalWhileIterating () {
 		Engine engine = new Engine();
-		ImmutableArray<Entity> entities = engine.getEntitiesFor(Family.getFor(SpyComponent.class, IndexComponent.class));
+		ImmutableArray<Entity> entities = engine.getEntitiesFor(Family.all(SpyComponent.class, IndexComponent.class).get());
 		ComponentMapper<SpyComponent> sm = ComponentMapper.getFor(SpyComponent.class);
 
 		engine.addSystem(new IteratingRemovalSystem());
@@ -205,7 +205,7 @@ public class SortedIteratingSystemTest {
 	@Test
 	public void componentRemovalWhileIterating () {
 		Engine engine = new Engine();
-		ImmutableArray<Entity> entities = engine.getEntitiesFor(Family.getFor(SpyComponent.class, IndexComponent.class));
+		ImmutableArray<Entity> entities = engine.getEntitiesFor(Family.all(SpyComponent.class, IndexComponent.class).get());
 		ComponentMapper<SpyComponent> sm = ComponentMapper.getFor(SpyComponent.class);
 
 		engine.addSystem(new IteratingComponentRemovalSystem());
@@ -246,7 +246,7 @@ public class SortedIteratingSystemTest {
 	public void entityOrder () {
 		Engine engine = new Engine();
 
-		final Family family = Family.getFor(OrderComponent.class);
+		final Family family = Family.all(OrderComponent.class).get();
 		final SortedIteratingSystemMock system = new SortedIteratingSystemMock(family);
 		engine.addSystem(system);
 

@@ -46,7 +46,7 @@ public class PooledEngineTests {
 
 		@Override
 		public void addedToEngine (Engine engine) {
-			allEntities = engine.getEntitiesFor(Family.getFor(PositionComponent.class));
+			allEntities = engine.getEntitiesFor(Family.all(PositionComponent.class).get());
 		}
 
 		@Override
@@ -73,7 +73,7 @@ public class PooledEngineTests {
 
 		@Override
 		public void addedToEngine (Engine engine) {
-			entities = engine.getEntitiesFor(Family.getFor(PositionComponent.class));
+			entities = engine.getEntitiesFor(Family.all(PositionComponent.class).get());
 			this.engine = (PooledEngine)engine;
 		}
 
@@ -102,7 +102,7 @@ public class PooledEngineTests {
 		CombinedSystem combinedSystem = new CombinedSystem(engine);
 
 		engine.addSystem(combinedSystem);
-		engine.addEntityListener(Family.getFor(PositionComponent.class), new MyPositionListener());
+		engine.addEntityListener(Family.all(PositionComponent.class).get(), new MyPositionListener());
 
 		for (int i = 0; i < 10; i++) {
 			Entity entity = engine.createEntity();
