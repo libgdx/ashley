@@ -66,7 +66,7 @@ public class BasicTest {
 
 		@Override
 		public void addedToEngine (Engine engine) {
-			entities = engine.getEntitiesFor(Family.getFor(PositionComponent.class));
+			entities = engine.getEntitiesFor(Family.all(PositionComponent.class).get());
 			log("PositionSystem added to engine.");
 		}
 
@@ -85,7 +85,7 @@ public class BasicTest {
 
 		@Override
 		public void addedToEngine (Engine engine) {
-			entities = engine.getEntitiesFor(Family.getFor(PositionComponent.class, MovementComponent.class));
+			entities = engine.getEntitiesFor(Family.all(PositionComponent.class, MovementComponent.class).get());
 			log("MovementSystem added to engine.");
 		}
 
