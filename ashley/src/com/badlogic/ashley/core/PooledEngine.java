@@ -133,8 +133,8 @@ public class PooledEngine extends Engine {
 
 		public ComponentPools (int initialSize, int maxSize) {
 			this.pools = new ObjectMap<Class<?>, ReflectionPool>();
-			this.initialSize = 0;
-			this.maxSize = 0;
+			this.initialSize = initialSize;
+			this.maxSize = maxSize;
 		}
 
 		public <T> T obtain (Class<T> type) {
