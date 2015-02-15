@@ -9,6 +9,7 @@ import com.badlogic.ashley.signals.Listener;
 import com.badlogic.ashley.signals.Signal;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Pool.Poolable;
 
 public class PooledEngineTests {
 	private float deltaTime = 0.16f;
@@ -92,6 +93,16 @@ public class PooledEngineTests {
 				engine.removeEntity(entity);
 				engine.removeEntity(entity);
 			}
+		}
+	}
+	
+	private static class PooledComponentSpy extends Component implements Poolable {
+		public boolean recycled = false;
+		
+		
+		@Override
+		public void reset () {
+			recycled = true;
 		}
 	}
 
@@ -210,5 +221,36 @@ public class PooledEngineTests {
 		for (int j = 0; j < 2; j++) {
 			engine.update(0);
 		}
+	}
+	
+	@Test
+	public void recycleComponent() {
+		int maxEntities = 10;
+		int maxComponents = 10;
+		PooledEngine engine = new PooledEngine(maxEntities, maxEntities, maxComponents, maxComponents);
+		
+		for (int i = 0; i < maxComponents; ++i) {
+			Entity e = engine.createEntity();
+			PooledComponentSpy c = engine.createComponent(PooledComponentSpy.class);
+			
+			assertEquals(false, c.recycled);
+			
+			e.add(c);
+			
+			engine.addEntity(e);
+		}
+		
+		engine.removeAllEntities();
+		
+		for (int i = 0; i < maxComponents; ++i) {
+			Entity e = engine.createEntity();
+			PooledComponentSpy c = engine.createComponent(PooledComponentSpy.class);
+			
+			assertEquals(true, c.recycled);
+			
+			e.add(c);
+		}
+		
+		engine.removeAllEntities();
 	}
 }
