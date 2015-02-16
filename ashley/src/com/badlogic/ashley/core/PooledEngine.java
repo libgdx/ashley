@@ -87,12 +87,6 @@ public class PooledEngine extends Engine {
 		super.removeEntityInternal(entity);
 
 		if (entity instanceof PooledEntity) {
-			for (Component c : entity.getComponents()) {
-				if (c instanceof Poolable) {
-					componentPools.free(c);
-				}
-			}
-			
 			entityPool.free((PooledEntity)entity);
 		}
 	}
