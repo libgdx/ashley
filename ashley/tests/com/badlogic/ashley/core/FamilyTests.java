@@ -352,4 +352,15 @@ public class FamilyTests {
 		assertSame(family, Family.all(ComponentA.class, ComponentB.class, ComponentC.class).get());
 	}
 
+	@Test
+	public void matchWithComplexBuilding () {
+		Family family = Family.all(ComponentB.class).one(ComponentA.class).exclude(ComponentC.class).get();
+		Entity entity = new Entity().add(new ComponentA());
+		assertFalse(family.matches(entity));
+		entity.add(new ComponentB());
+		assertTrue(family.matches(entity));
+		entity.add(new ComponentC());
+		assertFalse(family.matches(entity));
+	}
+
 }
