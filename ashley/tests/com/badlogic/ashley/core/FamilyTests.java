@@ -18,6 +18,7 @@ package com.badlogic.ashley.core;
 
 import static org.junit.Assert.*;
 
+import com.badlogic.ashley.core.Family.Builder;
 import org.junit.Test;
 
 import com.badlogic.ashley.systems.IteratingSystem;
@@ -333,5 +334,22 @@ public class FamilyTests {
 		assertFalse(f.matches(e));
 		engine.clearPools();
 	}
+
+    @Test
+    public void matchWithPartialBuilding () {
+        Component[] components = {new ComponentA(), new ComponentB(), new ComponentC()};
+        Entity entity = new Entity();
+        for (Component component : components) {
+            entity.add(component);
+        }
+
+        Builder builder = new Builder();
+        for (Component component : components) {
+            builder.all(component.getClass());
+        }
+        Family family = builder.get();
+        assertTrue(family.matches(entity));
+        assertSame(family, Family.all(ComponentA.class, ComponentB.class, ComponentC.class).get());
+    }
 
 }
