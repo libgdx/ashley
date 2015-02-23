@@ -336,7 +336,7 @@ public class FamilyTests {
 	}
 
 	@Test
-	public void matchWithPartialBuilding() {
+	public void matchWithPartialBuilding () {
 		Component[] components = {new ComponentA(), new ComponentB(), new ComponentC()};
 		Entity entity = new Entity();
 		for (Component component : components) {
