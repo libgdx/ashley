@@ -120,9 +120,9 @@ public class Family {
 		 */
 		@SafeVarargs
 		public Builder all (Class<? extends Component>... componentTypes) {
-            Bits bits = ComponentType.getBitsFor(componentTypes);
-            bits.or(all);
-            all = bits;
+			Bits bits = ComponentType.getBitsFor(componentTypes);
+			bits.or(all);
+			all = bits;
 			return this;
 		}
 
@@ -132,8 +132,8 @@ public class Family {
 		 */
 		@SafeVarargs
 		public Builder one (Class<? extends Component>... componentTypes) {
-            Bits bits = ComponentType.getBitsFor(componentTypes);
-            bits.or(one);
+			Bits bits = ComponentType.getBitsFor(componentTypes);
+			bits.or(one);
 			one = bits;
 			return this;
 		}
@@ -144,8 +144,8 @@ public class Family {
 		 */
 		@SafeVarargs
 		public Builder exclude (Class<? extends Component>... componentTypes) {
-            Bits bits = ComponentType.getBitsFor(componentTypes);
-            bits.or(exclude);
+			Bits bits = ComponentType.getBitsFor(componentTypes);
+			bits.or(exclude);
 			exclude = bits;
 			return this;
 		}

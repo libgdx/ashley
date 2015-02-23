@@ -335,21 +335,21 @@ public class FamilyTests {
 		engine.clearPools();
 	}
 
-    @Test
-    public void matchWithPartialBuilding () {
-        Component[] components = {new ComponentA(), new ComponentB(), new ComponentC()};
-        Entity entity = new Entity();
-        for (Component component : components) {
-            entity.add(component);
-        }
+	@Test
+	public void matchWithPartialBuilding() {
+		Component[] components = {new ComponentA(), new ComponentB(), new ComponentC()};
+		Entity entity = new Entity();
+		for (Component component : components) {
+			entity.add(component);
+		}
 
-        Builder builder = new Builder();
-        for (Component component : components) {
-            builder.all(component.getClass());
-        }
-        Family family = builder.get();
-        assertTrue(family.matches(entity));
-        assertSame(family, Family.all(ComponentA.class, ComponentB.class, ComponentC.class).get());
-    }
+		Builder builder = new Builder();
+		for (Component component : components) {
+			builder.all(component.getClass());
+		}
+		Family family = builder.get();
+		assertTrue(family.matches(entity));
+		assertSame(family, Family.all(ComponentA.class, ComponentB.class, ComponentC.class).get());
+	}
 
 }
