@@ -76,7 +76,7 @@ public class Family {
 	 * @return A Builder singleton instance to get a family
 	 */
 	@SafeVarargs
-	public static Builder all (Class<? extends Component>... componentTypes) {
+	public static final Builder all (Class<? extends Component>... componentTypes) {
 		return builder.reset().all(componentTypes);
 	}
 
@@ -85,7 +85,7 @@ public class Family {
 	 * @return A Builder singleton instance to get a family
 	 */
 	@SafeVarargs
-	public static Builder one (Class<? extends Component>... componentTypes) {
+	public static final Builder one (Class<? extends Component>... componentTypes) {
 		return builder.reset().one(componentTypes);
 	}
 
@@ -94,7 +94,7 @@ public class Family {
 	 * @return A Builder singleton instance to get a family
 	 */
 	@SafeVarargs
-	public static Builder exclude (Class<? extends Component>... componentTypes) {
+	public static final Builder exclude (Class<? extends Component>... componentTypes) {
 		return builder.reset().exclude(componentTypes);
 	}
 
@@ -119,7 +119,7 @@ public class Family {
 		 * @return A Builder singleton instance to get a family
 		 */
 		@SafeVarargs
-		public Builder all (Class<? extends Component>... componentTypes) {
+		public final Builder all (Class<? extends Component>... componentTypes) {
 			all = ComponentType.getBitsFor(componentTypes);
 			return this;
 		}
@@ -129,7 +129,7 @@ public class Family {
 		 * @return A Builder singleton instance to get a family
 		 */
 		@SafeVarargs
-		public Builder one (Class<? extends Component>... componentTypes) {
+		public final Builder one (Class<? extends Component>... componentTypes) {
 			one = ComponentType.getBitsFor(componentTypes);
 			return this;
 		}
@@ -139,7 +139,7 @@ public class Family {
 		 * @return A Builder singleton instance to get a family
 		 */
 		@SafeVarargs
-		public Builder exclude (Class<? extends Component>... componentTypes) {
+		public final Builder exclude (Class<? extends Component>... componentTypes) {
 			exclude = ComponentType.getBitsFor(componentTypes);
 			return this;
 		}
