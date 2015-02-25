@@ -28,19 +28,19 @@ public class MovementSystem extends IteratingSystem {
 	private Vector2 tmp = new Vector2();
 	private ComponentMapper<PositionComponent> pm = ComponentMapper.getFor(PositionComponent.class);
 	private ComponentMapper<MovementComponent> mm = ComponentMapper.getFor(MovementComponent.class);
-	
-	public MovementSystem() {
+
+	public MovementSystem () {
 		super(Family.getFor(PositionComponent.class, MovementComponent.class));
 	}
 
 	@Override
-	public void processEntity(Entity entity, float deltaTime) {
+	public void processEntity (Entity entity, float deltaTime) {
 		PositionComponent pos = pm.get(entity);
 		MovementComponent mov = mm.get(entity);
-		
+
 		tmp.set(mov.accel).scl(deltaTime);
 		mov.velocity.add(tmp);
-		
+
 		tmp.set(mov.velocity).scl(deltaTime);
 		pos.pos.add(tmp.x, tmp.y, 0.0f);
 	}

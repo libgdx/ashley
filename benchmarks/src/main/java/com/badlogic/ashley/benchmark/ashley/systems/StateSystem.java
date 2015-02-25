@@ -22,16 +22,15 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 
-public class StateSystem extends IteratingSystem {	
+public class StateSystem extends IteratingSystem {
 	private ComponentMapper<StateComponent> sm = ComponentMapper.getFor(StateComponent.class);
-	
-	
-	public StateSystem() {
+
+	public StateSystem () {
 		super(Family.getFor(StateComponent.class));
 	}
 
 	@Override
-	public void processEntity(Entity entity, float deltaTime) {
+	public void processEntity (Entity entity, float deltaTime) {
 		sm.get(entity).time += deltaTime;
 	}
 }

@@ -26,15 +26,15 @@ import com.badlogic.ashley.utils.ImmutableArray;
 public class RemovalSystem extends EntitySystem {
 	private Engine engine;
 	private ImmutableArray<Entity> entities;
-	
+
 	@Override
-	public void addedToEngine(Engine engine) {
+	public void addedToEngine (Engine engine) {
 		this.engine = engine;
 		entities = engine.getEntitiesFor(Family.getFor(RemovalComponent.class));
 	}
 
 	@Override
-	public void update(float deltaTime) {
+	public void update (float deltaTime) {
 		while (entities.size() > 0) {
 			engine.removeEntity(entities.get(0));
 		}

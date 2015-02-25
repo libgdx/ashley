@@ -23,57 +23,54 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableArray;
 
 /**
- * A simple {@link EntitySystem} that processes a {@link Family} of entities
- * not once per frame, but after a given interval. Entity processing logic should
- * be placed in {@link IntervalIteratingSystem#processEntity(Entity)}.
- * 
+ * A simple {@link EntitySystem} that processes a {@link Family} of entities not once per frame, but after a given interval.
+ * Entity processing logic should be placed in {@link IntervalIteratingSystem#processEntity(Entity)}.
  * @author David Saltares
  */
 public abstract class IntervalIteratingSystem extends IntervalSystem {
 	private Family family;
 	private ImmutableArray<Entity> entities;
-	
+
 	/**
 	 * @param family represents the collection of family the system should process
 	 * @param interval time in seconds between calls to {@link IntervalIteratingSystem#updateInterval()}.
 	 */
-	public IntervalIteratingSystem(Family family, float interval){
+	public IntervalIteratingSystem (Family family, float interval) {
 		this(family, interval, 0);
 	}
-	
+
 	/**
 	 * @param family represents the collection of family the system should process
 	 * @param interval time in seconds between calls to {@link IntervalIteratingSystem#updateInterval()}.
 	 * @param priority
 	 */
-	public IntervalIteratingSystem(Family family, float interval, int priority){
+	public IntervalIteratingSystem (Family family, float interval, int priority) {
 		super(interval, priority);
 		this.family = family;
 	}
-	
+
 	@Override
-	public void addedToEngine(Engine engine) {
+	public void addedToEngine (Engine engine) {
 		entities = engine.getEntitiesFor(family);
 	}
-	
+
 	@Override
-	protected void updateInterval() {
+	protected void updateInterval () {
 		for (int i = 0; i < entities.size(); ++i) {
 			processEntity(entities.get(i));
 		}
 	}
-	
+
 	/**
 	 * @return set of entities processed by the system
 	 */
-	public ImmutableArray<Entity> getEntities() {
+	public ImmutableArray<Entity> getEntities () {
 		return entities;
 	}
-	
+
 	/**
 	 * The user should place the entity processing logic here.
-	 * 
 	 * @param entity
 	 */
-	protected abstract void processEntity(Entity entity);
+	protected abstract void processEntity (Entity entity);
 }

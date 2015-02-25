@@ -232,8 +232,8 @@ public class Entity {
 	}
 	
 	@Override
-	public int hashCode() {
-	    return (int)(uuid ^ (uuid >>> 32));
+	public int hashCode () {
+		return (int)(uuid ^ (uuid >>> 32));
 	}
 
 	@Override

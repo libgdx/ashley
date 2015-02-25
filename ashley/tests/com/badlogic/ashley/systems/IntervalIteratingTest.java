@@ -33,43 +33,43 @@ public class IntervalIteratingTest {
 	private static class IntervalComponentSpy extends Component {
 		public int numUpdates = 0;
 	}
-	
-    private static class IntervalIteratingSystemSpy extends IntervalIteratingSystem {
-    	private ComponentMapper<IntervalComponentSpy> im;
-    	
-        public IntervalIteratingSystemSpy() {
-            super(Family.getFor(IntervalComponentSpy.class), deltaTime * 2.0f);
-            
-            im = ComponentMapper.getFor(IntervalComponentSpy.class);
-        }
+
+	private static class IntervalIteratingSystemSpy extends IntervalIteratingSystem {
+		private ComponentMapper<IntervalComponentSpy> im;
+
+		public IntervalIteratingSystemSpy () {
+			super(Family.all(IntervalComponentSpy.class).get(), deltaTime * 2.0f);
+
+			im = ComponentMapper.getFor(IntervalComponentSpy.class);
+		}
 
 		@Override
-		protected void processEntity(Entity entity) {
+		protected void processEntity (Entity entity) {
 			im.get(entity).numUpdates++;
 		}
-    }
-    
-    @Test
-    public void intervalSystem(){
-        Engine engine = new Engine();
-        IntervalIteratingSystemSpy intervalSystemSpy = new IntervalIteratingSystemSpy();
-        ImmutableArray<Entity> entities = engine.getEntitiesFor(Family.getFor(IntervalComponentSpy.class));
-        ComponentMapper<IntervalComponentSpy> im = ComponentMapper.getFor(IntervalComponentSpy.class);
-        
-        engine.addSystem(intervalSystemSpy);
-        
-        for (int i = 0; i < 10; ++i) {
-        	Entity entity = new Entity();
-        	entity.add(new IntervalComponentSpy());
-        	engine.addEntity(entity);
-        }
+	}
 
-        for (int i = 1; i <= 10; ++i) {
-        	engine.update(deltaTime);
-        	
-        	for (int j = 0; j < entities.size(); ++j) {
-            	assertEquals(i / 2, im.get(entities.get(j)).numUpdates);
-            }
-        }
-    }
+	@Test
+	public void intervalSystem () {
+		Engine engine = new Engine();
+		IntervalIteratingSystemSpy intervalSystemSpy = new IntervalIteratingSystemSpy();
+		ImmutableArray<Entity> entities = engine.getEntitiesFor(Family.all(IntervalComponentSpy.class).get());
+		ComponentMapper<IntervalComponentSpy> im = ComponentMapper.getFor(IntervalComponentSpy.class);
+
+		engine.addSystem(intervalSystemSpy);
+
+		for (int i = 0; i < 10; ++i) {
+			Entity entity = new Entity();
+			entity.add(new IntervalComponentSpy());
+			engine.addEntity(entity);
+		}
+
+		for (int i = 1; i <= 10; ++i) {
+			engine.update(deltaTime);
+
+			for (int j = 0; j < entities.size(); ++j) {
+				assertEquals(i / 2, im.get(entities.get(j)).numUpdates);
+			}
+		}
+	}
 }
