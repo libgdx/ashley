@@ -76,7 +76,6 @@ public class Family {
 	 * @param componentTypes entities will have to contain all of the specified components.
 	 * @return A Builder singleton instance to get a family
 	 */
-	@SafeVarargs
 	public static final Builder all (Class<? extends Component>... componentTypes) {
 		return builder.all(componentTypes);
 	}
@@ -93,7 +92,6 @@ public class Family {
 	 * @param componentTypes entities cannot contain any of the specified components.
 	 * @return A Builder singleton instance to get a family
 	 */
-	@SafeVarargs
 	public static final Builder exclude (Class<? extends Component>... componentTypes) {
 		return builder.exclude(componentTypes);
 	}
@@ -118,7 +116,6 @@ public class Family {
 		 * @param componentTypes entities will have to contain all of the specified components.
 		 * @return A Builder singleton instance to get a family
 		 */
-		@SafeVarargs
 		public final Builder all (Class<? extends Component>... componentTypes) {
 			Bits bits = ComponentType.getBitsFor(componentTypes);
 			bits.or(all);
@@ -130,7 +127,6 @@ public class Family {
 		 * @param componentTypes entities will have to contain at least one of the specified components.
 		 * @return A Builder singleton instance to get a family
 		 */
-		@SafeVarargs
 		public final Builder one (Class<? extends Component>... componentTypes) {
 			Bits bits = ComponentType.getBitsFor(componentTypes);
 			bits.or(one);
@@ -142,7 +138,6 @@ public class Family {
 		 * @param componentTypes entities cannot contain any of the specified components.
 		 * @return A Builder singleton instance to get a family
 		 */
-		@SafeVarargs
 		public final Builder exclude (Class<? extends Component>... componentTypes) {
 			Bits bits = ComponentType.getBitsFor(componentTypes);
 			bits.or(exclude);

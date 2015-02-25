@@ -64,15 +64,10 @@ public class Engine {
 	private SnapshotArray<EntityListener> listeners;
 	private ObjectMap<Family,SnapshotArray<EntityListener>> familyListeners;
 	
-<<<<<<< HEAD
 	/** A listener for the Engine that's called every time a component is added. */
 	private final Listener<EntityEvent> componentAdded;
 	/** A listener for the Engine that's called every time a component is removed. */
 	private final Listener<EntityEvent> componentRemoved;
-=======
-	private final Listener<Entity> componentAdded;
-	private final Listener<Entity> componentRemoved;
->>>>>>> refs/remotes/upstream/master
 	
 	private boolean updating;
 	

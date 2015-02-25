@@ -16,7 +16,12 @@
 
 package com.badlogic.ashley.core;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -30,200 +35,188 @@ import com.badlogic.gdx.utils.Bits;
 
 public class EntityTests {
 
-<<<<<<< HEAD
-	private static class ComponentA extends Component {}
-	
-	private static class ComponentB extends Component {}
-	
-	private static class EntityListenerMock implements Listener<EntityEvent> {
-=======
-	private static class ComponentA extends Component {
+    private static class ComponentA extends Component {
+    }
+
+    private static class ComponentB extends Component {
+    }
+
+    private static class EntityListenerMock implements Listener<EntityEvent> {
+
+	public int counter = 0;
+
+	@Override
+	public void receive(Signal<EntityEvent> signal, EntityEvent event) {
+	    ++counter;
+
+	    assertNotNull(signal);
+	    assertNotNull(event);
+	}
+    }
+
+    private ComponentMapper<ComponentA> am = ComponentMapper.getFor(ComponentA.class);
+    private ComponentMapper<ComponentB> bm = ComponentMapper.getFor(ComponentB.class);
+
+    @Test
+    public void uniqueIndex() {
+	int numEntities = 10000;
+	Array<Entity> entities = new Array<Entity>();
+	Set<Long> ids = new HashSet<Long>();
+	Engine engine = new Engine();
+
+	for (int i = 0; i < numEntities; ++i) {
+	    Entity entity = new Entity();
+	    engine.addEntity(entity);
+	    assertFalse(ids.contains(entity.getId()));
+	    ids.add(entity.getId());
+	    entities.add(entity);
+	}
+    }
+
+    @Test
+    public void noComponents() {
+	Entity entity = new Entity();
+
+	assertEquals(0, entity.getComponents().size());
+	assertTrue(entity.getComponentBits().isEmpty());
+	assertNull(am.get(entity));
+	assertNull(bm.get(entity));
+	assertFalse(am.has(entity));
+	assertFalse(bm.has(entity));
+    }
+
+    @Test
+    public void addAndRemoveComponent() {
+	Entity entity = new Entity();
+
+	entity.add(new ComponentA());
+
+	assertEquals(1, entity.getComponents().size());
+
+	Bits componentBits = entity.getComponentBits();
+	int componentAIndex = ComponentType.getIndexFor(ComponentA.class);
+
+	for (int i = 0; i < componentBits.length(); ++i) {
+	    assertEquals(i == componentAIndex, componentBits.get(i));
 	}
 
-	private static class ComponentB extends Component {
+	assertNotNull(am.get(entity));
+	assertNull(bm.get(entity));
+	assertTrue(am.has(entity));
+	assertFalse(bm.has(entity));
+
+	entity.remove(ComponentA.class);
+
+	assertEquals(0, entity.getComponents().size());
+
+	for (int i = 0; i < componentBits.length(); ++i) {
+	    assertFalse(componentBits.get(i));
 	}
 
-	private static class EntityListenerMock implements Listener<Entity> {
->>>>>>> refs/remotes/upstream/master
+	assertNull(am.get(entity));
+	assertNull(bm.get(entity));
+	assertFalse(am.has(entity));
+	assertFalse(bm.has(entity));
+    }
 
-		public int counter = 0;
+    @Test
+    public void addAndRemoveAllComponents() {
+	Entity entity = new Entity();
 
-		@Override
-<<<<<<< HEAD
-		public void receive(Signal<EntityEvent> signal, EntityEvent event) {
-=======
-		public void receive (Signal<Entity> signal, Entity object) {
->>>>>>> refs/remotes/upstream/master
-			++counter;
+	entity.add(new ComponentA());
+	entity.add(new ComponentB());
 
-			assertNotNull(signal);
-			assertNotNull(event);
-		}
+	assertEquals(2, entity.getComponents().size());
+
+	Bits componentBits = entity.getComponentBits();
+	int componentAIndex = ComponentType.getIndexFor(ComponentA.class);
+	int componentBIndex = ComponentType.getIndexFor(ComponentB.class);
+
+	for (int i = 0; i < componentBits.length(); ++i) {
+	    assertEquals(i == componentAIndex || i == componentBIndex, componentBits.get(i));
 	}
 
-	private ComponentMapper<ComponentA> am = ComponentMapper.getFor(ComponentA.class);
-	private ComponentMapper<ComponentB> bm = ComponentMapper.getFor(ComponentB.class);
+	assertNotNull(am.get(entity));
+	assertNotNull(bm.get(entity));
+	assertTrue(am.has(entity));
+	assertTrue(bm.has(entity));
 
-	@Test
-	public void uniqueIndex () {
-		int numEntities = 10000;
-		Array<Entity> entities = new Array<Entity>();
-		Set<Long> ids = new HashSet<Long>();
-		Engine engine = new Engine();
+	entity.removeAll();
 
-		for (int i = 0; i < numEntities; ++i) {
-			Entity entity = new Entity();
-			engine.addEntity(entity);
-			assertFalse(ids.contains(entity.getId()));
-			ids.add(entity.getId());
-			entities.add(entity);
-		}
+	assertEquals(0, entity.getComponents().size());
+
+	for (int i = 0; i < componentBits.length(); ++i) {
+	    assertFalse(componentBits.get(i));
 	}
 
-	@Test
-	public void noComponents () {
-		Entity entity = new Entity();
+	assertNull(am.get(entity));
+	assertNull(bm.get(entity));
+	assertFalse(am.has(entity));
+	assertFalse(bm.has(entity));
+    }
 
-		assertEquals(0, entity.getComponents().size());
-		assertTrue(entity.getComponentBits().isEmpty());
-		assertNull(am.get(entity));
-		assertNull(bm.get(entity));
-		assertFalse(am.has(entity));
-		assertFalse(bm.has(entity));
-	}
+    @Test
+    public void addSameComponent() {
+	Entity entity = new Entity();
 
-	@Test
-	public void addAndRemoveComponent () {
-		Entity entity = new Entity();
+	ComponentA a1 = new ComponentA();
+	ComponentA a2 = new ComponentA();
 
-		entity.add(new ComponentA());
+	entity.add(a1);
+	entity.add(a2);
 
-		assertEquals(1, entity.getComponents().size());
+	assertEquals(1, entity.getComponents().size());
+	assertTrue(am.has(entity));
+	assertNotEquals(a1, am.get(entity));
+	assertEquals(a2, am.get(entity));
+    }
 
-		Bits componentBits = entity.getComponentBits();
-		int componentAIndex = ComponentType.getIndexFor(ComponentA.class);
+    @Test
+    public void componentListener() {
+	EntityListenerMock addedListener = new EntityListenerMock();
+	EntityListenerMock removedListener = new EntityListenerMock();
 
-		for (int i = 0; i < componentBits.length(); ++i) {
-			assertEquals(i == componentAIndex, componentBits.get(i));
-		}
+	Entity entity = new Entity();
+	entity.componentAdded.add(addedListener);
+	entity.componentRemoved.add(removedListener);
 
-		assertNotNull(am.get(entity));
-		assertNull(bm.get(entity));
-		assertTrue(am.has(entity));
-		assertFalse(bm.has(entity));
+	assertEquals(0, addedListener.counter);
+	assertEquals(0, removedListener.counter);
 
-		entity.remove(ComponentA.class);
+	entity.add(new ComponentA());
 
-		assertEquals(0, entity.getComponents().size());
+	assertEquals(1, addedListener.counter);
+	assertEquals(0, removedListener.counter);
 
-		for (int i = 0; i < componentBits.length(); ++i) {
-			assertFalse(componentBits.get(i));
-		}
+	entity.remove(ComponentA.class);
 
-		assertNull(am.get(entity));
-		assertNull(bm.get(entity));
-		assertFalse(am.has(entity));
-		assertFalse(bm.has(entity));
-	}
+	assertEquals(1, addedListener.counter);
+	assertEquals(1, removedListener.counter);
 
-	@Test
-	public void addAndRemoveAllComponents () {
-		Entity entity = new Entity();
+	entity.add(new ComponentB());
 
-		entity.add(new ComponentA());
-		entity.add(new ComponentB());
+	assertEquals(2, addedListener.counter);
 
-		assertEquals(2, entity.getComponents().size());
+	entity.remove(ComponentB.class);
 
-		Bits componentBits = entity.getComponentBits();
-		int componentAIndex = ComponentType.getIndexFor(ComponentA.class);
-		int componentBIndex = ComponentType.getIndexFor(ComponentB.class);
+	assertEquals(2, removedListener.counter);
+    }
 
-		for (int i = 0; i < componentBits.length(); ++i) {
-			assertEquals(i == componentAIndex || i == componentBIndex, componentBits.get(i));
-		}
+    @Test
+    public void getComponentByClass() {
+	ComponentA compA = new ComponentA();
+	ComponentB compB = new ComponentB();
 
-		assertNotNull(am.get(entity));
-		assertNotNull(bm.get(entity));
-		assertTrue(am.has(entity));
-		assertTrue(bm.has(entity));
+	Entity entity = new Entity();
+	entity.add(compA).add(compB);
 
-		entity.removeAll();
+	ComponentA retA = entity.getComponent(ComponentA.class);
+	ComponentB retB = entity.getComponent(ComponentB.class);
 
-		assertEquals(0, entity.getComponents().size());
+	assertNotNull(retA);
+	assertNotNull(retB);
 
-		for (int i = 0; i < componentBits.length(); ++i) {
-			assertFalse(componentBits.get(i));
-		}
-
-		assertNull(am.get(entity));
-		assertNull(bm.get(entity));
-		assertFalse(am.has(entity));
-		assertFalse(bm.has(entity));
-	}
-
-	@Test
-	public void addSameComponent () {
-		Entity entity = new Entity();
-
-		ComponentA a1 = new ComponentA();
-		ComponentA a2 = new ComponentA();
-
-		entity.add(a1);
-		entity.add(a2);
-
-		assertEquals(1, entity.getComponents().size());
-		assertTrue(am.has(entity));
-		assertNotEquals(a1, am.get(entity));
-		assertEquals(a2, am.get(entity));
-	}
-
-	@Test
-	public void componentListener () {
-		EntityListenerMock addedListener = new EntityListenerMock();
-		EntityListenerMock removedListener = new EntityListenerMock();
-
-		Entity entity = new Entity();
-		entity.componentAdded.add(addedListener);
-		entity.componentRemoved.add(removedListener);
-
-		assertEquals(0, addedListener.counter);
-		assertEquals(0, removedListener.counter);
-
-		entity.add(new ComponentA());
-
-		assertEquals(1, addedListener.counter);
-		assertEquals(0, removedListener.counter);
-
-		entity.remove(ComponentA.class);
-
-		assertEquals(1, addedListener.counter);
-		assertEquals(1, removedListener.counter);
-
-		entity.add(new ComponentB());
-
-		assertEquals(2, addedListener.counter);
-
-		entity.remove(ComponentB.class);
-
-		assertEquals(2, removedListener.counter);
-	}
-
-	@Test
-	public void getComponentByClass () {
-		ComponentA compA = new ComponentA();
-		ComponentB compB = new ComponentB();
-
-		Entity entity = new Entity();
-		entity.add(compA).add(compB);
-
-		ComponentA retA = entity.getComponent(ComponentA.class);
-		ComponentB retB = entity.getComponent(ComponentB.class);
-
-		assertNotNull(retA);
-		assertNotNull(retB);
-
-		assertTrue(retA == compA);
-		assertTrue(retB == compB);
-	}
+	assertTrue(retA == compA);
+	assertTrue(retB == compB);
+    }
 }
