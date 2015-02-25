@@ -29,8 +29,9 @@ import com.badlogic.gdx.utils.ObjectMap;
 public class Family {
 	private static ObjectMap<String, Family> families = new ObjectMap<String, Family>();
 	private static int familyIndex = 0;
-	private static final Builder builder = new Builder();
+	// zero bits should goes first for builder
 	private static final Bits zeroBits = new Bits();
+	private static final Builder builder = new Builder();
 
 	private final Bits all;
 	private final Bits one;
@@ -77,7 +78,7 @@ public class Family {
 	 */
 	@SafeVarargs
 	public static final Builder all (Class<? extends Component>... componentTypes) {
-		return builder.reset().all(componentTypes);
+		return builder.all(componentTypes);
 	}
 
 	/**
@@ -86,7 +87,7 @@ public class Family {
 	 */
 	@SafeVarargs
 	public static final Builder one (Class<? extends Component>... componentTypes) {
-		return builder.reset().one(componentTypes);
+		return builder.one(componentTypes);
 	}
 
 	/**
@@ -95,7 +96,7 @@ public class Family {
 	 */
 	@SafeVarargs
 	public static final Builder exclude (Class<? extends Component>... componentTypes) {
-		return builder.reset().exclude(componentTypes);
+		return builder.exclude(componentTypes);
 	}
 
 	public static class Builder {
@@ -120,7 +121,9 @@ public class Family {
 		 */
 		@SafeVarargs
 		public final Builder all (Class<? extends Component>... componentTypes) {
-			all = ComponentType.getBitsFor(componentTypes);
+			Bits bits = ComponentType.getBitsFor(componentTypes);
+			bits.or(all);
+			all = bits;
 			return this;
 		}
 
@@ -130,7 +133,9 @@ public class Family {
 		 */
 		@SafeVarargs
 		public final Builder one (Class<? extends Component>... componentTypes) {
-			one = ComponentType.getBitsFor(componentTypes);
+			Bits bits = ComponentType.getBitsFor(componentTypes);
+			bits.or(one);
+			one = bits;
 			return this;
 		}
 
@@ -140,7 +145,9 @@ public class Family {
 		 */
 		@SafeVarargs
 		public final Builder exclude (Class<? extends Component>... componentTypes) {
-			exclude = ComponentType.getBitsFor(componentTypes);
+			Bits bits = ComponentType.getBitsFor(componentTypes);
+			bits.or(exclude);
+			exclude = bits;
 			return this;
 		}
 
@@ -152,6 +159,7 @@ public class Family {
 				family = new Family(all, one, exclude);
 				families.put(hash, family);
 			}
+			reset();
 			return family;
 		}
 	}
