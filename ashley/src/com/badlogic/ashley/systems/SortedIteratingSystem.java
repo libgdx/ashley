@@ -107,6 +107,7 @@ public abstract class SortedIteratingSystem extends EntitySystem implements Enti
 	@Override
 	public void entityRemoved (Entity entity) {
 		sortedEntities.removeValue(entity, true);
+		shouldSort = true;
 	}
 
 	@Override
