@@ -111,7 +111,7 @@ public class Engine {
 	 */
 	public void addEntity(Entity entity){
 		entity.uuid = obtainEntityId();
-		if (notifying) {
+		if (updating || notifying) {
 			EntityOperation operation = entityOperationPool.obtain();
 			operation.entity = entity;
 			operation.type = EntityOperation.Type.Add;
