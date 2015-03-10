@@ -84,6 +84,9 @@ public class PooledEngine extends Engine {
 
 	@Override
 	protected void removeEntityInternal (Entity entity) {
+		// Check if entity is able to be removed (id == 0 means either entity is not used by engine, or already removed/in pool)
+		if (entity.getId() == 0) return;
+
 		super.removeEntityInternal(entity);
 
 		if (entity instanceof PooledEntity) {
