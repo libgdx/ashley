@@ -127,6 +127,13 @@ public abstract class SortedIteratingSystem extends EntitySystem implements Enti
 	}
 
 	/**
+	 * @return the Family used when the system was created
+	 */
+	public Family getFamily () {
+		return family;
+	}
+
+	/**
 	 * This method is called on every entity on every update call of the EntitySystem. Override this to implement your system's
 	 * specific processing.
 	 * @param entity The current Entity being processed
