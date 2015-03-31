@@ -68,6 +68,13 @@ public abstract class IntervalIteratingSystem extends IntervalSystem {
 		return entities;
 	}
 
+    /**
+	 * @return the Family used when the system was created
+	 */
+	public Family getFamily () {
+		return family;
+	}
+
 	/**
 	 * The user should place the entity processing logic here.
 	 * @param entity
