@@ -33,3 +33,4 @@ local.properties
 .loadpath
 .externalToolBuilders/
 *.launch
+/gradle.bat
