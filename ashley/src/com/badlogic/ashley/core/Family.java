@@ -180,27 +180,27 @@ public class Family {
 	}
 
 	private static String getFamilyHash (Bits all, Bits one, Bits exclude) {
-		StringBuilder builder = new StringBuilder();
+		StringBuilder stringBuilder = new StringBuilder();
 		if (!all.isEmpty()) {
-			builder.append("{all:").append(getBitsString(all)).append("}");
+			stringBuilder.append("{all:").append(getBitsString(all)).append("}");
 		}
 		if (!one.isEmpty()) {
-			builder.append("{one:").append(getBitsString(one)).append("}");
+			stringBuilder.append("{one:").append(getBitsString(one)).append("}");
 		}
 		if (!exclude.isEmpty()) {
-			builder.append("{exclude:").append(getBitsString(exclude)).append("}");
+			stringBuilder.append("{exclude:").append(getBitsString(exclude)).append("}");
 		}
-		return builder.toString();
+		return stringBuilder.toString();
 	}
 
 	private static String getBitsString (Bits bits) {
-		StringBuilder builder = new StringBuilder();
+		StringBuilder stringBuilder = new StringBuilder();
 
 		int numBits = bits.length();
 		for (int i = 0; i < numBits; ++i) {
-			builder.append(bits.get(i) ? "1" : "0");
+			stringBuilder.append(bits.get(i) ? "1" : "0");
 		}
 
-		return builder.toString();
+		return stringBuilder.toString();
 	}
 }

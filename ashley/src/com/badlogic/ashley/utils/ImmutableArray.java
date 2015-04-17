@@ -73,6 +73,10 @@ public class ImmutableArray<T> implements Iterable<T> {
 	public <V> V[] toArray (Class<?> type) {
 		return array.toArray(type);
 	}
+	
+	public int hashCode() {
+		return array.hashCode();
+	}
 
 	public boolean equals (Object object) {
 		return array.equals(object);

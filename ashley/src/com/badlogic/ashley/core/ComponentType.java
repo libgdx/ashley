@@ -27,7 +27,7 @@ import com.badlogic.gdx.utils.ObjectMap;
  * @author Stefan Bachmann
  */
 public final class ComponentType {
-	private static ObjectMap<Class<? extends Component>, ComponentType> componentTypes = new ObjectMap<Class<? extends Component>, ComponentType>();
+	private static ObjectMap<Class<? extends Component>, ComponentType> assignedComponentTypes = new ObjectMap<Class<? extends Component>, ComponentType>();
 	private static int typeIndex = 0;
 
 	private final int index;
@@ -46,11 +46,11 @@ public final class ComponentType {
 	 * @return A ComponentType matching the Component Class
 	 */
 	public static ComponentType getFor (Class<? extends Component> componentType) {
-		ComponentType type = componentTypes.get(componentType);
+		ComponentType type = assignedComponentTypes.get(componentType);
 
 		if (type == null) {
 			type = new ComponentType();
-			componentTypes.put(componentType, type);
+			assignedComponentTypes.put(componentType, type);
 		}
 
 		return type;
