@@ -56,8 +56,9 @@ public class Signal<T> {
 	 * @param object The object to send off
 	 */
 	public void dispatch (T object) {
-		final Listener<T>[] items = listeners.begin();
-		for (Listener<T> listener : items) {
+		final Object[] items = listeners.begin();
+		for (int i = 0, n = listeners.size; i < n; i++) {
+			Listener<T> listener = (Listener<T>)items[i];
 			listener.receive(this, object);
 		}
 		listeners.end();
