@@ -20,7 +20,7 @@ Ashley lives under the [Libgdx](https://github.com/libgdx) family but it does no
 
 ### News and community
 
-Stay up to date in Ashley matters by following [@siondream](https://twitter.com/siondream) and reading [siondream.com](http://siondream.com). Check the [libgdx](http://www.badlogicgames.com/) blog as well for additional updates.
+Stay up to date in Ashley matters by following [@siondream](https://twitter.com/siondream) and reading [saltares.com](http://saltares.com). Check the [libgdx](http://www.badlogicgames.com/) blog as well for additional updates.
 
 ### Report isssues
 
