@@ -54,10 +54,8 @@ public class Family {
 	public boolean matches (Entity entity) {
 		Bits entityComponentBits = entity.getComponentBits();
 
-		if (entityComponentBits.isEmpty()) return false;
-
-		for (int i = all.nextSetBit(0); i >= 0; i = all.nextSetBit(i + 1)) {
-			if (!entityComponentBits.get(i)) return false;
+		if (!entityComponentBits.containsAll(all)) {
+			return false;
 		}
 
 		if (!one.isEmpty() && !one.intersects(entityComponentBits)) {
@@ -162,21 +160,12 @@ public class Family {
 
 	@Override
 	public int hashCode () {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + all.hashCode();
-		result = prime * result + one.hashCode();
-		result = prime * result + exclude.hashCode();
-		result = prime * result + index;
-		return result;
+		return index;
 	}
 
 	@Override
 	public boolean equals (Object obj) {
-		if (this == obj) return true;
-		if (!(obj instanceof Family)) return false;
-		Family other = (Family)obj;
-		return index == other.index && all.equals(other.all) && one.equals(other.one) && exclude.equals(other.exclude);
+		return this == obj;
 	}
 
 	private static String getFamilyHash (Bits all, Bits one, Bits exclude) {
