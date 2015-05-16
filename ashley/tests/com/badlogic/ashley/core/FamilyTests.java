@@ -68,6 +68,7 @@ public class FamilyTests {
 
 	@Test
 	public void validFamily () {
+		assertNotNull(Family.all().get());
 		assertNotNull(Family.all(ComponentA.class).get());
 		assertNotNull(Family.all(ComponentB.class).get());
 		assertNotNull(Family.all(ComponentC.class).get());
@@ -94,6 +95,8 @@ public class FamilyTests {
 			.exclude(ComponentE.class, ComponentF.class).get();
 		Family family8 = Family.all(ComponentA.class, ComponentB.class).one(ComponentC.class, ComponentD.class)
 			.exclude(ComponentE.class, ComponentF.class).get();
+		Family family9 = Family.all().get();
+		Family family10 = Family.all().get();
 
 		assertTrue(family1.equals(family2));
 		assertTrue(family2.equals(family1));
@@ -103,11 +106,13 @@ public class FamilyTests {
 		assertTrue(family6.equals(family5));
 		assertTrue(family7.equals(family8));
 		assertTrue(family8.equals(family7));
+		assertTrue(family9.equals(family10));
 
 		assertEquals(family1.getIndex(), family2.getIndex());
 		assertEquals(family3.getIndex(), family4.getIndex());
 		assertEquals(family5.getIndex(), family6.getIndex());
 		assertEquals(family7.getIndex(), family8.getIndex());
+		assertEquals(family9.getIndex(), family10.getIndex());
 	}
 
 	@Test
@@ -126,6 +131,7 @@ public class FamilyTests {
 			.exclude(ComponentE.class, ComponentF.class).get();
 		Family family12 = Family.all(ComponentC.class, ComponentD.class).one(ComponentE.class, ComponentF.class)
 			.exclude(ComponentA.class, ComponentB.class).get();
+		Family family13 = Family.all().get();
 
 		assertFalse(family1.equals(family2));
 		assertFalse(family1.equals(family3));
@@ -138,6 +144,7 @@ public class FamilyTests {
 		assertFalse(family1.equals(family10));
 		assertFalse(family1.equals(family11));
 		assertFalse(family1.equals(family12));
+		assertFalse(family1.equals(family13));
 
 		assertFalse(family10.equals(family1));
 		assertFalse(family10.equals(family2));
@@ -149,6 +156,7 @@ public class FamilyTests {
 		assertFalse(family10.equals(family8));
 		assertFalse(family10.equals(family9));
 		assertFalse(family11.equals(family12));
+		assertFalse(family10.equals(family13));
 
 		assertNotEquals(family1.getIndex(), family2.getIndex());
 		assertNotEquals(family1.getIndex(), family3.getIndex());
@@ -160,6 +168,7 @@ public class FamilyTests {
 		assertNotEquals(family1.getIndex(), family9.getIndex());
 		assertNotEquals(family1.getIndex(), family10.getIndex());
 		assertNotEquals(family11.getIndex(), family12.getIndex());
+		assertNotEquals(family1.getIndex(), family13.getIndex());
 	}
 
 	@Test
@@ -235,6 +244,13 @@ public class FamilyTests {
 
 		entity.add(new ComponentB());
 
+		assertTrue(family.matches(entity));
+	}
+
+	@Test
+	public void testEmptyFamily() {
+		Family family = Family.all().get();
+		Entity entity = new Entity();
 		assertTrue(family.matches(entity));
 	}
 
