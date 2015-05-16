@@ -54,8 +54,8 @@ public class Family {
 	public boolean matches (Entity entity) {
 		Bits entityComponentBits = entity.getComponentBits();
 
-		for (int i = all.nextSetBit(0); i >= 0; i = all.nextSetBit(i + 1)) {
-			if (!entityComponentBits.get(i)) return false;
+		if (!entityComponentBits.containsAll(all)) {
+			return false;
 		}
 
 		if (!one.isEmpty() && !one.intersects(entityComponentBits)) {
