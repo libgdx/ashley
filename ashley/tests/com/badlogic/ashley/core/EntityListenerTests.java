@@ -2,6 +2,7 @@
 package com.badlogic.ashley.core;
 
 import org.junit.Test;
+import static org.junit.Assert.*;
 
 public class EntityListenerTests {
 
@@ -97,6 +98,45 @@ public class EntityListenerTests {
 		});
 
 		engine.addEntity(e);
+	}
+
+	int counter = 0;
+
+	@Test
+	public void entityListenerPriority () {
+		final Engine engine = new Engine();
+
+		Entity entity = new Entity();
+
+		class EntityListenerImplementation implements EntityListener {
+			int expectedCounter;
+
+			@Override
+			public void entityAdded (Entity entity) {
+				assertEquals(expectedCounter, counter++);
+			}
+
+			@Override
+			public void entityRemoved (Entity entity) {
+				assertEquals(expectedCounter, counter++);
+			}
+		}
+
+		int expectedCounter = 0;
+		for (int i = 0; i < 20; i++) {
+			EntityListenerImplementation listener = new EntityListenerImplementation();
+			listener.expectedCounter = expectedCounter++;
+			engine.addEntityListener(listener, i);
+		}
+
+		counter = 0;
+		engine.addEntity(entity);
+		counter = 0;
+		engine.removeEntity(entity);
+		counter = 0;
+		engine.addEntity(entity);
+		counter = 0;
+		engine.removeAllEntities();
 	}
 
 	public class PositionComponent extends Component {

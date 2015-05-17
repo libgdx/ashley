@@ -46,6 +46,7 @@ import com.badlogic.gdx.utils.SnapshotArray;
  */
 public class Engine {
 	private static SystemComparator comparator = new SystemComparator();
+	private static Family empty = Family.all().get();
 
 	private Array<Entity> entities;
 	private ImmutableArray<Entity> immutableEntities;
@@ -61,8 +62,7 @@ public class Engine {
 	private ObjectMap<Family, Array<Entity>> families;
 	private ObjectMap<Family, ImmutableArray<Entity>> immutableFamilies;
 
-	private SnapshotArray<EntityListener> entityListeners;
-	private ObjectMap<Family,SnapshotArray<EntityListener>> familyListeners;
+	private ObjectMap<Family,SnapshotArray<EntityListenerData>> entityListeners;
 
 	private final Listener<Entity> componentAdded;
 	private final Listener<Entity> componentRemoved;
@@ -88,8 +88,7 @@ public class Engine {
 		systemsByClass = new ObjectMap<Class<?>, EntitySystem>();
 		families = new ObjectMap<Family, Array<Entity>>();
 		immutableFamilies = new ObjectMap<Family, ImmutableArray<Entity>>();
-		entityListeners = new SnapshotArray<EntityListener>(false, 16);
-		familyListeners = new ObjectMap<Family,SnapshotArray<EntityListener>>();
+		entityListeners = new ObjectMap<Family,SnapshotArray<EntityListenerData>>();
 
 		componentAdded = new ComponentListener(this);
 		componentRemoved = new ComponentListener(this);
@@ -221,7 +220,16 @@ public class Engine {
 	 * The listener will be notified every time an entity is added/removed to/from the engine.
 	 */
 	public void addEntityListener(EntityListener listener) {
-		entityListeners.add(listener);
+		addEntityListener(empty, 0, listener);
+	}
+
+	/**
+	 * Adds an {@link EntityListener} with the given priority.
+	 *
+	 * The listener will be notified every time an entity is added/removed to/from the engine.
+	 */
+	public void addEntityListener(EntityListener listener, int priority) {
+		addEntityListener(empty, priority, listener);
 	}
 
 	/**
@@ -230,25 +238,40 @@ public class Engine {
 	 * The listener will be notified every time an entity is added/removed to/from the given family.
 	 */
 	public void addEntityListener(Family family, EntityListener listener) {
+		addEntityListener(family, 0, listener);
+	}
+
+	/**
+	 * Adds an {@link EntityListener} for a specific {@link Family}.
+	 *
+	 * The listener will be notified every time an entity is added/removed to/from the given family.
+	 */
+	public void addEntityListener(Family family, int priority, EntityListener listener) {
 		registerFamily(family);
-		SnapshotArray<EntityListener> listeners = familyListeners.get(family);
+		SnapshotArray<EntityListenerData> listeners = entityListeners.get(family);
 
 		if (listeners == null) {
-			listeners = new SnapshotArray<EntityListener>(false, 16);
-			familyListeners.put(family, listeners);
+			listeners = new SnapshotArray<EntityListenerData>(false, 16);
+			entityListeners.put(family, listeners);
 		}
 
-		listeners.add(listener);
+		EntityListenerData entityListenerData = new EntityListenerData();
+		entityListenerData.listener = listener;
+		entityListenerData.priority = priority;
+		listeners.add(entityListenerData);
 	}
 
 	/**
 	 * Removes an {@link EntityListener}
 	 */
 	public void removeEntityListener(EntityListener listener) {
-		entityListeners.removeValue(listener, true);
-
-		for (SnapshotArray<EntityListener> familyListenerArray : familyListeners.values()) {
-			familyListenerArray.removeValue(listener, true);
+		for (SnapshotArray<EntityListenerData> entityListenerArray : entityListeners.values()) {
+			for (int i = 0; i < entityListenerArray.size; i++) {
+				if (entityListenerArray.get(i).listener == listener) {
+					entityListenerArray.removeIndex(i);
+					break;
+				}
+			}
 		}
 	}
 
@@ -285,13 +308,13 @@ public class Engine {
 				familyEntities.add(entity);
 				entity.getFamilyBits().set(familyIndex);
 
-				notifyFamilyListenersAdd(family, entity);
+				notifyEntityListenersAdd(family, entity);
 			}
 			else if (belongsToFamily && !matches) {
 				familyEntities.removeValue(entity, true);
 				entity.getFamilyBits().clear(familyIndex);
 
-				notifyFamilyListenersRemove(family, entity);
+				notifyEntityListenersRemove(family, entity);
 			}
 		}
 	}
@@ -309,7 +332,7 @@ public class Engine {
 				if(family.matches(entity)){
 					familyEntities.removeValue(entity, true);
 					entity.getFamilyBits().clear(family.getIndex());
-					notifyFamilyListenersRemove(family, entity);
+					notifyEntityListenersRemove(family, entity);
 				}
 			}
 		}
@@ -317,15 +340,6 @@ public class Engine {
 		entity.componentAdded.remove(componentAdded);
 		entity.componentRemoved.remove(componentRemoved);
 		entity.componentOperationHandler = null;
-
-		notifying = true;
-		Object[] items = entityListeners.begin();
-		for (int i = 0, n = entityListeners.size; i < n; i++) {
-			EntityListener listener = (EntityListener)items[i];
-			listener.entityRemoved(entity);
-		}
-		entityListeners.end();
-		notifying = false;
 	}
 
 	protected void addEntityInternal(Entity entity) {
@@ -337,41 +351,32 @@ public class Engine {
 		entity.componentAdded.add(componentAdded);
 		entity.componentRemoved.add(componentRemoved);
 		entity.componentOperationHandler = componentOperationHandler;
-
-		notifying = true;
-		Object[] items = entityListeners.begin();
-		for (int i = 0, n = entityListeners.size; i < n; i++) {
-			EntityListener listener = (EntityListener)items[i];
-			listener.entityAdded(entity);
-		}
-		entityListeners.end();
-		notifying = false;
 	}
 
-	private void notifyFamilyListenersAdd(Family family, Entity entity) {
-		SnapshotArray<EntityListener> listeners = familyListeners.get(family);
+	private void notifyEntityListenersAdd(Family family, Entity entity) {
+		SnapshotArray<EntityListenerData> listeners = entityListeners.get(family);
 
 		if (listeners != null) {
 			notifying = true;
 			Object[] items = listeners.begin();
 			for (int i = 0, n = listeners.size; i < n; i++) {
-				EntityListener listener = (EntityListener)items[i];
-				listener.entityAdded(entity);
+				EntityListenerData listenerData = (EntityListenerData)items[i];
+				listenerData.listener.entityAdded(entity);
 			}
 			listeners.end();
 			notifying = false;
 		}
 	}
 
-	private void notifyFamilyListenersRemove(Family family, Entity entity) {
-		SnapshotArray<EntityListener> listeners = familyListeners.get(family);
+	private void notifyEntityListenersRemove(Family family, Entity entity) {
+		SnapshotArray<EntityListenerData> listeners = entityListeners.get(family);
 
 		if (listeners != null) {
 			notifying = true;
 			Object[] items = listeners.begin();
 			for (int i = 0, n = listeners.size; i < n; i++) {
-				EntityListener listener = (EntityListener)items[i];
-				listener.entityRemoved(entity);
+				EntityListenerData listenerData = (EntityListenerData)items[i];
+				listenerData.listener.entityRemoved(entity);
 			}
 			listeners.end();
 			notifying = false;
@@ -518,9 +523,21 @@ public class Engine {
 		}
 	}
 
+	private static class EntityListenerData {
+		public EntityListener listener;
+		public int priority;
+	}
+
 	private static class SystemComparator implements Comparator<EntitySystem>{
 		@Override
 		public int compare(EntitySystem a, EntitySystem b) {
+			return a.priority > b.priority ? 1 : (a.priority == b.priority) ? 0 : -1;
+		}
+	}
+
+	private static class ListenerComparator implements Comparator<EntityListenerData> {
+		@Override
+		public int compare (EntityListenerData a, EntityListenerData b) {
 			return a.priority > b.priority ? 1 : (a.priority == b.priority) ? 0 : -1;
 		}
 	}
