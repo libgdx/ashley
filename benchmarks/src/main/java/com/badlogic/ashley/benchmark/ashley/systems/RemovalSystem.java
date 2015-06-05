@@ -30,7 +30,7 @@ public class RemovalSystem extends EntitySystem {
 	@Override
 	public void addedToEngine (Engine engine) {
 		this.engine = engine;
-		entities = engine.getEntitiesFor(Family.getFor(RemovalComponent.class));
+		entities = engine.getEntitiesFor(Family.all(RemovalComponent.class).get());
 	}
 
 	@Override

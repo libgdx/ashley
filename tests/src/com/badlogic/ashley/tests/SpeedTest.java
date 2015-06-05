@@ -29,7 +29,7 @@ public class SpeedTest {
 
 	public static void main (String[] args) {
 		Timer timer = new Timer();
-		Array<Entity> entities = new Array<>();
+		Array<Entity> entities = new Array<Entity>();
 
 		PooledEngine engine = new PooledEngine();
 
