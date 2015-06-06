@@ -25,6 +25,7 @@ public abstract class EntitySystem {
 	public int priority;
 
 	private boolean processing;
+	private Engine engine;
 
 	/** Default constructor that will initialise an EntitySystem with priority 0. */
 	public EntitySystem () {
@@ -69,5 +70,21 @@ public abstract class EntitySystem {
 	/** Sets whether or not the system should be processed by the {@link Engine}. */
 	public void setProcessing (boolean processing) {
 		this.processing = processing;
+	}
+	
+	/** @return engine instance the system is registered to.
+	 * It will be null if the system is not associated to any engine instance. */
+	public Engine getEngine () {
+		return engine;
+	}
+	
+	final void addedToEngineInternal(Engine engine) {
+		this.engine = engine;
+		addedToEngine(engine);
+	}
+	
+	final void removedFromEngineInternal(Engine engine) {
+		this.engine = null;
+		removedFromEngine(engine);
 	}
 }

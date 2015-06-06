@@ -177,7 +177,7 @@ public class Engine {
 		if (!systemsByClass.containsKey(systemType)) {
 			systems.add(system);
 			systemsByClass.put(systemType, system);
-			system.addedToEngine(this);
+			system.addedToEngineInternal(this);
 
 			systems.sort(comparator);
 		}
@@ -189,7 +189,7 @@ public class Engine {
 	public void removeSystem(EntitySystem system){
 		if(systems.removeValue(system, true)) {
 			systemsByClass.remove(system.getClass());
-			system.removedFromEngine(this);
+			system.removedFromEngineInternal(this);
 		}
 	}
 

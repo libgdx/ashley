@@ -125,11 +125,9 @@ public class EngineTests {
 
 	private static class CounterSystem extends EntitySystem {
 		private ImmutableArray<Entity> entities;
-		private Engine engine;
 
 		@Override
 		public void addedToEngine (Engine engine) {
-			this.engine = engine;
 			entities = engine.getEntitiesFor(Family.all(CounterComponent.class).get());
 		}
 
@@ -139,7 +137,7 @@ public class EngineTests {
 				if (i % 2 == 0) {
 					entities.get(i).getComponent(CounterComponent.class).counter++;
 				} else {
-					engine.removeEntity(entities.get(i));
+					getEngine().removeEntity(entities.get(i));
 				}
 			}
 		}
@@ -273,6 +271,18 @@ public class EngineTests {
 			assertTrue(value >= previous);
 			previous = value;
 		}
+	}
+	
+	@Test
+	public void entitySystemEngineReference () {
+		Engine engine = new Engine();
+		EntitySystem system = new EntitySystemMock();
+		
+		assertNull(system.getEngine());
+		engine.addSystem(system);
+		assertEquals(engine, system.getEngine());
+		engine.removeSystem(system);
+		assertNull(system.getEngine());
 	}
 
 	@Test

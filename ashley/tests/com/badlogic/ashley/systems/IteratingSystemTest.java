@@ -87,8 +87,6 @@ public class IteratingSystemTest {
 	}
 
 	private static class IteratingRemovalSystem extends IteratingSystem {
-
-		private Engine engine;
 		private ComponentMapper<SpyComponent> sm;
 		private ComponentMapper<IndexComponent> im;
 
@@ -102,14 +100,13 @@ public class IteratingSystemTest {
 		@Override
 		public void addedToEngine (Engine engine) {
 			super.addedToEngine(engine);
-			this.engine = engine;
 		}
 
 		@Override
 		public void processEntity (Entity entity, float deltaTime) {
 			int index = im.get(entity).index;
 			if (index % 2 == 0) {
-				engine.removeEntity(entity);
+				getEngine().removeEntity(entity);
 			} else {
 				sm.get(entity).updates++;
 			}

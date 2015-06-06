@@ -37,13 +37,8 @@ public class PooledEngineTests {
 	}
 
 	public static class CombinedSystem extends EntitySystem {
-		private Engine engine;
 		private ImmutableArray<Entity> allEntities;
 		private int counter = 0;
-
-		public CombinedSystem (Engine engine) {
-			this.engine = engine;
-		}
 
 		@Override
 		public void addedToEngine (Engine engine) {
@@ -53,7 +48,7 @@ public class PooledEngineTests {
 		@Override
 		public void update (float deltaTime) {
 			if (counter >= 6 && counter <= 8) {
-				engine.removeEntity(allEntities.get(2));
+				getEngine().removeEntity(allEntities.get(2));
 			}
 			counter++;
 		}
@@ -70,17 +65,16 @@ public class PooledEngineTests {
 
 	private static class RemoveEntityTwiceSystem extends EntitySystem {
 		private ImmutableArray<Entity> entities;
-		private PooledEngine engine;
 
 		@Override
 		public void addedToEngine (Engine engine) {
 			entities = engine.getEntitiesFor(Family.all(PositionComponent.class).get());
-			this.engine = (PooledEngine)engine;
 		}
 
 		@Override
 		public void update (float deltaTime) {
 			Entity entity;
+			PooledEngine engine = (PooledEngine)getEngine();
 			for (int i = 0; i < 10; i++) {
 				entity = engine.createEntity();
 				assertEquals(0, entity.flags);
@@ -110,7 +104,7 @@ public class PooledEngineTests {
 	public void entityRemovalListenerOrder () {
 		PooledEngine engine = new PooledEngine();
 
-		CombinedSystem combinedSystem = new CombinedSystem(engine);
+		CombinedSystem combinedSystem = new CombinedSystem();
 
 		engine.addSystem(combinedSystem);
 		engine.addEntityListener(Family.all(PositionComponent.class).get(), new MyPositionListener());
