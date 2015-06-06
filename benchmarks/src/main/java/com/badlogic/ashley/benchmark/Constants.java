@@ -12,9 +12,9 @@ public class Constants {
 	public static final int BENCHMARK_ROUNDS = 20;
 	public static final int WARMUP_ROUNDS = 20;
 
-	public static final int ENTITIES_SMALL_TEST = 5000;
-	public static final int ENTITIES_MEDIUM_TEST = 10000;
-	public static final int ENTITIES_BIG_TEST = 20000;
+	public static final int ENTITIES_SMALL_TEST = 10000;
+	public static final int ENTITIES_MEDIUM_TEST = 20000;
+	public static final int ENTITIES_BIG_TEST = 50000;
 
 	public static final float MIN_RADIUS = 0.1f;
 	public static final float MAX_RADIUS = 10.0f;
