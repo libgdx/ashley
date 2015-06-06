@@ -15,6 +15,7 @@ subprojects {
 ext {
     projectGroup = "ashley"
     gdxVersion = "1.6.0"
+    jUnitVersion = "4.12"
 }
 
 /** needed to disable Java 8 doclint which throws errors **/
@@ -31,7 +32,7 @@ project(":ashley") {
 
     dependencies {
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
-        testCompile "junit:junit:4.12"
+        testCompile "junit:junit:$jUnitVersion"
     }
 }
 
@@ -46,7 +47,7 @@ project(":tests") {
 project(":benchmarks") {
     dependencies {
         compile project(":ashley")
-        testCompile "junit:junit:4.12"
+        compile "junit:junit:$jUnitVersion"
         compile fileTree(dir: new File(projectDir, "libs"), include: "*.jar")
     }
 }
