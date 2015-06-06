@@ -26,7 +26,7 @@ public class StateSystem extends IteratingSystem {
 	private ComponentMapper<StateComponent> sm = ComponentMapper.getFor(StateComponent.class);
 
 	public StateSystem () {
-		super(Family.getFor(StateComponent.class));
+		super(Family.all(StateComponent.class).get());
 	}
 
 	@Override

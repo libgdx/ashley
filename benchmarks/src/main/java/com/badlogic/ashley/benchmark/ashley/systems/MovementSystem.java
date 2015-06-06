@@ -30,7 +30,7 @@ public class MovementSystem extends IteratingSystem {
 	private ComponentMapper<MovementComponent> mm = ComponentMapper.getFor(MovementComponent.class);
 
 	public MovementSystem () {
-		super(Family.getFor(PositionComponent.class, MovementComponent.class));
+		super(Family.all(PositionComponent.class, MovementComponent.class).get());
 	}
 
 	@Override

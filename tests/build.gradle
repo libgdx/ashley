@@ -1,9 +1,12 @@
 apply plugin: "java"
-
-sourceCompatibility = 1.7
+sourceCompatibility = 1.6
 
 sourceSets.main.java.srcDirs = [ "src/" ]
+sourceSets.main.resources.srcDirs = [ "src/" ]
+sourceSets.test.java.srcDirs = [ "tests/" ]
+sourceSets.test.resources.srcDirs = [ "tests/" ]
 
 eclipse.project {
-    name =  projectGroup + "-tests"
+    name = projectGroup + "-tests"
 }
+

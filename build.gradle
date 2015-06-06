@@ -1,42 +1,37 @@
-buildscript {
+
+subprojects {
+    apply plugin: "eclipse"
+    apply plugin: "idea"
+    apply plugin: "java"
+
     repositories {
-        mavenCentral()
         mavenLocal()
-    }
-}
-
-allprojects {
-    apply plugin: 'eclipse'
-    apply plugin: 'idea'
-    apply plugin: 'java'
-
-    repositories {
         mavenCentral()
         maven { url "https://oss.sonatype.org/content/repositories/releases/" }
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
-        mavenLocal()
     }
 }
 
 ext {
-	projectGroup = "ashley"
-	gdxVersion = '1.6.0'
+    projectGroup = "ashley"
+    gdxVersion = "1.6.0"
 }
 
 /** needed to disable Java 8 doclint which throws errors **/
 if (JavaVersion.current().isJava8Compatible()) {
     allprojects {
-	tasks.withType(Javadoc) {
-	    options.addStringOption('Xdoclint:none', '-quiet')
-	}
+        tasks.withType(Javadoc) {
+            options.addStringOption('Xdoclint:none', '-quiet')
+        }
     }
 }
 
 project(":ashley") {
     apply from : '../publish.gradle'
-	
-	dependencies {
+
+    dependencies {
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
+        testCompile "junit:junit:4.12"
     }
 }
 
@@ -48,6 +43,11 @@ project(":tests") {
     }
 }
 
-tasks.eclipse.doLast {
-    delete ".project"
+project(":benchmarks") {
+    dependencies {
+        compile project(":ashley")
+        testCompile "junit:junit:4.12"
+        compile fileTree(dir: new File(projectDir, "libs"), include: "*.jar")
+    }
 }
+

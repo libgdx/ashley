@@ -28,7 +28,7 @@ public class CollisionSystem extends EntitySystem {
 
 	@Override
 	public void addedToEngine (Engine engine) {
-		entities = engine.getEntitiesFor(Family.getFor(RadiusComponent.class));
+		entities = engine.getEntitiesFor(Family.all(RadiusComponent.class).get());
 	}
 
 	@Override
