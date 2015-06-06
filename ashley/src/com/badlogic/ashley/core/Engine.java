@@ -445,7 +445,7 @@ public class Engine {
 
 		@Override
 		public void receive(Signal<Entity> signal, Entity object) {
-			engine.updateFamilyMembership(object);
+			//engine.updateFamilyMembership(object);
 		}
 	}
 
