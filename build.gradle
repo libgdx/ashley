@@ -14,7 +14,7 @@ subprojects {
 
 ext {
     projectGroup = "ashley"
-    gdxVersion = "1.6.0"
+    gdxVersion = "1.6.2"
     jUnitVersion = "4.12"
 }
 
