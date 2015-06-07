@@ -14,7 +14,7 @@ import com.badlogic.gdx.utils.Pool.Poolable;
 public class PooledEngineTests {
 	private float deltaTime = 0.16f;
 
-	public static class PositionComponent extends Component {
+	public static class PositionComponent implements Component {
 		public float x = 0.0f;
 		public float y = 0.0f;
 	}
@@ -90,7 +90,7 @@ public class PooledEngineTests {
 		}
 	}
 	
-	private static class PooledComponentSpy extends Component implements Poolable {
+	private static class PooledComponentSpy implements Component, Poolable {
 		public boolean recycled = false;
 		
 		

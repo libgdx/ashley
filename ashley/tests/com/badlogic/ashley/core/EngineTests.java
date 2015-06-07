@@ -29,13 +29,13 @@ public class EngineTests {
 
 	private float deltaTime = 0.16f;
 
-	private static class ComponentA extends Component {
+	private static class ComponentA implements Component {
 	}
 
-	private static class ComponentB extends Component {
+	private static class ComponentB implements Component {
 	}
 
-	private static class ComponentC extends Component {
+	private static class ComponentC implements Component {
 	}
 
 	private static class EntityListenerMock implements EntityListener {
@@ -119,7 +119,7 @@ public class EngineTests {
 		}
 	}
 
-	private static class CounterComponent extends Component {
+	private static class CounterComponent implements Component {
 		int counter = 0;
 	}
 

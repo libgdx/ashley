@@ -25,11 +25,11 @@ import com.badlogic.ashley.core.ComponentType;
 
 public class ComponentTypeTests {
 
-	private static class ComponentA extends Component {
+	private static class ComponentA implements Component {
 
 	}
 
-	private static class ComponentB extends Component {
+	private static class ComponentB implements Component {
 
 	}
 

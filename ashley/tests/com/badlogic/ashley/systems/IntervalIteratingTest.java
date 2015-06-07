@@ -30,7 +30,7 @@ import static org.junit.Assert.*;
 public class IntervalIteratingTest {
 	private static final float deltaTime = 0.1f;
 
-	private static class IntervalComponentSpy extends Component {
+	private static class IntervalComponentSpy implements Component {
 		public int numUpdates = 0;
 	}
 

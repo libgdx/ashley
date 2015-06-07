@@ -18,7 +18,7 @@ package com.badlogic.ashley.benchmark.ashley.components;
 
 import com.badlogic.ashley.core.Component;
 
-public class StateComponent extends Component {
+public class StateComponent implements Component {
 	private int state = 0;
 	public float time = 0.0f;
 

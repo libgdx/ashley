@@ -26,22 +26,22 @@ import com.badlogic.ashley.systems.IteratingSystem;
 @SuppressWarnings("unchecked")
 public class FamilyTests {
 
-	private static class ComponentA extends Component {
+	private static class ComponentA implements Component {
 	}
 
-	private static class ComponentB extends Component {
+	private static class ComponentB implements Component {
 	}
 
-	private static class ComponentC extends Component {
+	private static class ComponentC implements Component {
 	}
 
-	private static class ComponentD extends Component {
+	private static class ComponentD implements Component {
 	}
 
-	private static class ComponentE extends Component {
+	private static class ComponentE implements Component {
 	}
 
-	private static class ComponentF extends Component {
+	private static class ComponentF implements Component {
 	}
 
 	static class TestSystemA extends IteratingSystem {

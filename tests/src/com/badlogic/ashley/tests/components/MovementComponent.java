@@ -18,7 +18,7 @@ package com.badlogic.ashley.tests.components;
 
 import com.badlogic.ashley.core.Component;
 
-public class MovementComponent extends Component {
+public class MovementComponent implements Component {
 	public float velocityX;
 	public float velocityY;
 

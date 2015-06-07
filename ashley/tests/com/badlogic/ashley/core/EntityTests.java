@@ -30,10 +30,10 @@ import com.badlogic.gdx.utils.Bits;
 
 public class EntityTests {
 
-	private static class ComponentA extends Component {
+	private static class ComponentA implements Component {
 	}
 
-	private static class ComponentB extends Component {
+	private static class ComponentB implements Component {
 	}
 
 	private static class EntityListenerMock implements Listener<Entity> {

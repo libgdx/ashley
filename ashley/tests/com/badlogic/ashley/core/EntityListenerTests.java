@@ -99,6 +99,6 @@ public class EntityListenerTests {
 		engine.addEntity(e);
 	}
 
-	public class PositionComponent extends Component {
+	public class PositionComponent implements Component {
 	}
 }

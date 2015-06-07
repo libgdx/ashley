@@ -34,10 +34,10 @@ public class SortedIteratingSystemTest {
 	private static final OrderComparator comparator = new OrderComparator();
 	private static final float deltaTime = 0.16f;
 
-	private static class ComponentB extends Component {
+	private static class ComponentB implements Component {
 	}
 
-	private static class ComponentC extends Component {
+	private static class ComponentC implements Component {
 	}
 
 	private static class SortedIteratingSystemMock extends SortedIteratingSystem {
@@ -62,7 +62,7 @@ public class SortedIteratingSystemTest {
 		}
 	}
 
-	public static class OrderComponent extends Component {
+	public static class OrderComponent implements Component {
 		public String name;
 		public int zLayer;
 
@@ -72,11 +72,11 @@ public class SortedIteratingSystemTest {
 		}
 	}
 
-	private static class SpyComponent extends Component {
+	private static class SpyComponent implements Component {
 		public int updates = 0;
 	}
 
-	private static class IndexComponent extends Component {
+	private static class IndexComponent implements Component {
 		public int index = 0;
 	}
 
