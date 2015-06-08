@@ -110,6 +110,10 @@ public class Engine {
 	 * Adds an entity to this Engine.
 	 */
 	public void addEntity(Entity entity){
+		if (entity.uuid != 0L) {
+			throw new IllegalArgumentException("Entity is already registered with an Engine id = " + entity.uuid);
+		}
+		
 		entity.uuid = obtainEntityId();
 		if (updating || notifying) {
 			EntityOperation operation = entityOperationPool.obtain();
@@ -257,6 +261,10 @@ public class Engine {
 	 * @param deltaTime The time passed since the last frame.
 	 */
 	public void update(float deltaTime){
+		if (updating) {
+			throw new IllegalStateException("Cannot call update() on an Engine that is already updating.");
+		}
+		
 		updating = true;
 		for(int i=0; i<systems.size; i++){
 			EntitySystem system = systems.get(i);
@@ -297,9 +305,14 @@ public class Engine {
 	}
 
 	protected void removeEntityInternal(Entity entity) {
+		boolean removed;
+		
 		entity.scheduledForRemoval = false;
 		entities.removeValue(entity, true);
-		entitiesById.remove(entity.getId());
+		
+		if (entitiesById.remove(entity.getId()) == entity) {
+			removed = true;
+		}
 
 		if(!entity.getFamilyBits().isEmpty()){
 			for (Entry<Family, Array<Entity>> entry : families.entries()) {
@@ -326,6 +339,8 @@ public class Engine {
 		}
 		entityListeners.end();
 		notifying = false;
+		
+		entity.uuid = 0L;
 	}
 
 	protected void addEntityInternal(Entity entity) {

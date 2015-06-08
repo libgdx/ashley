@@ -629,4 +629,32 @@ public class EngineTests {
 		
 		assertEquals(0, engineEntities.size());
 	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void addEntityTwice () {
+	    Engine engine = new Engine();
+	    Entity entity = new Entity();
+	    engine.addEntity(entity);
+	    engine.addEntity(entity);
+	}
+	
+	@Test(expected=IllegalStateException.class)
+	public void nestedUpdateException() {
+		final Engine engine = new Engine();
+		
+		engine.addSystem(new EntitySystem() {
+			boolean duringCallback;
+			
+			@Override
+			public void update(float deltaTime) {
+				if (!duringCallback) {
+					duringCallback = true;
+					getEngine().update(deltaTime);
+					duringCallback = false;
+				}
+			}
+		});
+		
+		engine.update(deltaTime);
+	}
 }
