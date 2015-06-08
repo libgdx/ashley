@@ -79,7 +79,7 @@ uploadArchives {
 
                 pom.project {
                    name 'Ashley'
-                   description 'Ashely, a miminal entity framework inspired by Ash and Atermis'
+                   description 'Ashley, a minimal entity framework inspired by Ash and Artemis'
                    url 'https://github.com/libgdx/ashley'
 
                    scm {
@@ -102,7 +102,7 @@ uploadArchives {
                            name 'Stefan Bachmann'
                        }
                        developer {
-                           id 'siondream'
+                           id 'saltares'
                            name 'David Saltares'
                        }
                    }
