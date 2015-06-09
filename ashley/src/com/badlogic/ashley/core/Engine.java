@@ -22,9 +22,9 @@ import com.badlogic.ashley.signals.Listener;
 import com.badlogic.ashley.signals.Signal;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Bits;
 import com.badlogic.gdx.utils.LongMap;
 import com.badlogic.gdx.utils.ObjectMap;
-import com.badlogic.gdx.utils.ObjectMap.Entry;
 import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.SnapshotArray;
 
@@ -45,7 +45,8 @@ import com.badlogic.gdx.utils.SnapshotArray;
  * @author Stefan Bachmann
  */
 public class Engine {
-	private static SystemComparator comparator = new SystemComparator();
+	private static SystemComparator systemComparator = new SystemComparator();
+	private static Family empty = Family.all().get();
 
 	private Array<Entity> entities;
 	private ImmutableArray<Entity> immutableEntities;
@@ -61,8 +62,9 @@ public class Engine {
 	private ObjectMap<Family, Array<Entity>> families;
 	private ObjectMap<Family, ImmutableArray<Entity>> immutableFamilies;
 
-	private SnapshotArray<EntityListener> entityListeners;
-	private ObjectMap<Family,SnapshotArray<EntityListener>> familyListeners;
+	private SnapshotArray<EntityListenerData> entityListeners;
+	private ObjectMap<Family, Bits> entityListenerMasks;
+
 
 	private final Listener<Entity> componentAdded;
 	private final Listener<Entity> componentRemoved;
@@ -88,8 +90,8 @@ public class Engine {
 		systemsByClass = new ObjectMap<Class<?>, EntitySystem>();
 		families = new ObjectMap<Family, Array<Entity>>();
 		immutableFamilies = new ObjectMap<Family, ImmutableArray<Entity>>();
-		entityListeners = new SnapshotArray<EntityListener>(false, 16);
-		familyListeners = new ObjectMap<Family,SnapshotArray<EntityListener>>();
+		entityListeners = new SnapshotArray<EntityListenerData>(true, 16);
+		entityListenerMasks = new ObjectMap<Family, Bits>();
 
 		componentAdded = new ComponentListener(this);
 		componentRemoved = new ComponentListener(this);
@@ -180,8 +182,7 @@ public class Engine {
 	 * the new one will replace the old one.
 	 */
 	public void addSystem(EntitySystem system){
-		Class<? extends EntitySystem> systemType = system.getClass();
-		
+		Class<? extends EntitySystem> systemType = system.getClass();		
 		EntitySystem oldSytem = getSystem(systemType);
 		
 		if (oldSytem != null) {
@@ -192,7 +193,7 @@ public class Engine {
 		systemsByClass.put(systemType, system);
 		system.addedToEngineInternal(this);
 
-		systems.sort(comparator);
+		systems.sort(systemComparator);
 	}
 
 	/**
@@ -232,8 +233,17 @@ public class Engine {
 	 *
 	 * The listener will be notified every time an entity is added/removed to/from the engine.
 	 */
-	public void addEntityListener(EntityListener listener) {
-		entityListeners.add(listener);
+	public void addEntityListener (EntityListener listener) {
+		addEntityListener(empty, 0, listener);
+	}
+
+	/**
+	 * Adds an {@link EntityListener}. The listener will be notified every time an entity is added/removed
+	 * to/from the engine. The priority determines in which order the entity listeners will be called. Lower
+	 * value means it will get executed first.
+	 */
+	public void addEntityListener (int priority, EntityListener listener) {
+		addEntityListener(empty, priority, listener);
 	}
 
 	/**
@@ -242,25 +252,66 @@ public class Engine {
 	 * The listener will be notified every time an entity is added/removed to/from the given family.
 	 */
 	public void addEntityListener(Family family, EntityListener listener) {
-		registerFamily(family);
-		SnapshotArray<EntityListener> listeners = familyListeners.get(family);
+		addEntityListener(family, 0, listener);
+	}
 
-		if (listeners == null) {
-			listeners = new SnapshotArray<EntityListener>(false, 16);
-			familyListeners.put(family, listeners);
+	/**
+	 * Adds an {@link EntityListener} for a specific {@link Family}. The listener will be notified every time an entity is
+	 * added/removed to/from the given family. The priority determines in which order the entity listeners will be called. Lower
+	 * value means it will get executed first.
+	 */
+	public void addEntityListener (Family family, int priority, EntityListener listener) {
+		registerFamily(family);
+
+		int insertionIndex = 0;
+		while (insertionIndex < entityListeners.size) {
+			if (entityListeners.get(insertionIndex).priority <= priority) {
+				insertionIndex++;
+			} else {
+				break;
+			}
 		}
 
-		listeners.add(listener);
+		// Shift up bitmasks by one step
+		for (Bits mask : entityListenerMasks.values()) {
+			for (int k = mask.length(); k > insertionIndex; k--) {
+				if (mask.get(k - 1)) {
+					mask.set(k);
+				} else {
+					mask.clear(k);
+				}
+			}
+			mask.clear(insertionIndex);
+		}
+
+		entityListenerMasks.get(family).set(insertionIndex);
+
+		EntityListenerData entityListenerData = new EntityListenerData();
+		entityListenerData.listener = listener;
+		entityListenerData.priority = priority;
+		entityListeners.insert(insertionIndex, entityListenerData);
 	}
 
 	/**
 	 * Removes an {@link EntityListener}
 	 */
-	public void removeEntityListener(EntityListener listener) {
-		entityListeners.removeValue(listener, true);
+	public void removeEntityListener (EntityListener listener) {
+		for (int i = 0; i < entityListeners.size; i++) {
+			EntityListenerData entityListenerData = entityListeners.get(i);
+			if (entityListenerData.listener == listener) {
+				// Shift down bitmasks by one step
+				for (Bits mask : entityListenerMasks.values()) {
+					for (int k = i, n = mask.length(); k < n; k++) {
+						if (mask.get(k + 1)) {
+							mask.set(k);
+						} else {
+							mask.clear(k);
+						}
+					}
+				}
 
-		for (SnapshotArray<EntityListener> familyListenerArray : familyListeners.values()) {
-			familyListenerArray.removeValue(listener, true);
+				entityListeners.removeIndex(i--);
+			}
 		}
 	}
 
@@ -287,29 +338,48 @@ public class Engine {
 		updating = false;
 	}
 
-	private void updateFamilyMembership(Entity entity){
-		for (Entry<Family, Array<Entity>> entry : families.entries()) {
-			Family family = entry.key;
-			Array<Entity> familyEntities = entry.value;
-			int familyIndex = family.getIndex();
+	private void updateFamilyMembership (Entity entity, boolean removing) {
+		// Find families that the entity was added to/removed from, and fill
+		// the bitmasks with corresponding listener bits.
+		Bits addListenerBits = new Bits();
+		Bits removeListenerBits = new Bits();
 
+		for (Family family : entityListenerMasks.keys()) {
+			final int familyIndex = family.getIndex();
+			final Bits entityFamilyBits = entity.getFamilyBits();
 
-			boolean belongsToFamily = entity.getFamilyBits().get(familyIndex);
-			boolean matches = family.matches(entity);
+			boolean belongsToFamily = entityFamilyBits.get(familyIndex);
+			boolean matches = family.matches(entity) && !removing;
 
-			if (!belongsToFamily && matches) {
-				familyEntities.add(entity);
-				entity.getFamilyBits().set(familyIndex);
-
-				notifyFamilyListenersAdd(family, entity);
-			}
-			else if (belongsToFamily && !matches) {
-				familyEntities.removeValue(entity, true);
-				entity.getFamilyBits().clear(familyIndex);
-
-				notifyFamilyListenersRemove(family, entity);
+			if (belongsToFamily != matches) {
+				final Bits listenersMask = entityListenerMasks.get(family);
+				final Array<Entity> familyEntities = families.get(family);
+				if (matches) {
+					addListenerBits.or(listenersMask);
+					familyEntities.add(entity);
+					entityFamilyBits.set(familyIndex);
+				} else {
+					removeListenerBits.or(listenersMask);
+					familyEntities.removeValue(entity, true);
+					entityFamilyBits.clear(familyIndex);
+				}
 			}
 		}
+
+		// Notify listeners; set bits match indices of listeners
+		notifying = true;
+		Object[] items = entityListeners.begin();
+
+		for (int i = removeListenerBits.nextSetBit(0); i >= 0; i = removeListenerBits.nextSetBit(i + 1)) {
+			((EntityListenerData)items[i]).listener.entityRemoved(entity);
+		}
+
+		for (int i = addListenerBits.nextSetBit(0); i >= 0; i = addListenerBits.nextSetBit(i + 1)) {
+			((EntityListenerData)items[i]).listener.entityAdded(entity);
+		}
+
+		entityListeners.end();
+		notifying = false;
 	}
 
 	protected void removeEntityInternal(Entity entity) {
@@ -322,32 +392,12 @@ public class Engine {
 			removed = true;
 		}
 
-		if(!entity.getFamilyBits().isEmpty()){
-			for (Entry<Family, Array<Entity>> entry : families.entries()) {
-				Family family = entry.key;
-				Array<Entity> familyEntities = entry.value;
-
-				if(family.matches(entity)){
-					familyEntities.removeValue(entity, true);
-					entity.getFamilyBits().clear(family.getIndex());
-					notifyFamilyListenersRemove(family, entity);
-				}
-			}
-		}
+		updateFamilyMembership(entity, true);
 
 		entity.componentAdded.remove(componentAdded);
 		entity.componentRemoved.remove(componentRemoved);
 		entity.componentOperationHandler = null;
 
-		notifying = true;
-		Object[] items = entityListeners.begin();
-		for (int i = 0, n = entityListeners.size; i < n; i++) {
-			EntityListener listener = (EntityListener)items[i];
-			listener.entityRemoved(entity);
-		}
-		entityListeners.end();
-		notifying = false;
-		
 		if (removed) {
 			entity.uuid = 0L;
 		}
@@ -357,50 +407,11 @@ public class Engine {
 		entities.add(entity);
 		entitiesById.put(entity.getId(), entity);
 
-		updateFamilyMembership(entity);
+		updateFamilyMembership(entity, false);
 
 		entity.componentAdded.add(componentAdded);
 		entity.componentRemoved.add(componentRemoved);
 		entity.componentOperationHandler = componentOperationHandler;
-
-		notifying = true;
-		Object[] items = entityListeners.begin();
-		for (int i = 0, n = entityListeners.size; i < n; i++) {
-			EntityListener listener = (EntityListener)items[i];
-			listener.entityAdded(entity);
-		}
-		entityListeners.end();
-		notifying = false;
-	}
-
-	private void notifyFamilyListenersAdd(Family family, Entity entity) {
-		SnapshotArray<EntityListener> listeners = familyListeners.get(family);
-
-		if (listeners != null) {
-			notifying = true;
-			Object[] items = listeners.begin();
-			for (int i = 0, n = listeners.size; i < n; i++) {
-				EntityListener listener = (EntityListener)items[i];
-				listener.entityAdded(entity);
-			}
-			listeners.end();
-			notifying = false;
-		}
-	}
-
-	private void notifyFamilyListenersRemove(Family family, Entity entity) {
-		SnapshotArray<EntityListener> listeners = familyListeners.get(family);
-
-		if (listeners != null) {
-			notifying = true;
-			Object[] items = listeners.begin();
-			for (int i = 0, n = listeners.size; i < n; i++) {
-				EntityListener listener = (EntityListener)items[i];
-				listener.entityRemoved(entity);
-			}
-			listeners.end();
-			notifying = false;
-		}
 	}
 
 	private ImmutableArray<Entity> registerFamily(Family family) {
@@ -411,12 +422,10 @@ public class Engine {
 			immutableEntitiesInFamily = new ImmutableArray<Entity>(familyEntities);
 			families.put(family, familyEntities);
 			immutableFamilies.put(family, immutableEntitiesInFamily);
+			entityListenerMasks.put(family, new Bits());
 
-			for(Entity e : this.entities){
-				if(family.matches(e)) {
-					familyEntities.add(e);
-					e.getFamilyBits().set(family.getIndex());
-				}
+			for (Entity entity : this.entities){
+				updateFamilyMembership(entity, false);
 			}
 		}
 
@@ -470,7 +479,7 @@ public class Engine {
 
 		@Override
 		public void receive(Signal<Entity> signal, Entity object) {
-			engine.updateFamilyMembership(object);
+			engine.updateFamilyMembership(object, false);
 		}
 	}
 
@@ -541,6 +550,11 @@ public class Engine {
 		protected ComponentOperation newObject() {
 			return new ComponentOperation();
 		}
+	}
+
+	private static class EntityListenerData {
+		public EntityListener listener;
+		public int priority;
 	}
 
 	private static class SystemComparator implements Comparator<EntitySystem>{
