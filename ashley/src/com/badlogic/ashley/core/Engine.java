@@ -108,6 +108,8 @@ public class Engine {
 
 	/**
 	 * Adds an entity to this Engine.
+	 * This will throw an IllegalArgumentException if the given entity
+	 * was already registered with an engine.
 	 */
 	public void addEntity(Entity entity){
 		if (entity.uuid != 0L) {
@@ -174,17 +176,23 @@ public class Engine {
 
 	/**
 	 * Adds the {@link EntitySystem} to this Engine.
+	 * If the Engine already had a system of the same class,
+	 * the new one will replace the old one.
 	 */
 	public void addSystem(EntitySystem system){
 		Class<? extends EntitySystem> systemType = system.getClass();
-
-		if (!systemsByClass.containsKey(systemType)) {
-			systems.add(system);
-			systemsByClass.put(systemType, system);
-			system.addedToEngineInternal(this);
-
-			systems.sort(comparator);
+		
+		EntitySystem oldSytem = getSystem(systemType);
+		
+		if (oldSytem != null) {
+			removeSystem(oldSytem);
 		}
+		
+		systems.add(system);
+		systemsByClass.put(systemType, system);
+		system.addedToEngineInternal(this);
+
+		systems.sort(comparator);
 	}
 
 	/**
@@ -305,7 +313,7 @@ public class Engine {
 	}
 
 	protected void removeEntityInternal(Entity entity) {
-		boolean removed;
+		boolean removed = false;
 		
 		entity.scheduledForRemoval = false;
 		entities.removeValue(entity, true);
@@ -340,7 +348,9 @@ public class Engine {
 		entityListeners.end();
 		notifying = false;
 		
-		entity.uuid = 0L;
+		if (removed) {
+			entity.uuid = 0L;
+		}
 	}
 
 	protected void addEntityInternal(Entity entity) {

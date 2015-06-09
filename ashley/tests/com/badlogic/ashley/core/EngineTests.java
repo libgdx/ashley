@@ -214,6 +214,25 @@ public class EngineTests {
 
 		assertEquals(2, engine.getSystems().size());
 	}
+	
+	@Test
+	public void addTwoSystemsOfSameClass () {
+		Engine engine = new Engine();
+		EntitySystemMockA system1 = new EntitySystemMockA();
+		EntitySystemMockA system2 = new EntitySystemMockA();
+
+		assertEquals(0, engine.getSystems().size());
+
+		engine.addSystem(system1);
+		
+		assertEquals(1, engine.getSystems().size());
+		assertEquals(system1, engine.getSystem(EntitySystemMockA.class));
+		
+		engine.addSystem(system2);
+
+		assertEquals(1, engine.getSystems().size());
+		assertEquals(system2, engine.getSystem(EntitySystemMockA.class));
+	}
 
 	@Test
 	public void systemUpdate () {
