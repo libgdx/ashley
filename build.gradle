@@ -16,6 +16,7 @@ ext {
     projectGroup = "ashley"
     gdxVersion = "1.6.2"
     jUnitVersion = "4.12"
+    mockitoVersion = "1.10.19"
 }
 
 /** needed to disable Java 8 doclint which throws errors **/
@@ -33,6 +34,7 @@ project(":ashley") {
     dependencies {
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
         testCompile "junit:junit:$jUnitVersion"
+        testCompile "org.mockito:mockito-core:$mockitoVersion"
     }
 }
 
