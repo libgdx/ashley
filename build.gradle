@@ -14,7 +14,7 @@ subprojects {
 
 ext {
     projectGroup = "ashley"
-    gdxVersion = "1.6.2"
+    gdxVersion = "1.6.4"
     jUnitVersion = "4.12"
     mockitoVersion = "1.10.19"
 }
