@@ -75,6 +75,17 @@ public class Entity {
 		}
 		return this;
 	}
+	/**
+	 * Adds all given {@link Component}s to this Entity. See {@link Entity#add(Component)}.
+	 * @param components The Components to add.
+	 * @return This Entity for chaining.
+	 */
+	public Entity add (Component... components) {
+		for (Component component : components) {
+			add(component);
+		}
+		return this;
+	}
 
 	/**
 	 * Removes the {@link Component} of the specified type. Since there is only ever one component of one type, we don't need an
