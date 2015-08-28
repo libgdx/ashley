@@ -75,6 +75,7 @@ public class Entity {
 		}
 		return this;
 	}
+	
 	/**
 	 * Adds all given {@link Component}s to this Entity. See {@link Entity#add(Component)}.
 	 * @param components The Components to add.
