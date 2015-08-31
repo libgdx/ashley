@@ -77,7 +77,9 @@ public class Entity {
 	}
 	
 	/**
-	 * Adds all given {@link Component}s to this Entity. See {@link Entity#add(Component)}.
+	 * Adds all given {@link Component}s to this Entity. See {@link Entity#add(Component)}.<p>
+	 * Please note that this will introduce some overhead due to varargs, which will allocate memory and generate work for the
+	 * garbage collector. To avoid this use {@link Entity#add(Component)} instead.
 	 * @param components The Components to add.
 	 * @return This Entity for chaining.
 	 */
