@@ -55,6 +55,14 @@ public class EngineTests {
 			assertNotNull(entity);
 		}
 	}
+	
+	private static class AddComponentBEntityListenerMock extends EntityListenerMock {
+		@Override
+		public void entityAdded (Entity entity) {
+		    super.entityAdded(entity);
+		    entity.add(new ComponentB());
+		}
+	}
 
 	private static class EntitySystemMock extends EntitySystem {
 		public int updateCalls = 0;
@@ -175,6 +183,25 @@ public class EngineTests {
 		assertEquals(2, listenerB.removedCount);
 	}
 
+	@Test
+	public void addComponentInsideListener() {
+		Engine engine = new Engine();
+
+		EntityListenerMock listenerA = new AddComponentBEntityListenerMock();
+		EntityListenerMock listenerB = new EntityListenerMock();
+
+		engine.addEntityListener(Family.all(ComponentA.class).get(), listenerA);
+		engine.addEntityListener(Family.all(ComponentB.class).get(), listenerB);
+
+		Entity entity1 = new Entity();
+		entity1.add(new ComponentA());
+		engine.addEntity(entity1);
+
+		assertEquals(1, listenerA.addedCount);
+		assertNotNull(entity1.getComponent(ComponentB.class));
+		assertEquals(1, listenerB.addedCount);
+	}
+	
 	@Test
 	public void addAndRemoveSystem () {
 		Engine engine = new Engine();
