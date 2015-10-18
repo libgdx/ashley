@@ -630,26 +630,6 @@ public class EngineTests {
 	}
 	
 	@Test
-	public void getEntityById () {
-		Engine engine = new Engine();
-		Entity entity = new Entity();
-		
-		assertEquals(0L, entity.getId());
-		
-		engine.addEntity(entity);
-		
-		long entityId = entity.getId();
-		
-		assertNotEquals(0L, entityId);
-		
-		assertEquals(entity, engine.getEntity(entityId));
-		
-		engine.removeEntity(entity);
-		
-		assertEquals(null, engine.getEntity(entityId));
-	}
-	
-	@Test
 	public void getEntities () {
 		int numEntities = 10;
 		

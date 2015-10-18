@@ -53,22 +53,6 @@ public class EntityTests {
 	private ComponentMapper<ComponentB> bm = ComponentMapper.getFor(ComponentB.class);
 
 	@Test
-	public void uniqueIndex () {
-		int numEntities = 10000;
-		Array<Entity> entities = new Array<Entity>();
-		Set<Long> ids = new HashSet<Long>();
-		Engine engine = new Engine();
-
-		for (int i = 0; i < numEntities; ++i) {
-			Entity entity = new Entity();
-			engine.addEntity(entity);
-			assertFalse(ids.contains(entity.getId()));
-			ids.add(entity.getId());
-			entities.add(entity);
-		}
-	}
-
-	@Test
 	public void noComponents () {
 		Entity entity = new Entity();
 

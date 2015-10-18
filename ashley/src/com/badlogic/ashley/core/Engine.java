@@ -23,8 +23,8 @@ import com.badlogic.ashley.signals.Signal;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Bits;
-import com.badlogic.gdx.utils.LongMap;
 import com.badlogic.gdx.utils.ObjectMap;
+import com.badlogic.gdx.utils.ObjectSet;
 import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.SnapshotArray;
 
@@ -47,42 +47,32 @@ import com.badlogic.gdx.utils.SnapshotArray;
 public class Engine {
 	private static SystemComparator systemComparator = new SystemComparator();
 	private static Family empty = Family.all().get();
-
+	
+	private final Listener<Entity> componentAdded;
+	private final Listener<Entity> componentRemoved;
+	
 	private Array<Entity> entities;
+	private ObjectSet<Entity> entitySet;
 	private ImmutableArray<Entity> immutableEntities;
-	private LongMap<Entity> entitiesById;
-
 	private Array<EntityOperation> entityOperations;
 	private EntityOperationPool entityOperationPool;
-
 	private Array<EntitySystem> systems;
 	private ImmutableArray<EntitySystem> immutableSystems;
 	private ObjectMap<Class<?>, EntitySystem> systemsByClass;
-
 	private ObjectMap<Family, Array<Entity>> families;
 	private ObjectMap<Family, ImmutableArray<Entity>> immutableFamilies;
-
 	private SnapshotArray<EntityListenerData> entityListeners;
 	private ObjectMap<Family, Bits> entityListenerMasks;
-
-
-	private final Listener<Entity> componentAdded;
-	private final Listener<Entity> componentRemoved;
-
 	private boolean updating;
-
 	private boolean notifying;
-	private long nextEntityId = 1;
-
-	/** Mechanism to delay component addition/removal to avoid affecting system processing */
 	private ComponentOperationPool componentOperationsPool;
  	private Array<ComponentOperation> componentOperations;
  	private ComponentOperationHandler componentOperationHandler;
 
 	public Engine(){
 		entities = new Array<Entity>(false, 16);
+		entitySet = new ObjectSet<Entity>();
 		immutableEntities = new ImmutableArray<Entity>(entities);
-		entitiesById = new LongMap<Entity>();
 		entityOperations = new Array<EntityOperation>(false, 16);
 		entityOperationPool = new EntityOperationPool();
 		systems = new Array<EntitySystem>(false, 16);
@@ -104,21 +94,16 @@ public class Engine {
 		componentOperationHandler = new ComponentOperationHandler(this);
 	}
 
-	private long obtainEntityId() {
-		return nextEntityId++;
-	}
-
 	/**
 	 * Adds an entity to this Engine.
 	 * This will throw an IllegalArgumentException if the given entity
 	 * was already registered with an engine.
 	 */
 	public void addEntity(Entity entity){
-		if (entity.uuid != 0L) {
-			throw new IllegalArgumentException("Entity is already registered with an Engine id = " + entity.uuid);
+		if (entitySet.contains(entity)) {
+			throw new IllegalArgumentException("Entity is already registered with the Engine " + entity);
 		}
 		
-		entity.uuid = obtainEntityId();
 		if (updating || notifying) {
 			EntityOperation operation = entityOperationPool.obtain();
 			operation.entity = entity;
@@ -166,10 +151,6 @@ public class Engine {
 				removeEntity(entities.first());
 			}
 		}
-	}
-
-	public Entity getEntity(long id) {
-		return entitiesById.get(id);
 	}
 
 	public ImmutableArray<Entity> getEntities() {
@@ -383,29 +364,20 @@ public class Engine {
 	}
 
 	protected void removeEntityInternal(Entity entity) {
-		boolean removed = false;
-		
 		entity.scheduledForRemoval = false;
 		entities.removeValue(entity, true);
+		entitySet.remove(entity);
 		
-		if (entitiesById.remove(entity.getId()) == entity) {
-			removed = true;
-		}
-
 		updateFamilyMembership(entity, true);
 
 		entity.componentAdded.remove(componentAdded);
 		entity.componentRemoved.remove(componentRemoved);
 		entity.componentOperationHandler = null;
-
-		if (removed) {
-			entity.uuid = 0L;
-		}
 	}
 
 	protected void addEntityInternal(Entity entity) {
 		entities.add(entity);
-		entitiesById.put(entity.getId(), entity);
+		entitySet.add(entity);
 
 		entity.componentAdded.add(componentAdded);
 		entity.componentRemoved.add(componentRemoved);

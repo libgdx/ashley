@@ -168,8 +168,7 @@ public class PooledEngineTests {
 			assertEquals(0, entities[i].getComponents().size());
 			assertTrue(entities[i].getFamilyBits().isEmpty());
 			assertFalse(familyEntities.contains(entities[i], true));
-			assertEquals(0L, entities[i].getId());
-
+			
 			entities[i].componentAdded.dispatch(entities[i]);
 			entities[i].componentRemoved.dispatch(entities[i]);
 		}
@@ -187,23 +186,22 @@ public class PooledEngineTests {
 
 		for (int i = 0; i < numEntities; ++i) {
 			Entity entity = engine.createEntity();
+			assertEquals(0, entity.flags);
 			engine.addEntity(entity);
 			entities.add(entity);
-
-			assertNotEquals(0L, entity.getId());
+			entity.flags = 1;
 		}
 
 		for (Entity entity : entities) {
 			engine.removeEntity(entity);
-			assertEquals(0L, entity.getId());
+			assertEquals(0, entity.flags);
 		}
 
 		for (int i = 0; i < numEntities; ++i) {
 			Entity entity = engine.createEntity();
+			assertEquals(0, entity.flags);
 			engine.addEntity(entity);
 			entities.add(entity);
-
-			assertNotEquals(0L, entity.getId());
 		}
 	}
 

@@ -35,7 +35,6 @@ public class Entity {
 	/** Will dispatch an event when a component is removed. */
 	public final Signal<Entity> componentRemoved;
 
-	long uuid;
 	boolean scheduledForRemoval;
 	ComponentOperationHandler componentOperationHandler;
 
@@ -56,11 +55,6 @@ public class Entity {
 
 		componentAdded = new Signal<Entity>();
 		componentRemoved = new Signal<Entity>();
-	}
-
-	/** @return The Entity's unique id. */
-	public long getId () {
-		return uuid;
 	}
 
 	/**
@@ -193,19 +187,6 @@ public class Entity {
 		}
 
 		return removeComponent;
-	}
-
-	@Override
-	public int hashCode () {
-		return (int)(uuid ^ (uuid >>> 32));
-	}
-
-	@Override
-	public boolean equals (Object obj) {
-		if (this == obj) return true;
-		if (!(obj instanceof Entity)) return false;
-		Entity other = (Entity)obj;
-		return uuid == other.uuid;
 	}
 
 	/** @return true if the entity is scheduled to be removed */
