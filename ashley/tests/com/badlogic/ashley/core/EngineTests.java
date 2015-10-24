@@ -20,6 +20,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
+import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Bits;
@@ -547,6 +548,125 @@ public class EngineTests {
 		for (int i = 0; i < entities.size(); ++i) {
 			assertEquals(1, entities.get(i).getComponent(CounterComponent.class).counter);
 		}
+	}
+	
+	public class ComponentAddSystem extends IteratingSystem {
+		private ComponentAddedListener listener; 
+		
+		public ComponentAddSystem (ComponentAddedListener listener) {
+			super(Family.all().get());
+			this.listener = listener;
+		}
+
+		@Override
+		protected void processEntity (Entity entity, float deltaTime) {
+			assertNull(entity.getComponent(ComponentA.class));
+			entity.add(new ComponentA());
+			assertNotNull(entity.getComponent(ComponentA.class));
+			listener.checkEntityListenerUpdate();
+		}
+	}
+	
+	public class ComponentRemoveSystem extends IteratingSystem {
+		private ComponentRemovedListener listener; 
+		
+		public ComponentRemoveSystem (ComponentRemovedListener listener) {
+			super(Family.all().get());
+			this.listener = listener;
+		}
+
+		@Override
+		protected void processEntity (Entity entity, float deltaTime) {
+			assertNotNull(entity.getComponent(ComponentA.class));
+			entity.remove(ComponentA.class);
+			assertNull(entity.getComponent(ComponentA.class));
+			listener.checkEntityListenerUpdate();
+		}
+	}
+	
+	public class ComponentAddedListener implements EntityListener {
+		int addedCalls;
+		int numEntities;
+		
+		public ComponentAddedListener(int numEntities) {
+			this.numEntities = numEntities;
+		}
+		
+		@Override
+		public void entityAdded (Entity entity) {
+			addedCalls++;
+		}
+
+		@Override
+		public void entityRemoved (Entity entity) {
+
+		}
+		
+		public void checkEntityListenerNonUpdate() {
+			assertEquals(numEntities, addedCalls);
+			addedCalls = 0;
+		}
+		
+		public void checkEntityListenerUpdate() {
+			assertEquals(0, addedCalls);
+		}
+	}
+	
+	public class ComponentRemovedListener implements EntityListener {
+		int removedCalls;
+		int numEntities;
+		
+		public ComponentRemovedListener(int numEntities) {
+			this.numEntities = numEntities;
+		}
+		
+		@Override
+		public void entityAdded (Entity entity) {
+			
+		}
+
+		@Override
+		public void entityRemoved (Entity entity) {
+			removedCalls++;
+		}
+		
+		public void checkEntityListenerNonUpdate() {
+			assertEquals(numEntities, removedCalls);
+			removedCalls = 0;
+		}
+		
+		public void checkEntityListenerUpdate() {
+			assertEquals(0, removedCalls);
+		}
+	}
+	
+	@Test
+	public void entityAddRemoveComponentWhileIterating() {
+		int numEntities = 20;
+		Engine engine = new Engine();
+		ComponentAddedListener addedListener = new ComponentAddedListener(numEntities);
+		ComponentAddSystem addSystem = new ComponentAddSystem(addedListener);
+		
+		ComponentRemovedListener removedListener = new ComponentRemovedListener(numEntities);
+		ComponentRemoveSystem removeSystem = new ComponentRemoveSystem(removedListener);
+		
+		for (int i = 0; i < numEntities; ++i) {
+			Entity entity = new Entity();
+			engine.addEntity(entity);
+		}
+		
+		engine.addEntityListener(Family.all(ComponentA.class).get(), addedListener);
+		engine.addEntityListener(Family.all(ComponentA.class).get(), removedListener);
+		
+		engine.addSystem(addSystem);
+		engine.update(deltaTime);
+		addedListener.checkEntityListenerNonUpdate();
+		engine.removeSystem(addSystem);
+		
+		engine.addSystem(removeSystem);
+		engine.update(deltaTime);
+		removedListener.checkEntityListenerNonUpdate();
+		engine.removeSystem(removeSystem);
 	}
 
 	@Test

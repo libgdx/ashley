@@ -179,9 +179,8 @@ public class PooledEngineTests {
 
 	@Test
 	public void recycleEntity () {
-		PooledEngine engine = new PooledEngine();
-
-		int numEntities = 200;
+		int numEntities = 5;
+		PooledEngine engine = new PooledEngine(numEntities, 100, 0, 100);
 		Array<Entity> entities = new Array<Entity>();
 
 		for (int i = 0; i < numEntities; ++i) {
@@ -200,8 +199,7 @@ public class PooledEngineTests {
 		for (int i = 0; i < numEntities; ++i) {
 			Entity entity = engine.createEntity();
 			assertEquals(0, entity.flags);
-			engine.addEntity(entity);
-			entities.add(entity);
+			assertTrue(entities.contains(entity, true));
 		}
 	}
 
