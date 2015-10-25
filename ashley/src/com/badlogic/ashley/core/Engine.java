@@ -432,8 +432,12 @@ public class Engine {
 			ComponentOperation operation = componentOperations.get(i);
 
 			switch(operation.type) {
-				case Add: operation.entity.addInternal(operation.component); break;
-				case Remove: operation.entity.removeInternal(operation.componentClass); break;
+				case Add:
+					operation.entity.notifyComponentAdded();
+					break;
+				case Remove:
+					operation.entity.notifyComponentRemoved();
+					break;
 				default: break;
 			}
 
@@ -463,25 +467,25 @@ public class Engine {
 			this.engine = engine;
 		}
 
-		public void add(Entity entity, Component component) {
+		public void add(Entity entity) {
 			if (engine.updating) {
 				ComponentOperation operation = engine.componentOperationsPool.obtain();
-				operation.makeAdd(entity, component);
+				operation.makeAdd(entity);
 				engine.componentOperations.add(operation);
 			}
 			else {
-				entity.addInternal(component);
+				entity.notifyComponentAdded();
 			}
 		}
 
-		public void remove(Entity entity, Class<? extends Component> componentClass) {
+		public void remove(Entity entity) {
 			if (engine.updating) {
 				ComponentOperation operation = engine.componentOperationsPool.obtain();
-				operation.makeRemove(entity, componentClass);
+				operation.makeRemove(entity);
 				engine.componentOperations.add(operation);
 			}
 			else {
-				entity.removeInternal(componentClass);
+				entity.notifyComponentRemoved();
 			}
 		}
 	}
@@ -494,27 +498,20 @@ public class Engine {
 
 		public Type type;
 		public Entity entity;
-		public Component component;
-		public Class<? extends Component> componentClass;
 
-		public void makeAdd(Entity entity, Component component) {
+		public void makeAdd(Entity entity) {
 			this.type = Type.Add;
 			this.entity = entity;
-			this.component = component;
-			this.componentClass = null;
 		}
 
-		public void makeRemove(Entity entity, Class<? extends Component> componentClass) {
+		public void makeRemove(Entity entity) {
 			this.type = Type.Remove;
 			this.entity = entity;
-			this.component = null;
-			this.componentClass = componentClass;
 		}
 
 		@Override
 		public void reset() {
 			entity = null;
-			component = null;
 		}
 	}
 

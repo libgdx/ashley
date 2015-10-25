@@ -62,11 +62,15 @@ public class Entity {
 	 * @return The Entity for easy chaining
 	 */
 	public Entity add (Component component) {
-		if (componentOperationHandler != null) {
-			componentOperationHandler.add(this, component);
-		} else {
-			addInternal(component);
+		if (addInternal(component)) {
+			if (componentOperationHandler != null) {
+				componentOperationHandler.add(this);
+			}
+			else {
+				notifyComponentAdded();
+			}
 		}
+		
 		return this;
 	}
 
@@ -80,10 +84,13 @@ public class Entity {
 		int componentTypeIndex = componentType.getIndex();
 		Component removeComponent = components.get(componentTypeIndex);
 
-		if (componentOperationHandler != null) {
-			componentOperationHandler.remove(this, componentClass);
-		} else {
-			removeInternal(componentClass);
+		if (removeComponent != null && removeInternal(componentClass)) {
+			if (componentOperationHandler != null) {
+				componentOperationHandler.remove(this);
+			}
+			else {
+				notifyComponentRemoved();
+			}
 		}
 
 		return removeComponent;
@@ -92,7 +99,7 @@ public class Entity {
 	/** Removes all the {@link Component}'s from the Entity. */
 	public void removeAll () {
 		while (componentsArray.size > 0) {
-			removeInternal(componentsArray.get(0).getClass());
+			remove(componentsArray.get(0).getClass());
 		}
 	}
 
@@ -129,7 +136,6 @@ public class Entity {
 	}
 
 	/**
-	 * Internal use.
 	 * @return Whether or not the Entity has a {@link Component} for the specified class.
 	 */
 	boolean hasComponent (ComponentType componentType) {
@@ -137,7 +143,6 @@ public class Entity {
 	}
 
 	/**
-	 * Internal use.
 	 * @return This Entity's component bits, describing all the {@link Component}s it contains.
 	 */
 	Bits getComponentBits () {
@@ -149,13 +154,16 @@ public class Entity {
 		return familyBits;
 	}
 
-	Entity addInternal (Component component) {
+	/**
+	 * @param component
+	 * @return whether or not the component was added.
+	 */
+	boolean addInternal (Component component) {
 		Class<? extends Component> componentClass = component.getClass();
-
 		Component oldComponent = getComponent(componentClass);
 
 		if (component == oldComponent) {
-			return this;
+			return false;
 		}
 
 		if (oldComponent != null) {
@@ -163,17 +171,18 @@ public class Entity {
 		}
 
 		int componentTypeIndex = ComponentType.getIndexFor(componentClass);
-
 		components.set(componentTypeIndex, component);
 		componentsArray.add(component);
-
 		componentBits.set(componentTypeIndex);
-
-		componentAdded.dispatch(this);
-		return this;
+		
+		return true;
 	}
 
-	Component removeInternal (Class<? extends Component> componentClass) {
+	/**
+	 * @param componentClass
+	 * @return whether or not a component with the specified class was found and removed.
+	 */
+	boolean removeInternal (Class<? extends Component> componentClass) {
 		ComponentType componentType = ComponentType.getFor(componentClass);
 		int componentTypeIndex = componentType.getIndex();
 		Component removeComponent = components.get(componentTypeIndex);
@@ -182,11 +191,19 @@ public class Entity {
 			components.set(componentTypeIndex, null);
 			componentsArray.removeValue(removeComponent, true);
 			componentBits.clear(componentTypeIndex);
-
-			componentRemoved.dispatch(this);
+			
+			return true;
 		}
-
-		return removeComponent;
+		
+		return false;
+	}
+	
+	void notifyComponentAdded() {
+		componentAdded.dispatch(this);
+	}
+	
+	void notifyComponentRemoved() {
+		componentRemoved.dispatch(this);
 	}
 
 	/** @return true if the entity is scheduled to be removed */
