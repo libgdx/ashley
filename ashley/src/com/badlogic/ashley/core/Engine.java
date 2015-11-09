@@ -363,6 +363,8 @@ public class Engine {
 
 		addListenerBits.clear();
 		removeListenerBits.clear();
+		bitsPool.free(addListenerBits);
+		bitsPool.free(removeListenerBits);
 		entityListeners.end();
 		notifying = false;
 	}
