@@ -68,6 +68,8 @@ public class Engine {
 	private ComponentOperationPool componentOperationsPool;
  	private Array<ComponentOperation> componentOperations;
  	private ComponentOperationHandler componentOperationHandler;
+ 	
+ 	private BitsPool bitsPool = new BitsPool();
 
 	public Engine(){
 		entities = new Array<Entity>(false, 16);
@@ -322,8 +324,8 @@ public class Engine {
 	private void updateFamilyMembership (Entity entity, boolean removing) {
 		// Find families that the entity was added to/removed from, and fill
 		// the bitmasks with corresponding listener bits.
-		Bits addListenerBits = new Bits();
-		Bits removeListenerBits = new Bits();
+		Bits addListenerBits = bitsPool.obtain();
+		Bits removeListenerBits = bitsPool.obtain();
 
 		for (Family family : entityListenerMasks.keys()) {
 			final int familyIndex = family.getIndex();
@@ -359,6 +361,8 @@ public class Engine {
 			((EntityListenerData)items[i]).listener.entityAdded(entity);
 		}
 
+		addListenerBits.clear();
+		removeListenerBits.clear();
 		entityListeners.end();
 		notifying = false;
 	}
@@ -554,6 +558,13 @@ public class Engine {
 		@Override
 		protected EntityOperation newObject() {
 			return new EntityOperation();
+		}
+	}
+	
+	private static class BitsPool extends Pool<Bits> {
+		@Override
+		protected Bits newObject () {
+			return new Bits();
 		}
 	}
 }
