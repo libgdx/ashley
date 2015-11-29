@@ -584,7 +584,7 @@ public class EngineTests {
 		}
 	}
 	
-	public class ComponentAddedListener implements EntityListener {
+	public static class ComponentAddedListener implements EntityListener {
 		int addedCalls;
 		int numEntities;
 		
@@ -612,7 +612,7 @@ public class EngineTests {
 		}
 	}
 	
-	public class ComponentRemovedListener implements EntityListener {
+	public static class ComponentRemovedListener implements EntityListener {
 		int removedCalls;
 		int numEntities;
 		
