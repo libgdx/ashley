@@ -121,6 +121,54 @@ public class Entity {
 	}
 
 	/**
+	 * Disable the component on this {@link Entity} by class.  Does nothing if a component of the given class
+	 * is not already added to this {@link Entity}.  If such a component is already added, then it remains
+	 * added, but subsequent calls to {@link #hasComponent(ComponentType)} will return false.
+	 * <em>Note:</em> This method may be useful to temporarily exclude an {@link Entity} from an
+	 * {@link EntitySystem}, if the intention is to include the same component again later.
+	 * @param componentClass The {@link Class} of the component to be disabled.
+	 * @return The {@link Entity} for easy chaining
+	 */
+	public Entity disable(Class<? extends Component> componentClass) {
+		Component c = getComponent(componentClass);
+		if (c != null) {
+			componentBits.clear(ComponentType.getIndexFor(componentClass));
+		}
+		return this;
+	}
+
+	/**
+	 * Enable the component on this {@link Entity} by class.  Does nothing if a component of the given class
+	 * is not already added to this {@link Entity}.
+	 * @see #disable(Class<? extends Component>)
+	 * @param componentClass The {@link Class} of the component to be disabled.
+	 * @return The {@link Entity} for easy chaining
+	 */
+	public Entity enable(Class<? extends Component> componentClass) {
+		Component c = getComponent(componentClass);
+		if (c != null) {
+			componentBits.set(ComponentType.getIndexFor(componentClass));
+		}
+		return this;
+	}
+
+	/**
+	 * Enable or disable the component on this {@link Entity} by class.  Does nothing if a component of the
+	 * given class is not already added to this {@link Entity}.
+	 * @see #disable(Class<? extends Component>)
+	 * @see #enable(Class<? extends Component>)
+	 * @param componentClass The {@link Class} of the component to be disabled.
+	 * @return The {@link Entity} for easy chaining
+	 */
+	public Entity toggle(Class<? extends Component> componentClass) {
+		Component c = getComponent(componentClass);
+		if (c != null) {
+			componentBits.flip(ComponentType.getIndexFor(componentClass));
+		}
+		return this;
+	}
+
+	/**
 	 * Internal use.
 	 * @return The {@link Component} object for the specified class, null if the Entity does not have any components for that class.
 	 */
