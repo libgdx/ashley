@@ -82,4 +82,30 @@ public class EntityManagerTests {
 	    manager.addEntity(entity);
 	    manager.addEntity(entity);
 	}
+	
+	@Test
+	public void delayedOperationsOrder() {
+		EntityListenerMock listener = new EntityListenerMock();
+		EntityManager manager = new EntityManager(listener);
+		
+		Entity entityA = new Entity();
+		Entity entityB = new Entity();
+		
+		boolean delayed = true;
+		manager.addEntity(entityA);
+		manager.addEntity(entityB);
+		
+		assertEquals(2, manager.getEntities().size());
+		
+		Entity entityC = new Entity();
+		Entity entityD = new Entity();
+		manager.removeAllEntities(delayed);
+		manager.addEntity(entityC, delayed);
+		manager.addEntity(entityD, delayed);
+		manager.processPendingOperations();
+		
+		assertEquals(2, manager.getEntities().size());
+		assertNotEquals(-1, manager.getEntities().indexOf(entityC, true));
+		assertNotEquals(-1, manager.getEntities().indexOf(entityD, true));
+	}
 }

@@ -11,7 +11,7 @@ class EntityManager {
 	private Array<Entity> entities = new Array<Entity>(false, 16);
 	private ObjectSet<Entity> entitySet = new ObjectSet<Entity>();
 	private ImmutableArray<Entity> immutableEntities = new ImmutableArray<Entity>(entities);
-	private Array<EntityOperation> entityOperations = new Array<EntityOperation>(false, 16);
+	private Array<EntityOperation> pendingOperations = new Array<EntityOperation>(false, 16);
 	private EntityOperationPool entityOperationPool = new EntityOperationPool();
 	
 	public EntityManager(EntityListener listener) {
@@ -31,7 +31,7 @@ class EntityManager {
 			EntityOperation operation = entityOperationPool.obtain();
 			operation.entity = entity;
 			operation.type = EntityOperation.Type.Add;
-			entityOperations.add(operation);
+			pendingOperations.add(operation);
 		}
 		else {
 			addEntityInternal(entity);
@@ -51,7 +51,7 @@ class EntityManager {
 			EntityOperation operation = entityOperationPool.obtain();
 			operation.entity = entity;
 			operation.type = EntityOperation.Type.Remove;
-			entityOperations.add(operation);
+			pendingOperations.add(operation);
 		}
 		else {
 			removeEntityInternal(entity);
@@ -69,7 +69,7 @@ class EntityManager {
 			}
 			EntityOperation operation = entityOperationPool.obtain();
 			operation.type = EntityOperation.Type.RemoveAll;
-			entityOperations.add(operation);
+			pendingOperations.add(operation);
 		}
 		else {
 			while(entities.size > 0) {
@@ -83,8 +83,8 @@ class EntityManager {
 	}
 	
 	public void processPendingOperations() {
-		while (entityOperations.size > 0) {
-			EntityOperation operation = entityOperations.removeIndex(entityOperations.size - 1);
+		for (int i = 0; i < pendingOperations.size; ++i) {
+			EntityOperation operation = pendingOperations.get(i); 
 
 			switch(operation.type) {
 				case Add: addEntityInternal(operation.entity); break;
@@ -100,8 +100,8 @@ class EntityManager {
 
 			entityOperationPool.free(operation);
 		}
-
-		entityOperations.clear();
+		
+		pendingOperations.clear();
 	}
 	
 	protected void removeEntityInternal(Entity entity) {
