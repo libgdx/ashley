@@ -6,6 +6,8 @@ A tiny entity framework written in Java. It's inspired by frameworks like
 entity framework  without the use of black-magic and thus making the API easy
 and transparent to use.
 
+Ashley is awesome, if you don't believe it, check out some [games](https://github.com/libgdx/ashley/wiki/Games-made-with-Ashley) made with it!
+
 Ashley lives under the [Libgdx](https://github.com/libgdx) family but it does not force you to use that specific framework if you do not wish to do so.
 
 [![Build Status](http://144.76.220.132:8080/job/ashley/badge/icon)](http://144.76.220.132:8080/job/ashley/)
