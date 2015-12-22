@@ -23,10 +23,6 @@ class EntityManager {
 	}
 	
 	public void addEntity(Entity entity, boolean delayed){
-		if (entitySet.contains(entity)) {
-			throw new IllegalArgumentException("Entity is already registered " + entity);
-		}
-		
 		if (delayed) {
 			EntityOperation operation = entityOperationPool.obtain();
 			operation.entity = entity;
@@ -113,6 +109,10 @@ class EntityManager {
 	}
 
 	protected void addEntityInternal(Entity entity) {
+		if (entitySet.contains(entity)) {
+			throw new IllegalArgumentException("Entity is already registered " + entity);
+		}
+
 		entities.add(entity);
 		entitySet.add(entity);
 
