@@ -75,14 +75,34 @@ public class EntityManagerTests {
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
-	public void addEntityTwice () {
+	public void addEntityTwice1 () {
 		 EntityListenerMock listener = new EntityListenerMock();
 		 EntityManager manager = new EntityManager(listener);
 	    Entity entity = new Entity();
 	    manager.addEntity(entity);
 	    manager.addEntity(entity);
 	}
-	
+
+	@Test(expected=IllegalArgumentException.class)
+	public void addEntityTwice2() {
+		EntityListenerMock listener = new EntityListenerMock();
+		EntityManager manager = new EntityManager(listener);
+		Entity entity = new Entity();
+		manager.addEntity(entity, false);
+		manager.addEntity(entity, false);
+	}
+
+	@Test(expected=IllegalArgumentException.class)
+	public void addEntityTwiceDelayed() {
+		EntityListenerMock listener = new EntityListenerMock();
+		EntityManager manager = new EntityManager(listener);
+
+		Entity entity = new Entity();
+		manager.addEntity(entity, true);
+		manager.addEntity(entity, true);
+		manager.processPendingOperations();
+	}
+
 	@Test
 	public void delayedOperationsOrder() {
 		EntityListenerMock listener = new EntityListenerMock();
@@ -107,5 +127,43 @@ public class EntityManagerTests {
 		assertEquals(2, manager.getEntities().size());
 		assertNotEquals(-1, manager.getEntities().indexOf(entityC, true));
 		assertNotEquals(-1, manager.getEntities().indexOf(entityD, true));
+	}
+
+	@Test
+	public void removeAndAddEntityDelayed() {
+		EntityListenerMock listener = new EntityListenerMock();
+		EntityManager manager = new EntityManager(listener);
+
+		Entity entity = new Entity();
+		manager.addEntity(entity, false);     // immediate
+		assertEquals(1, manager.getEntities().size());
+
+		manager.removeEntity(entity, true);   // delayed
+		assertEquals(1, manager.getEntities().size());
+
+		manager.addEntity(entity, true);      // delayed
+		assertEquals(1, manager.getEntities().size());
+
+		manager.processPendingOperations();
+		assertEquals(1, manager.getEntities().size());
+	}
+
+	@Test
+	public void removeAllAndAddEntityDelayed() {
+		EntityListenerMock listener = new EntityListenerMock();
+		EntityManager manager = new EntityManager(listener);
+
+		Entity entity = new Entity();
+		manager.addEntity(entity, false);  // immediate
+		assertEquals(1, manager.getEntities().size());
+
+		manager.removeAllEntities(true);   // delayed
+		assertEquals(1, manager.getEntities().size());
+
+		manager.addEntity(entity, true);   // delayed
+		assertEquals(1, manager.getEntities().size());
+
+		manager.processPendingOperations();
+		assertEquals(1, manager.getEntities().size());
 	}
 }
