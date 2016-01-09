@@ -80,7 +80,7 @@ class FamilyManager {
 		}
 	}
 	
-	public void updateFamilyMembership (Entity entity, boolean removing) {
+	public void updateFamilyMembership (Entity entity) {
 		// Find families that the entity was added to/removed from, and fill
 		// the bitmasks with corresponding listener bits.
 		Bits addListenerBits = bitsPool.obtain();
@@ -91,7 +91,7 @@ class FamilyManager {
 			final Bits entityFamilyBits = entity.getFamilyBits();
 
 			boolean belongsToFamily = entityFamilyBits.get(familyIndex);
-			boolean matches = family.matches(entity) && !removing;
+			boolean matches = family.matches(entity) && !entity.removing;
 
 			if (belongsToFamily != matches) {
 				final Bits listenersMask = entityListenerMasks.get(family);
@@ -139,7 +139,7 @@ class FamilyManager {
 			entityListenerMasks.put(family, new Bits());
 
 			for (Entity entity : entities){
-				updateFamilyMembership(entity, false);
+				updateFamilyMembership(entity);
 			}
 		}
 

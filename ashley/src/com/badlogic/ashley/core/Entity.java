@@ -35,6 +35,7 @@ public class Entity {
 	public final Signal<Entity> componentRemoved;
 
 	boolean scheduledForRemoval;
+	boolean removing;
 	ComponentOperationHandler componentOperationHandler;
 
 	private Bag<Component> components;

@@ -188,11 +188,11 @@ public class Engine {
 		entity.componentRemoved.add(componentRemoved);
 		entity.componentOperationHandler = componentOperationHandler;
 		
-		familyManager.updateFamilyMembership(entity, false);
+		familyManager.updateFamilyMembership(entity);
 	}
 	
 	protected void removeEntityInternal(Entity entity) {
-		familyManager.updateFamilyMembership(entity, true);
+		familyManager.updateFamilyMembership(entity);
 
 		entity.componentAdded.remove(componentAdded);
 		entity.componentRemoved.remove(componentRemoved);
@@ -202,7 +202,7 @@ public class Engine {
 	private class ComponentListener implements Listener<Entity> {
 		@Override
 		public void receive(Signal<Entity> signal, Entity object) {
-			familyManager.updateFamilyMembership(object, false);
+			familyManager.updateFamilyMembership(object);
 		}
 	}
 	

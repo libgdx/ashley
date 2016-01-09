@@ -110,6 +110,7 @@ public class PooledEngine extends Engine {
 			componentAdded.removeAllListeners();
 			componentRemoved.removeAllListeners();
 			scheduledForRemoval = false;
+			removing = false;
 		}
 	}
 

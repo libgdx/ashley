@@ -49,10 +49,10 @@ public class FamilyManagerTests {
 		entities.add(entity3);
 		entities.add(entity4);
 
-		manager.updateFamilyMembership(entity1, false);
-		manager.updateFamilyMembership(entity2, false);
-		manager.updateFamilyMembership(entity3, false);
-		manager.updateFamilyMembership(entity4, false);
+		manager.updateFamilyMembership(entity1);
+		manager.updateFamilyMembership(entity2);
+		manager.updateFamilyMembership(entity3);
+		manager.updateFamilyMembership(entity4);
 		
 		assertEquals(3, familyEntities.size());
 		assertTrue(familyEntities.contains(entity1, true));
@@ -72,16 +72,18 @@ public class FamilyManagerTests {
 
 		entities.add(entity);
 		
-		manager.updateFamilyMembership(entity, false);
+		manager.updateFamilyMembership(entity);
 		
 		ImmutableArray<Entity> familyEntities = manager.getEntitiesFor(Family.all(ComponentA.class).get());
 		
 		assertEquals(1, familyEntities.size());
 		assertTrue(familyEntities.contains(entity, true));
 		
+		entity.removing = true;
 		entities.removeValue(entity, true);
 		
-		manager.updateFamilyMembership(entity, true);
+		manager.updateFamilyMembership(entity);
+		entity.removing = false;
 
 		assertEquals(0, familyEntities.size());
 		assertFalse(familyEntities.contains(entity, true));
@@ -122,10 +124,10 @@ public class FamilyManagerTests {
 		entity4.add(new ComponentB());
 		entity4.add(new ComponentC());
 		
-		manager.updateFamilyMembership(entity1, false);
-		manager.updateFamilyMembership(entity2, false);
-		manager.updateFamilyMembership(entity3, false);
-		manager.updateFamilyMembership(entity4, false);
+		manager.updateFamilyMembership(entity1);
+		manager.updateFamilyMembership(entity2);
+		manager.updateFamilyMembership(entity3);
+		manager.updateFamilyMembership(entity4);
 
 		assertEquals(3, familyEntities.size());
 		assertTrue(familyEntities.contains(entity1, true));
@@ -167,10 +169,10 @@ public class FamilyManagerTests {
 		entity4.add(new ComponentB());
 		entity4.add(new ComponentC());
 		
-		manager.updateFamilyMembership(entity1, false);
-		manager.updateFamilyMembership(entity2, false);
-		manager.updateFamilyMembership(entity3, false);
-		manager.updateFamilyMembership(entity4, false);
+		manager.updateFamilyMembership(entity1);
+		manager.updateFamilyMembership(entity2);
+		manager.updateFamilyMembership(entity3);
+		manager.updateFamilyMembership(entity4);
 
 		assertEquals(3, familyEntities.size());
 		assertTrue(familyEntities.contains(entity1, true));
@@ -179,10 +181,13 @@ public class FamilyManagerTests {
 		assertFalse(familyEntities.contains(entity2, true));
 	
 		entity1.remove(ComponentA.class);
+		entity3.removing = true;
 		entities.removeValue(entity3, true);
 
-		manager.updateFamilyMembership(entity1, false);
-		manager.updateFamilyMembership(entity3, true);
+		manager.updateFamilyMembership(entity1);
+		manager.updateFamilyMembership(entity3);
+		
+		entity3.removing = false;
 		
 		assertEquals(1, familyEntities.size());
 		assertTrue(familyEntities.contains(entity4, true));
@@ -213,15 +218,15 @@ public class FamilyManagerTests {
 		entity2.add(new ComponentA());
 		entity2.add(new ComponentB());
 		
-		manager.updateFamilyMembership(entity1, false);
-		manager.updateFamilyMembership(entity2, false);
+		manager.updateFamilyMembership(entity1);
+		manager.updateFamilyMembership(entity2);
 
 		assertEquals(1, entitiesWithComponentAOnly.size());
 		assertEquals(1, entitiesWithComponentB.size());
 
 		entity2.remove(ComponentB.class);
 		
-		manager.updateFamilyMembership(entity2, false);
+		manager.updateFamilyMembership(entity2);
 
 		assertEquals(2, entitiesWithComponentAOnly.size());
 		assertEquals(0, entitiesWithComponentB.size());
