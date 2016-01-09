@@ -3,8 +3,10 @@
 ### Ashley 1.7.1
 
 * **API addition**: expose `IntervalSystem` interval value (read-only). Commit 5277cbe83264d0ddc851a823232f51c350e9c387.
-* **Bug fix**: fixed pending entity operations not being processed in the right order. Issue #197
-* **Internals**: split Engine internals into loosely coupled, single responsibility smaller classes. Issue #178
+* **Bug fix**: fixed pending entity operations not being processed in the right order. Issue #197.
+* **Bug fix**: fixed adding component in empty family `EntityListener` causing wrong `EntityListener` calls. Issue #203.
+* **Bug fix**: fixed some entity operations not being performed under special circumstances. Commit c45ba3b34860121571eb9a660a76bc82ac0a1a96.
+* **Internals**: split Engine internals into loosely coupled, single responsibility smaller classes. Issue #178.
 
 ### Ashley 1.7.0
 
