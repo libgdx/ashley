@@ -191,4 +191,61 @@ public class EntityListenerTests {
 		inOrder.verify(b).entityAdded(entity);
 		inOrder.verifyNoMoreInteractions();
 	}
+
+    private interface ComponentRecorder {
+        void addingComponentA();
+
+        void removingComponentA();
+
+        void addingComponentB();
+
+        void removingComponentB();
+    }
+
+    @Test
+    public void componentHandlingInListeners() {
+        final Engine engine = new Engine();
+
+        final ComponentRecorder recorder = mock(ComponentRecorder.class);
+
+        engine.addEntityListener(new EntityListener() {
+            @Override
+            public void entityAdded(Entity entity) {
+                recorder.addingComponentA();
+                entity.add(new ComponentA());
+            }
+
+            @Override
+            public void entityRemoved(Entity entity) {
+                recorder.removingComponentA();
+                entity.remove(ComponentA.class);
+            }
+        });
+
+        engine.addEntityListener(new EntityListener() {
+            @Override
+            public void entityAdded(Entity entity) {
+                recorder.addingComponentB();
+                entity.add(new ComponentB());
+            }
+
+            @Override
+            public void entityRemoved(Entity entity) {
+                recorder.removingComponentB();
+                entity.remove(ComponentB.class);
+            }
+        });
+
+        engine.update(0);
+        Entity e = new Entity();
+        engine.addEntity(e);
+        engine.update(0);
+        engine.removeEntity(e);
+        engine.update(0);
+
+        verify(recorder).addingComponentA();
+        verify(recorder).removingComponentA();
+        verify(recorder).addingComponentB();
+        verify(recorder).removingComponentB();
+    }
 }
