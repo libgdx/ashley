@@ -7,6 +7,7 @@
 * **Bug fix**: fixed adding component in empty family `EntityListener` causing wrong `EntityListener` calls. Issue #203.
 * **Bug fix**: fixed some entity operations not being performed under special circumstances. Commit c45ba3b34860121571eb9a660a76bc82ac0a1a96.
 * **Internals**: split Engine internals into loosely coupled, single responsibility smaller classes. Issue #178.
+* **Update**: uses Libgdx 1.8.0
 
 ### Ashley 1.7.0
 
