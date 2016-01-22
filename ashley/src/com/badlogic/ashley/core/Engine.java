@@ -172,7 +172,10 @@ public class Engine {
 		}
 		
 		updating = true;
-		for (EntitySystem system : systemManager.getSystems()) {
+		ImmutableArray<EntitySystem> systems = systemManager.getSystems();
+		for (int i = 0; i < systems.size(); ++i) {
+			EntitySystem system = systems.get(i);
+			
 			if (system.checkProcessing()) {
 				system.update(deltaTime);
 			}
