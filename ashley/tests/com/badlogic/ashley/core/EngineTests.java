@@ -24,6 +24,7 @@ import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Bits;
+import com.badlogic.gdx.utils.GdxRuntimeException;
 
 @SuppressWarnings("unchecked")
 public class EngineTests {
@@ -802,5 +803,34 @@ public class EngineTests {
 		});
 		
 		engine.update(deltaTime);
+	}
+	
+	@Test
+	public void systemUpdateThrows() {
+		Engine engine = new Engine();
+		
+		EntitySystem system = new EntitySystem() {
+			@Override
+			public void update(float deltaTime) {
+				throw new GdxRuntimeException("throwing");
+			}
+		};
+		
+		engine.addSystem(system);
+		
+		boolean thrown = false;
+		
+		try {
+			engine.update(0.0f);
+		}
+		catch (Exception e) {
+			thrown = true;
+		}
+		
+		assertTrue(thrown);
+		
+		engine.removeSystem(system);
+		
+		engine.update(0.0f);
 	}
 }

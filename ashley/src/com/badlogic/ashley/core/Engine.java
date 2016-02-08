@@ -173,17 +173,21 @@ public class Engine {
 		
 		updating = true;
 		ImmutableArray<EntitySystem> systems = systemManager.getSystems();
-		for (int i = 0; i < systems.size(); ++i) {
-			EntitySystem system = systems.get(i);
-			
-			if (system.checkProcessing()) {
-				system.update(deltaTime);
+		try {
+			for (int i = 0; i < systems.size(); ++i) {
+				EntitySystem system = systems.get(i);
+				
+				if (system.checkProcessing()) {
+					system.update(deltaTime);
+				}
+	
+				componentOperationHandler.processOperations();
+				entityManager.processPendingOperations();
 			}
-
-			componentOperationHandler.processOperations();
-			entityManager.processPendingOperations();
 		}
-		updating = false;
+		finally {
+			updating = false;
+		}	
 	}
 	
 	protected void addEntityInternal(Entity entity) {

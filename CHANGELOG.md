@@ -1,5 +1,10 @@
 ## Changelog
 
+### Ashley 1.7.2
+
+* ** Bug fix**: `Engine` doesn't use `EntitySystem` `iterator()`. Issue #209.
+* ** Bug fix**: Fixes `Engine` left unusable, in the updating state, after an uncaught exception in a subsystem. Issue #210.
+
 ### Ashley 1.7.1
 
 * **API addition**: expose `IntervalSystem` interval value (read-only). Commit 5277cbe83264d0ddc851a823232f51c350e9c387.
