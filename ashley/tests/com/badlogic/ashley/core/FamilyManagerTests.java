@@ -5,6 +5,7 @@ import org.junit.Test;
 
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.GdxRuntimeException;
 
 
 public class FamilyManagerTests {
@@ -230,5 +231,40 @@ public class FamilyManagerTests {
 
 		assertEquals(2, entitiesWithComponentAOnly.size());
 		assertEquals(0, entitiesWithComponentB.size());
+	}
+	
+	@Test
+	public void entityListenerThrows() {
+		Array<Entity> entities = new Array<Entity>();
+		ImmutableArray<Entity> immutableEntities = new ImmutableArray<Entity>(entities);
+		FamilyManager manager = new FamilyManager(immutableEntities);
+		
+		EntityListener listener = new EntityListener() {
+			@Override
+			public void entityAdded (Entity entity) {
+				throw new GdxRuntimeException("throwing");
+			}
+
+			@Override
+			public void entityRemoved (Entity entity) {
+				throw new GdxRuntimeException("throwing");
+			}
+		};
+		
+		manager.addEntityListener(Family.all().get(), 0, listener);
+		
+		Entity entity = new Entity();
+		entities.add(entity);
+		
+		boolean thrown = false;
+		try {
+			manager.updateFamilyMembership(entity);
+		}
+		catch (Exception e) {
+			thrown = true;
+		}
+		
+		assertTrue(thrown);
+		assertFalse(manager.notifying());
 	}
 }

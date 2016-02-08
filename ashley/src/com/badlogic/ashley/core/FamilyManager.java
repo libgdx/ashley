@@ -112,20 +112,23 @@ class FamilyManager {
 		notifying = true;
 		Object[] items = entityListeners.begin();
 
-		for (int i = removeListenerBits.nextSetBit(0); i >= 0; i = removeListenerBits.nextSetBit(i + 1)) {
-			((EntityListenerData)items[i]).listener.entityRemoved(entity);
+		try {
+			for (int i = removeListenerBits.nextSetBit(0); i >= 0; i = removeListenerBits.nextSetBit(i + 1)) {
+				((EntityListenerData)items[i]).listener.entityRemoved(entity);
+			}
+	
+			for (int i = addListenerBits.nextSetBit(0); i >= 0; i = addListenerBits.nextSetBit(i + 1)) {
+				((EntityListenerData)items[i]).listener.entityAdded(entity);
+			}
 		}
-
-		for (int i = addListenerBits.nextSetBit(0); i >= 0; i = addListenerBits.nextSetBit(i + 1)) {
-			((EntityListenerData)items[i]).listener.entityAdded(entity);
+		finally {
+			addListenerBits.clear();
+			removeListenerBits.clear();
+			bitsPool.free(addListenerBits);
+			bitsPool.free(removeListenerBits);
+			entityListeners.end();
+			notifying = false;	
 		}
-
-		addListenerBits.clear();
-		removeListenerBits.clear();
-		bitsPool.free(addListenerBits);
-		bitsPool.free(removeListenerBits);
-		entityListeners.end();
-		notifying = false;
 	}
 	
 	private ImmutableArray<Entity> registerFamily(Family family) {

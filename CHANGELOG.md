@@ -4,6 +4,7 @@
 
 * ** Bug fix**: `Engine` doesn't use `EntitySystem` `iterator()`. Issue #209.
 * ** Bug fix**: Fixes `Engine` left unusable, in the updating state, after an uncaught exception in a subsystem. Issue #210.
+* ** Bug fix**: Fixes `FamilyManager` not cleaning up properly when a triggering a listener that throws. Issue #210.
 
 ### Ashley 1.7.1
 
