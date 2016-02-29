@@ -2,6 +2,8 @@
 
 ### Ashley 1.7.3
 
+* **Update**: uses Libgdx 1.9.2.
+
 ### Ashley 1.7.2
 
 * ** Bug fix**: `Engine` doesn't use `EntitySystem` `iterator()`. Issue #209.
