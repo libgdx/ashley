@@ -20,6 +20,8 @@ import com.badlogic.ashley.core.ComponentOperationHandler.BooleanInformer;
 import com.badlogic.ashley.core.SystemManager.SystemListener;
 import com.badlogic.ashley.signals.Listener;
 import com.badlogic.ashley.signals.Signal;
+import com.badlogic.ashley.systems.InterpolatingSystem;
+import com.badlogic.ashley.systems.PhysicsSystem;
 import com.badlogic.ashley.utils.ImmutableArray;
 
 /**
@@ -188,6 +190,20 @@ public class Engine {
 		finally {
 			updating = false;
 		}	
+	}
+
+	public void updatePhysics(float physicsStep) {
+		ImmutableArray<PhysicsSystem> systems = systemManager.getPhysicsSystems();
+		for (PhysicsSystem system : systems) {
+			system.updatePhysics(physicsStep);
+		}
+	}
+
+	public void interpolate(float delta, float physicsStep, float inAccumulator) {
+		ImmutableArray<InterpolatingSystem> systems = systemManager.getInterpolatingSystems();
+		for (InterpolatingSystem system : systems) {
+			system.interpolate(delta, physicsStep, inAccumulator);
+		}
 	}
 	
 	protected void addEntityInternal(Entity entity) {
