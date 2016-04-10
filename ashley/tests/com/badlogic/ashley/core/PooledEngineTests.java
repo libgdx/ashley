@@ -3,6 +3,7 @@ package com.badlogic.ashley.core;
 
 import static org.junit.Assert.*;
 
+import com.badlogic.ashley.systems.IteratingSystem;
 import org.junit.Test;
 
 import com.badlogic.ashley.signals.Listener;
@@ -99,6 +100,120 @@ public class PooledEngineTests {
 			recycled = true;
 		}
 	}
+
+	private static class UniquePooledCompnentA implements Component, Poolable {
+		public int count = 1;
+
+		@Override
+		public void reset() {
+			count = 1;
+		}
+	}
+
+	private static class UniquePooledCompnentB implements Component, Poolable {
+		public float value = 1f;
+
+		@Override
+		public void reset() {
+			value = 1f;
+		}
+	}
+
+	private class RemoveAFromBSystem extends IteratingSystem{
+
+		final int numberToRemove;
+		int numberRemoved = 0;
+		public RemoveAFromBSystem(int numberToRemove){
+			super(Family.all(UniquePooledCompnentA.class, UniquePooledCompnentB.class).get());
+			this.numberToRemove = numberToRemove;
+		}
+
+		//Removes one each update
+		@Override
+		public void update(float deltaTime) {
+			super.update(deltaTime);
+			numberRemoved = 0;
+		}
+
+		@Override
+		protected void processEntity(Entity entity, float deltaTime) {
+			if(numberRemoved < numberToRemove){
+				if(entity.hasComponent(ComponentType.getFor(UniquePooledCompnentA.class))){
+					getEngine().removeEntity(entity);
+					//entity.remove(UniquePooledCompnentA.class);
+					numberRemoved++;
+				}
+			}
+		}
+	}
+
+	private interface IAssertEntityInFamily{
+		public void assertAgainst(Entity entity);
+	}
+
+	private class ListeningAndLookingForASystem extends IteratingSystem{
+
+		EntityListener el;
+		IAssertEntityInFamily asserter;
+		final Family targetFamily;
+		public ListeningAndLookingForASystem(Family familyToListenOn, IAssertEntityInFamily entityAsserter){
+			super(familyToListenOn);
+			this.asserter = entityAsserter;
+			this.targetFamily = familyToListenOn;
+		}
+
+		@Override
+		public void addedToEngine(Engine engine) {
+			super.addedToEngine(engine);
+
+			final Engine eg = engine;
+			if(el == null){
+				el = new EntityListener() {
+					@Override
+					public void entityAdded(Entity entity) {
+
+					}
+
+					@Override
+					public void entityRemoved(Entity entity) {
+						for(Entity e : eg.getEntitiesFor(Family.all(UniquePooledCompnentA.class).get())){
+							asserter.assertAgainst(e);
+						}
+					}
+				};
+			}
+			engine.addEntityListener(targetFamily, el);
+		}
+
+		@Override
+		protected void processEntity(Entity entity, float deltaTime) {
+
+		}
+	}
+
+	private class GenerateABSystem extends EntitySystem{
+
+		int numberToAdd = 1;
+		public GenerateABSystem(int numberToAdd){
+			super();
+			this.numberToAdd = numberToAdd;
+		}
+
+		//Removes one each update
+		@Override
+		public void update(float deltaTime) {
+			super.update(deltaTime);
+			for(int i=0;i<numberToAdd;i++) {
+				PooledEngine engine = (PooledEngine) getEngine();
+				Entity ab = engine.createEntity();
+				ab.add(engine.createComponent(UniquePooledCompnentA.class));
+				ab.add(engine.createComponent(UniquePooledCompnentB.class));
+				engine.addEntity(ab);
+			}
+		}
+
+	}
+
 
 	@Test
 	public void entityRemovalListenerOrder () {
@@ -246,5 +361,89 @@ public class PooledEngineTests {
 		}
 		
 		engine.removeAllEntities();
+	}
+
+	@Test
+	public void getEntitiesForFamilyReturnsOnlyEntitiesInFamily(){
+
+		final PooledEngine engine = new PooledEngine();
+
+		int aCount = 2;
+		int bCount = 3;
+
+		for(int i = 0;i<aCount;i++){
+			Entity a = engine.createEntity();
+			a.add(engine.createComponent(UniquePooledCompnentA.class));
+			engine.addEntity(a);
+		}
+
+		for(int i = 0;i<bCount;i++){
+			Entity b = engine.createEntity();
+			b.add(engine.createComponent(UniquePooledCompnentA.class));
+			b.add(engine.createComponent(UniquePooledCompnentB.class));
+			engine.addEntity(b);
+		}
+
+		engine.addSystem(new RemoveAFromBSystem(1));
+
+		assertEquals(5, engine.getEntitiesFor(Family.all(UniquePooledCompnentA.class).get()).size());
+		engine.update(0.16f);
+		assertEquals(4, engine.getEntitiesFor(Family.all(UniquePooledCompnentA.class).get()).size());
+		engine.update(0.16f);
+		assertEquals(3, engine.getEntitiesFor(Family.all(UniquePooledCompnentA.class).get()).size());
+		engine.update(0.16f);
+		assertEquals(2, engine.getEntitiesFor(Family.all(UniquePooledCompnentA.class).get()).size());
+
+		//From here, the system family shouldn't find the 2 A-only entities
+		engine.update(0.16f);
+		assertEquals(2, engine.getEntitiesFor(Family.all(UniquePooledCompnentA.class).get()).size());
+		engine.update(0.16f);
+		assertEquals(2, engine.getEntitiesFor(Family.all(UniquePooledCompnentA.class).get()).size());
+	}
+
+
+	@Test
+	public void getEntitiesForInEntityListenerShouldReturnOnlyEntitisInFamily(){
+
+		final PooledEngine engine = new PooledEngine();
+
+		//Flexible so we can check at volumes, and high churn
+		int aCount = 200;
+		int bCount = 400;
+		int total = aCount + bCount;
+		int addsPerIteration = 399;
+		int removesPerIteration = 400;
+		int changePerIteration = removesPerIteration - addsPerIteration;
+
+		for(int i = 0;i<aCount;i++){
+			Entity a = engine.createEntity();
+			a.add(engine.createComponent(UniquePooledCompnentA.class));
+			engine.addEntity(a);
+		}
+
+		for(int i = 0;i<bCount;i++){
+			Entity b = engine.createEntity();
+			b.add(engine.createComponent(UniquePooledCompnentA.class));
+			b.add(engine.createComponent(UniquePooledCompnentB.class));
+			engine.addEntity(b);
+		}
+
+		engine.addSystem(new GenerateABSystem(addsPerIteration)); //Adds 2
+		engine.addSystem(new RemoveAFromBSystem(removesPerIteration));
+		engine.addSystem(new ListeningAndLookingForASystem(Family.all(UniquePooledCompnentB.class).get(), new IAssertEntityInFamily() {
+			@Override
+			public void assertAgainst(Entity entity) {
+				assertTrue("Entity does not have value", entity.hasComponent(ComponentType.getFor(UniquePooledCompnentA.class)));
+			}
+		}));
+
+		int iterations = Math.abs(bCount/changePerIteration);
+		for(int i=0;i<iterations;i++){
+			int expectedTotal = total-((changePerIteration)*i);
+
+			assertEquals("Before Update Total should be right on iteration " + i, expectedTotal, engine.getEntitiesFor(Family.all(UniquePooledCompnentA.class).get()).size());
+			engine.update(0.16f);
+			assertEquals("After Update Total Should be right on iteration " + i, expectedTotal - changePerIteration, engine.getEntitiesFor(Family.all(UniquePooledCompnentA.class).get()).size());
+		}
 	}
 }
