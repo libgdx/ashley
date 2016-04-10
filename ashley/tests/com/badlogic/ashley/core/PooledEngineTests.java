@@ -205,11 +205,20 @@ public class PooledEngineTests {
 			super.update(deltaTime);
 			for(int i=0;i<numberToAdd;i++) {
 				PooledEngine engine = (PooledEngine) getEngine();
+
+				//Try to use up a pooled entity on a non-matching
+				//	entity
+				Entity bOnly = engine.createEntity();
+				bOnly.add(engine.createComponent(UniquePooledCompnentB.class));
+				engine.addEntity(bOnly);
+
 				Entity ab = engine.createEntity();
 				ab.add(engine.createComponent(UniquePooledCompnentA.class));
 				ab.add(engine.createComponent(UniquePooledCompnentB.class));
 				engine.addEntity(ab);
 			}
+
+
 		}
 
 	}
@@ -411,8 +420,8 @@ public class PooledEngineTests {
 		int aCount = 200;
 		int bCount = 400;
 		int total = aCount + bCount;
-		int addsPerIteration = 399;
-		int removesPerIteration = 400;
+		int addsPerIteration = 5;
+		int removesPerIteration = 6;
 		int changePerIteration = removesPerIteration - addsPerIteration;
 
 		for(int i = 0;i<aCount;i++){
