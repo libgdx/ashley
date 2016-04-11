@@ -455,4 +455,81 @@ public class PooledEngineTests {
 			assertEquals("After Update Total Should be right on iteration " + i, expectedTotal - changePerIteration, engine.getEntitiesFor(Family.all(UniquePooledCompnentA.class).get()).size());
 		}
 	}
+
+
+	private static class FollowerComponent implements Component, Poolable{
+
+		@Override
+		public void reset() {
+
+		}
+	}
+
+	private static class EnemyComponent implements Component, Poolable{
+		@Override
+		public void reset() {
+
+		}
+	}
+
+	private static class OtherComponent implements  Component, Poolable{
+
+		@Override
+		public void reset() {
+
+		}
+	}
+
+	@Test
+	public void removeDuringEntityRemovedHandledOk(){
+		final PooledEngine engine = new PooledEngine();
+
+		final Entity enemy = engine.createEntity();
+		enemy.add(engine.createComponent(EnemyComponent.class));
+		engine.addEntity(enemy);
+
+		final Entity otherFollower = engine.createEntity();
+		otherFollower.add(engine.createComponent(FollowerComponent.class));
+		otherFollower.add(engine.createComponent(OtherComponent.class));
+		engine.addEntity(otherFollower);
+
+		final Entity enemyWithFollower = engine.createEntity();
+		enemyWithFollower.add(engine.createComponent(EnemyComponent.class));
+		enemyWithFollower.add(engine.createComponent(FollowerComponent.class));
+		engine.addEntity(enemyWithFollower);
+
+
+		engine.addEntityListener(Family.all(EnemyComponent.class).get(), new EntityListener() {
+			private boolean isMidRemoval = false;
+			private ComponentMapper<FollowerComponent> fm = ComponentMapper.getFor(FollowerComponent.class);
+			@Override
+			public void entityAdded(Entity entity) {
+
+			}
+
+			@Override
+			public void entityRemoved(Entity entity) {
+				ImmutableArray<Entity> followers = engine.getEntitiesFor(Family.all(FollowerComponent.class).get());
+
+				for(Entity follower: followers){
+					FollowerComponent fc = fm.get(follower);
+					assertTrue("Follower Component is not defined for entity matching Family.all(FollowerComponent.class)", fc != null);
+					//UNCOMMENT THIS TO REPRODUCE ISSUE #214
+					//follower.removeAll();
+					engine.removeEntity(follower);
+				}
+			}
+		});
+
+		engine.addSystem(new EntitySystem() {
+			@Override
+			public void update(float deltaTime) {
+				super.update(deltaTime);
+				getEngine().removeEntity(enemy);
+			}
+		});
+
+		engine.update(0.16f);
+		engine.update(0.16f);
+	}
 }
