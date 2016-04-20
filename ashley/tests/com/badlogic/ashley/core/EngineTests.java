@@ -315,7 +315,7 @@ public class EngineTests {
 			assertEquals(i, systemA.updateCalls);
 			assertEquals(i, systemB.updateCalls);
 
-			engine.update(deltaTime, 1, 3);
+			engine.update(deltaTime, 1, 2);
 
 			assertEquals(i + 1, systemA.updateCalls);
 			assertEquals(i + 1, systemB.updateCalls);
@@ -325,7 +325,7 @@ public class EngineTests {
 			assertEquals(i + numUpdates, systemA.updateCalls);
 			assertEquals(numUpdates, systemB.updateCalls);
 
-			engine.update(deltaTime, 1, 2);
+			engine.update(deltaTime, 1, 1);
 
 			assertEquals(i + 1 + numUpdates, systemA.updateCalls);
 			assertEquals(numUpdates, systemB.updateCalls);
