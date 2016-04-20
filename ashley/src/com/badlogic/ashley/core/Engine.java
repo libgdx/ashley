@@ -207,7 +207,7 @@ public class Engine {
 			for (int i = 0; i < systems.size(); ++i) {
 				EntitySystem system = systems.get(i);
 
-				if(system.priority >= minRange && system.priority <= maxRange) {
+				if(system.priority >= minRange && system.priority < maxRange) {
 					if (system.checkProcessing()) {
 						system.update(deltaTime);
 					}
