@@ -171,10 +171,10 @@ public class Engine {
 	}
 
 	/**
-	 * Updates all the systems with priorities in the range
+	 * Updates all the systems with priorities in the given range
 	 * @param deltaTime The time passed since the last frame.
-	 * @param minRange The lowest range to update, inclusive
-	 * @param maxRange The highest range to update, inclusive
+	 * @param minRange The lowest priority to update, inclusive
+	 * @param maxRange The highest priority to update, inclusive
 	 */
 	public void update(float deltaTime, int minRange, int maxRange){
 		if (updating) {
