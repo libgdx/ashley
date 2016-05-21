@@ -2,7 +2,7 @@
 
 ### Ashley 1.7.3
 
-* **Update**: uses Libgdx 1.9.2.
+* **Update**: uses Libgdx 1.9.3.
 
 ### Ashley 1.7.2
 
