@@ -31,13 +31,20 @@ public class EngineTests {
 
 	private float deltaTime = 0.16f;
 
-	private static class ComponentA implements Component {
+	public static class ComponentA implements Component {
 	}
 
 	private static class ComponentB implements Component {
 	}
 
 	private static class ComponentC implements Component {
+	}
+
+	private static class ComponentD implements Component {
+		int value;
+		public ComponentD(int value) {
+			this.value = value;
+		}
 	}
 
 	private static class EntityListenerMock implements EntityListener {
@@ -151,6 +158,27 @@ public class EngineTests {
 				}
 			}
 		}
+	}
+
+	@Test
+	public void createEntity() {
+		Engine engine = new Engine();
+		Entity entity = engine.createEntity();
+		assertNotNull(entity);
+	}
+
+	@Test
+	public void createComponent() {
+		Engine engine = new Engine();
+		ComponentA component = engine.createComponent(ComponentA.class);
+		assertNotNull(component);
+	}
+
+	@Test
+	public void createComponentInvalid() {
+		Engine engine = new Engine();
+		ComponentD component = engine.createComponent(ComponentD.class);
+		assertNull(component);
 	}
 
 	@Test

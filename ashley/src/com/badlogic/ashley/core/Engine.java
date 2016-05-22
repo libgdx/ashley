@@ -21,6 +21,8 @@ import com.badlogic.ashley.core.SystemManager.SystemListener;
 import com.badlogic.ashley.signals.Listener;
 import com.badlogic.ashley.signals.Signal;
 import com.badlogic.ashley.utils.ImmutableArray;
+import com.badlogic.gdx.utils.reflect.ClassReflection;
+import com.badlogic.gdx.utils.reflect.ReflectionException;
 
 /**
  * The heart of the Entity framework. It is responsible for keeping track of {@link Entity} and
@@ -50,6 +52,17 @@ public class Engine {
 	private FamilyManager familyManager = new FamilyManager(entityManager.getEntities());	
 	private boolean updating;
 
+	public Entity createEntity() {
+		return new Entity();
+	}
+
+	public <T extends Component> T createComponent(Class<T> type) {
+		try {
+			return ClassReflection.newInstance(type);
+		} catch (ReflectionException e) {
+			return null;
+		}
+	}
 
 	/**
 	 * Adds an entity to this Engine.
