@@ -101,13 +101,15 @@ class EntityManager {
 	}
 	
 	protected void removeEntityInternal(Entity entity) {
-		entity.scheduledForRemoval = false;
-		entity.removing = true;
-		entities.removeValue(entity, true);
-		entitySet.remove(entity);
-		
-		listener.entityRemoved(entity);
-		entity.removing = false;
+		boolean removed = entitySet.remove(entity);
+
+		if (removed) {
+			entity.scheduledForRemoval = false;
+			entity.removing = true;
+			entities.removeValue(entity, true);
+			listener.entityRemoved(entity);
+			entity.removing = false;
+		}
 	}
 
 	protected void addEntityInternal(Entity entity) {
@@ -120,7 +122,7 @@ class EntityManager {
 
 		listener.entityAdded(entity);
 	}
-	
+
 	private static class EntityOperation implements Pool.Poolable {
 		public enum Type {
 			Add,

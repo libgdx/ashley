@@ -62,33 +62,6 @@ public class PooledEngineTests {
 			totalCalls++;
 		}
 	}
-
-	private static class RemoveEntityTwiceSystem extends EntitySystem {
-		private ImmutableArray<Entity> entities;
-
-		@Override
-		public void addedToEngine (Engine engine) {
-			entities = engine.getEntitiesFor(Family.all(PositionComponent.class).get());
-		}
-
-		@Override
-		public void update (float deltaTime) {
-			Entity entity;
-			PooledEngine engine = (PooledEngine)getEngine();
-			for (int i = 0; i < 10; i++) {
-				entity = engine.createEntity();
-				assertEquals(0, entity.flags);
-				entity.flags = 1;
-				entity.add(engine.createComponent(PositionComponent.class));
-				engine.addEntity(entity);
-			}
-			for (int i = 0; i < entities.size(); ++i) {
-				entity = entities.get(i);
-				engine.removeEntity(entity);
-				engine.removeEntity(entity);
-			}
-		}
-	}
 	
 	private static class PooledComponentSpy implements Component, Poolable {
 		public boolean recycled = false;
@@ -210,10 +183,22 @@ public class PooledEngineTests {
 	@Test
 	public void removeEntityTwice () {
 		PooledEngine engine = new PooledEngine();
-		engine.addSystem(new RemoveEntityTwiceSystem());
 
-		for (int j = 0; j < 2; j++) {
-			engine.update(0);
+		for (int i = 0; i < 100; ++i) {
+			Array<Entity> entities = new Array<Entity>();
+
+			for (int j = 0; j < 100; ++j) {
+				Entity entity = engine.createEntity();
+				engine.addEntity(entity);
+				assertEquals(0, entity.flags);
+				entity.flags = 1;
+				entities.add(entity);
+			}
+
+			for (Entity entity : entities) {
+				engine.removeEntity(entity);
+				engine.removeEntity(entity);
+			}
 		}
 	}
 	
