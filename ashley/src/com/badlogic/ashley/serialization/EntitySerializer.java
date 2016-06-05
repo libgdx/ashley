@@ -15,6 +15,7 @@ import com.badlogic.gdx.utils.reflect.ReflectionException;
  * @author David Saltares
  */
 public class EntitySerializer implements Json.Serializer<Entity> {
+    private final TransientChecker transientChecker = new TransientChecker();
     private Engine engine;
 
     public void setEngine(Engine engine) {
@@ -26,7 +27,7 @@ public class EntitySerializer implements Json.Serializer<Entity> {
         json.writeObjectStart();
         json.writeObjectStart("components");
         for (Component component : entity.getComponents()) {
-            if (isTransient(component)) {
+            if (transientChecker.isTransient(component.getClass())) {
                 continue;
             }
             write(json, component);
@@ -50,11 +51,6 @@ public class EntitySerializer implements Json.Serializer<Entity> {
         } catch (ReflectionException e) {
             return null;
         }
-    }
-
-    private boolean isTransient(Component component) {
-        Class componentType = component.getClass();
-        return ClassReflection.getAnnotation(componentType, Transient.class) != null;
     }
 
     private Component read(Json json, JsonValue componentValue) throws ReflectionException {

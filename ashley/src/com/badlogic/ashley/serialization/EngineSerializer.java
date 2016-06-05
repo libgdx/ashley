@@ -4,7 +4,6 @@ import com.badlogic.ashley.core.*;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
-import com.badlogic.gdx.utils.reflect.Annotation;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.badlogic.gdx.utils.reflect.ReflectionException;
 
@@ -16,6 +15,7 @@ import com.badlogic.gdx.utils.reflect.ReflectionException;
  * @author David Saltares
  */
 public class EngineSerializer<T extends Engine> implements Json.Serializer<T> {
+    private final TransientChecker transientChecker = new TransientChecker();
     private final EntityFilter entityFilter;
 
     public EngineSerializer() {
@@ -75,7 +75,7 @@ public class EngineSerializer<T extends Engine> implements Json.Serializer<T> {
     private void writeSystems(Json json, ImmutableArray<EntitySystem> systems) {
         json.writeObjectStart("systems");
         for (EntitySystem system : systems) {
-            if (!isTransient(system.getClass())) {
+            if (!transientChecker.isTransient(system.getClass())) {
                 writeSystem(json, system);
             }
         }
@@ -123,11 +123,6 @@ public class EngineSerializer<T extends Engine> implements Json.Serializer<T> {
         }
 
         entitySerializer.setEngine(engine);
-    }
-
-    private boolean isTransient(Class type) {
-        Annotation annotation = ClassReflection.getAnnotation(type, Transient.class);
-        return annotation != null;
     }
 
     private boolean shouldWrite(Entity entity) {
