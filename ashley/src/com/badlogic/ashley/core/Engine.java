@@ -50,6 +50,14 @@ public class Engine {
 	private FamilyManager familyManager = new FamilyManager(entityManager.getEntities());	
 	private boolean updating;
 
+	/**
+	 * Creates a new Entity object.
+	 * @return @{@link Entity}
+	 */
+
+	public Entity createEntity () {
+		return new Entity();
+	}
 
 	/**
 	 * Adds an entity to this Engine.

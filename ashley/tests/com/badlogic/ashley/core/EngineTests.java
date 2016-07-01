@@ -833,4 +833,13 @@ public class EngineTests {
 		
 		engine.update(0.0f);
 	}
+
+	@Test
+	public void createNewEntity () {
+		Engine engine = new Engine();
+		Entity entity = engine.createEntity();
+
+		assertNotEquals(entity, null);
+	}
+
 }
