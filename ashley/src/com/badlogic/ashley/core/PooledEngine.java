@@ -60,7 +60,8 @@ public class PooledEngine extends Engine {
 		componentPools = new ComponentPools(componentPoolInitialSize, componentPoolMaxSize);
 	}
 
-	/** @return Clean {@link Entity} from the Engine pool. In order to add it to the {@link Engine}, use {@link #addEntity(Entity)}. */
+	/** @return Clean {@link Entity} from the Engine pool. In order to add it to the {@link Engine}, use {@link #addEntity(Entity)}. @{@link Override {@link Engine#createEntity()}} */
+	@Override
 	public Entity createEntity () {
 		return entityPool.obtain();
 	}
