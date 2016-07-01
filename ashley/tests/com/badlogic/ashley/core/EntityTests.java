@@ -53,6 +53,18 @@ public class EntityTests {
 	private ComponentMapper<ComponentB> bm = ComponentMapper.getFor(ComponentB.class);
 
 	@Test
+	public void addAndReturnComponent(){
+		Entity entity = new Entity();
+		ComponentA componentA = new ComponentA();
+		ComponentB componentB = new ComponentB();
+
+		assertEquals(componentA, entity.addAndReturn(componentA));
+		assertEquals(componentB, entity.addAndReturn(componentB));
+
+		assertEquals(2, entity.getComponents().size());
+	}
+
+	@Test
 	public void noComponents () {
 		Entity entity = new Entity();
 

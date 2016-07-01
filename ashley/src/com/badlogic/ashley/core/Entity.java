@@ -75,6 +75,15 @@ public class Entity {
 	}
 
 	/**
+	 * Adds a {@link Component} to this Entity. If a {@link Component} of the same type already exists, it'll be replaced.
+	 * @return The Component for direct component manipulation (e.g. PooledComponent)
+	 */
+	public Component addAndReturn(Component component) {
+		add(component);
+		return component;
+	}
+
+	/**
 	 * Removes the {@link Component} of the specified type. Since there is only ever one component of one type, we don't need an
 	 * instance reference.
 	 * @return The removed {@link Component}, or null if the Entity did no contain such a component.
