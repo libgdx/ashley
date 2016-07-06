@@ -21,6 +21,8 @@ import com.badlogic.ashley.core.SystemManager.SystemListener;
 import com.badlogic.ashley.signals.Listener;
 import com.badlogic.ashley.signals.Signal;
 import com.badlogic.ashley.utils.ImmutableArray;
+import com.badlogic.gdx.utils.reflect.ClassReflection;
+import com.badlogic.gdx.utils.reflect.ReflectionException;
 
 /**
  * The heart of the Entity framework. It is responsible for keeping track of {@link Entity} and
@@ -57,6 +59,18 @@ public class Engine {
 
 	public Entity createEntity () {
 		return new Entity();
+	}
+
+	/**
+	 * Creates a new {@link Component}. To use that method your components must have a visible no-arg constructor
+	 */
+	public <T extends Component> T createComponent (Class<T> componentType) {
+		try {
+			return ClassReflection.newInstance(componentType);
+		} catch (ReflectionException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	/**

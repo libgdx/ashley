@@ -40,6 +40,10 @@ public class EngineTests {
 	private static class ComponentC implements Component {
 	}
 
+	private static class ComponentD implements Component {
+		public ComponentD(){}
+	}
+
 	private static class EntityListenerMock implements EntityListener {
 
 		public int addedCount = 0;
@@ -840,6 +844,14 @@ public class EngineTests {
 		Entity entity = engine.createEntity();
 
 		assertNotEquals(entity, null);
+	}
+
+	@Test
+	public void createNewComponent () {
+		Engine engine = new Engine();
+		ComponentD componentD = engine.createComponent(ComponentD.class);
+
+		assertNotNull(componentD);
 	}
 
 }

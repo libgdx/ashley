@@ -14,6 +14,10 @@ import com.badlogic.gdx.utils.Pool.Poolable;
 public class PooledEngineTests {
 	private float deltaTime = 0.16f;
 
+	public static class ComponentA implements Component {
+		public ComponentA(){}
+	}
+
 	public static class PositionComponent implements Component {
 		public float x = 0.0f;
 		public float y = 0.0f;
@@ -231,5 +235,13 @@ public class PooledEngineTests {
 		}
 		
 		engine.removeAllEntities();
+	}
+
+	@Test
+	public void createNewComponent () {
+		PooledEngine engine = new PooledEngine();
+		ComponentA componentA = engine.createComponent(ComponentA.class);
+
+		assertNotNull(componentA);
 	}
 }
