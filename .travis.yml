@@ -1,2 +1,2 @@
 language: java
-script: ./gradlew test
+script: ./gradlew clean ashley:test
