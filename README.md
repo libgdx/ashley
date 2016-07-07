@@ -10,7 +10,7 @@ Ashley is awesome, if you don't believe it, check out some [games](https://githu
 
 Ashley lives under the [Libgdx](https://github.com/libgdx) family but it does not force you to use that specific framework if you do not wish to do so.
 
-[![Build Status](http://144.76.220.132:8080/job/ashley/badge/icon)](http://144.76.220.132:8080/job/ashley/)
+[![Build Status](https://travis-ci.org/libgdx/ashley.svg?branch=master)](https://travis-ci.org/libgdx/ashley)
 
 ### Get started
 
