@@ -19,7 +19,7 @@ package com.badlogic.ashley.signals;
 import com.badlogic.gdx.utils.SnapshotArray;
 
 /**
- * A Signal is a basic event class then can dispatch an event to multiple listeners. It uses generics to allow any type of object
+ * A Signal is a basic event class that can dispatch an event to multiple listeners. It uses generics to allow any type of object
  * to be passed around on dispatch.
  * @author Stefan Bachmann
  */
