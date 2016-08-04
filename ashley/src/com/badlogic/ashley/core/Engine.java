@@ -68,9 +68,8 @@ public class Engine {
 		try {
 			return ClassReflection.newInstance(componentType);
 		} catch (ReflectionException e) {
-			e.printStackTrace();
+			return null;
 		}
-		return null;
 	}
 
 	/**

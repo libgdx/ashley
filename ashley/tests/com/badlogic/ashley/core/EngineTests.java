@@ -18,6 +18,7 @@ package com.badlogic.ashley.core;
 
 import static org.junit.Assert.*;
 
+import com.badlogic.gdx.utils.reflect.ReflectionException;
 import org.junit.Test;
 
 import com.badlogic.ashley.systems.IteratingSystem;
@@ -40,7 +41,7 @@ public class EngineTests {
 	private static class ComponentC implements Component {
 	}
 
-	private static class ComponentD implements Component {
+	public static class ComponentD implements Component {
 		public ComponentD(){}
 	}
 
@@ -854,4 +855,10 @@ public class EngineTests {
 		assertNotNull(componentD);
 	}
 
+	@Test()
+	public void createPrivateComponent () {
+		Engine engine = new Engine();
+		ComponentC componentC = engine.createComponent(ComponentC.class);
+		assertNull(componentC);
+	}
 }
