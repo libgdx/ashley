@@ -69,7 +69,9 @@ public class PooledEngine extends Engine {
 	/**
 	 * Retrieves a new {@link Component} from the {@link Engine} pool. It will be placed back in the pool whenever it's removed
 	 * from an {@link Entity} or the {@link Entity} itself it's removed.
+	 * Overrides the default implementation of Engine (creating a new Object)
 	 */
+	@Override
 	public <T extends Component> T createComponent (Class<T> componentType) {
 		return componentPools.obtain(componentType);
 	}
