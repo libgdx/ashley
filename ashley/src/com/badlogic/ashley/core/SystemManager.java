@@ -1,17 +1,21 @@
 package com.badlogic.ashley.core;
 
-import java.util.Comparator;
-
-import com.badlogic.ashley.signals.Listener;
-import com.badlogic.ashley.signals.Signal;
+import com.badlogic.ashley.systems.InterpolatingSystem;
+import com.badlogic.ashley.systems.PhysicsSystem;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectMap;
 
+import java.util.Comparator;
+
 class SystemManager {
 	private SystemComparator systemComparator = new SystemComparator();
 	private Array<EntitySystem> systems = new Array<EntitySystem>(false, 16);
+	private Array<PhysicsSystem> physicsSystems = new Array<PhysicsSystem>(false, 16);
+	private Array<InterpolatingSystem> interpolatingSystems = new Array<InterpolatingSystem>(false, 16);
 	private ImmutableArray<EntitySystem> immutableSystems = new ImmutableArray<EntitySystem>(systems);
+	private ImmutableArray<PhysicsSystem> immutablePhysicsSystems = new ImmutableArray<PhysicsSystem>(physicsSystems);
+	private ImmutableArray<InterpolatingSystem> immutableInterpolatingSystems = new ImmutableArray<InterpolatingSystem>(interpolatingSystems);
 	private ObjectMap<Class<?>, EntitySystem> systemsByClass = new ObjectMap<Class<?>, EntitySystem>();
 	private SystemListener listener;
 	
@@ -31,12 +35,25 @@ class SystemManager {
 		systemsByClass.put(systemType, system);		
 		systems.sort(systemComparator);
 		listener.systemAdded(system);
+
+		if (system instanceof PhysicsSystem) {
+			physicsSystems.add((PhysicsSystem) system);
+		}
+		if (system instanceof InterpolatingSystem) {
+			interpolatingSystems.add((InterpolatingSystem) system);
+		}
 	}
 	
 	public void removeSystem(EntitySystem system){
 		if(systems.removeValue(system, true)) {
 			systemsByClass.remove(system.getClass());
 			listener.systemRemoved(system);
+		}
+		if (system instanceof PhysicsSystem) {
+			physicsSystems.removeValue((PhysicsSystem) system, true);
+		}
+		if (system instanceof InterpolatingSystem) {
+			interpolatingSystems.removeValue((InterpolatingSystem) system, true);
 		}
 	}
 	
@@ -47,6 +64,14 @@ class SystemManager {
 	
 	public ImmutableArray<EntitySystem> getSystems() {
 		return immutableSystems;
+	}
+
+	public ImmutableArray<PhysicsSystem> getPhysicsSystems() {
+		return immutablePhysicsSystems;
+	}
+
+	public ImmutableArray<InterpolatingSystem> getInterpolatingSystems() {
+		return immutableInterpolatingSystems;
 	}
 	
 	private static class SystemComparator implements Comparator<EntitySystem>{

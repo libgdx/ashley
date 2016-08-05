@@ -20,6 +20,8 @@ import com.badlogic.ashley.core.ComponentOperationHandler.BooleanInformer;
 import com.badlogic.ashley.core.SystemManager.SystemListener;
 import com.badlogic.ashley.signals.Listener;
 import com.badlogic.ashley.signals.Signal;
+import com.badlogic.ashley.systems.InterpolatingSystem;
+import com.badlogic.ashley.systems.PhysicsSystem;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.badlogic.gdx.utils.reflect.ReflectionException;
@@ -209,6 +211,31 @@ public class Engine {
 		finally {
 			updating = false;
 		}	
+	}
+
+	/**
+	 * Updates all registered {@link PhysicsSystem}s. Should be used according to http://gafferongames.com/game-physics/fix-your-timestep/
+	 * @param physicsStep the physics step to use in the simulation, not the delta time, should be constant
+	 */
+	public void updatePhysics(float physicsStep) {
+		ImmutableArray<PhysicsSystem> systems = systemManager.getPhysicsSystems();
+		for (PhysicsSystem system : systems) {
+			system.updatePhysics(physicsStep);
+		}
+	}
+
+	/**
+	 * Updates all registered {@link InterpolatingSystem}s. Should be used after a physics simulation with a fixed timestep,
+	 * see http://gafferongames.com/game-physics/fix-your-timestep/
+	 * @param delta	current delta time, sometimes necessary for some rendering
+	 * @param physicsStep the physics step used in the simulation, should be constant
+	 * @param inAccumulator what is left in the accumulator after performing possible physics step, should be < physicsStep
+	 */
+	public void interpolate(float delta, float physicsStep, float inAccumulator) {
+		ImmutableArray<InterpolatingSystem> systems = systemManager.getInterpolatingSystems();
+		for (InterpolatingSystem system : systems) {
+			system.interpolate(delta, physicsStep, inAccumulator);
+		}
 	}
 	
 	protected void addEntityInternal(Entity entity) {
