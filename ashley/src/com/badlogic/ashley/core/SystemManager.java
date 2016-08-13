@@ -10,7 +10,7 @@ import com.badlogic.gdx.utils.ObjectMap;
 
 class SystemManager {
 	private SystemComparator systemComparator = new SystemComparator();
-	private Array<EntitySystem> systems = new Array<EntitySystem>(false, 16);
+	private Array<EntitySystem> systems = new Array<EntitySystem>(true, 16);
 	private ImmutableArray<EntitySystem> immutableSystems = new ImmutableArray<EntitySystem>(systems);
 	private ObjectMap<Class<?>, EntitySystem> systemsByClass = new ObjectMap<Class<?>, EntitySystem>();
 	private SystemListener listener;
