@@ -21,6 +21,9 @@ import com.badlogic.ashley.core.SystemManager.SystemListener;
 import com.badlogic.ashley.signals.Listener;
 import com.badlogic.ashley.signals.Signal;
 import com.badlogic.ashley.utils.ImmutableArray;
+import com.badlogic.gdx.utils.ObjectMap;
+import com.badlogic.gdx.utils.ObjectMap.Keys;
+import com.badlogic.gdx.utils.ObjectMap.Values;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.badlogic.gdx.utils.reflect.ReflectionException;
 
@@ -41,6 +44,11 @@ import com.badlogic.gdx.utils.reflect.ReflectionException;
  * @author Stefan Bachmann
  */
 public class Engine {
+
+	final ObjectMap<Class, Object> configurations = new ObjectMap<Class, Object>();
+	public final Signal<Object> configurationAdded = new Signal<Object>();
+	public final Signal<Object> configurationRemoved = new Signal<Object>();
+
 	private static Family empty = Family.all().get();
 	
 	private final Listener<Entity> componentAdded = new ComponentListener();
@@ -183,8 +191,61 @@ public class Engine {
 		familyManager.removeEntityListener(listener);
 	}
 
+	public <T> T getConfiguration(Class<T> clazz) {
+		return (T) configurations.get(clazz);
+	}
+
+	public Object[] getConfigurations() {
+		Object[] configs = new Object[configurations.size];
+		Values values = configurations.values();
+		for (int i = 0; values.hasNext(); i++) {
+			configs[i] = values.next();
+		}
+		return configs;
+	}
+
+	public <T> T addConfiguration(Class<T> clazz, T configuration) {
+		if (configuration instanceof Configuration)
+			((Configuration) configuration).onAdd(this);
+		T result = (T) configurations.put(clazz, configuration);
+		if (result instanceof Configuration)
+			((Configuration) result).onRemove(this);
+		if (result != null)
+			configurationRemoved.dispatch(result);
+		configurationAdded.dispatch(configuration);
+		return result;
+	}
+
+	public Object removeConfiguration(Class<? extends Object> clazz) {
+		Object config = configurations.get(clazz);
+		if (config == null)
+			return null;
+		Object oldConfig = configurations.remove(clazz);
+		if (oldConfig instanceof Configuration) {
+			((Configuration) oldConfig).onRemove(this);
+		}
+		configurationRemoved.dispatch(config);
+		return oldConfig;
+
+	}
+
+	Class[] getConfigurationKeys() {
+		Class[] result = new Class[configurations.size];
+		Keys<Class> keys = configurations.keys();
+		for (int i = 0; keys.hasNext(); i++)
+			result[i] = keys.next();
+		return result;
+	}
+
+	public void clearConfigurations() {
+		for (Class key : getConfigurationKeys()) {
+			removeConfiguration(key);
+		}
+	}
+
 	/**
 	 * Updates all the systems in this Engine.
+	 * 
 	 * @param deltaTime The time passed since the last frame.
 	 */
 	public void update(float deltaTime){
