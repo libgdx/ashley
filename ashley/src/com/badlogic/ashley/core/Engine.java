@@ -22,6 +22,7 @@ import com.badlogic.ashley.signals.Listener;
 import com.badlogic.ashley.signals.Signal;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.utils.ObjectMap;
+import com.badlogic.gdx.utils.ObjectMap.Entries;
 import com.badlogic.gdx.utils.ObjectMap.Keys;
 import com.badlogic.gdx.utils.ObjectMap.Values;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
@@ -191,10 +192,23 @@ public class Engine {
 		familyManager.removeEntityListener(listener);
 	}
 
+	/**
+	 * Retrieves the configuration item associated with that class
+	 */
 	public <T> T getConfiguration(Class<T> clazz) {
 		return (T) configurations.get(clazz);
 	}
 
+	/**
+	 * Retrieves an iterator for the configuration entries 
+	 */
+	public Entries<Class, Object> getConfigurationEntries() {
+		return configurations.entries();
+	}
+	
+	/**
+	 * Retrieves all stored configurations
+	 */
 	public Object[] getConfigurations() {
 		Object[] configs = new Object[configurations.size];
 		Values values = configurations.values();
@@ -204,6 +218,9 @@ public class Engine {
 		return configs;
 	}
 
+	/**
+	 * Adds a configuration to the engine
+	 */
 	public <T> T addConfiguration(Class<T> clazz, T configuration) {
 		if (configuration instanceof Configuration)
 			((Configuration) configuration).onAdd(this);
@@ -216,6 +233,9 @@ public class Engine {
 		return result;
 	}
 
+	/**
+	 * Removes a configuration from the engine 
+	 */
 	public Object removeConfiguration(Class<? extends Object> clazz) {
 		Object config = configurations.get(clazz);
 		if (config == null)
@@ -229,6 +249,17 @@ public class Engine {
 
 	}
 
+	/**
+	 * Removes a configuration from the engine returns the class that the configuration was associated to
+	 */
+	public Class removeConfiguration(Object configuration) {
+		Class configType = configurations.findKey(configuration, true);
+		if (configType == null)
+			return null;
+		removeConfiguration(configType);
+		return configType;
+	}
+
 	Class[] getConfigurationKeys() {
 		Class[] result = new Class[configurations.size];
 		Keys<Class> keys = configurations.keys();
@@ -237,6 +268,9 @@ public class Engine {
 		return result;
 	}
 
+	/**
+	 * Removes all configurations from the engine
+	 */
 	public void clearConfigurations() {
 		for (Class key : getConfigurationKeys()) {
 			removeConfiguration(key);
