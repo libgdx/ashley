@@ -98,6 +98,29 @@ public class Engine {
 		entityManager.removeAllEntities(delayed);
 	}
 
+	/**
+	 * Returns an {@link ImmutableArray} of {@link Entity} that is managed by the the Engine
+	 *  but cannot be used to modify the state of the Engine. This Array is not Immutable in
+	 *  the sense that its contents will not be modified, but in the sense that it only reflects
+	 *  the state of the engine.
+	 *
+	 * The Array is Immutable in the sense that you cannot modify its contents through the API of
+	 *  the {@link ImmutableArray} class, but is instead "Managed" by the Engine itself. The engine
+	 *  may add or remove items from the array and this will be reflected in the returned array.
+	 *
+	 * This is an important note if you are looping through the returned entities and calling operations
+	 *  that may add/remove entities from the engine, as the underlying iterator of the returned array
+	 *  will reflect these modifications.
+	 *
+	 * The returned array will have entities removed from it if they are removed from the engine,
+	 *   but there is no way to introduce new Entities through the array's interface, or remove
+	 *   entities from the engine through the array interface.
+	 *
+	 *  Discussion of this can be found at https://github.com/libgdx/ashley/issues/224
+	 *
+	 * @return An unmodifiable array of entities that will match the state of the entities in the
+	 *  engine.
+	 */
 	public ImmutableArray<Entity> getEntities() {
 		return entityManager.getEntities();
 	}
