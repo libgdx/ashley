@@ -91,18 +91,23 @@ public class Entity {
 	public Component remove (Class<? extends Component> componentClass) {
 		ComponentType componentType = ComponentType.getFor(componentClass);
 		int componentTypeIndex = componentType.getIndex();
-		Component removeComponent = components.get(componentTypeIndex);
-
-		if (removeComponent != null && removeInternal(componentClass)) {
-			if (componentOperationHandler != null) {
-				componentOperationHandler.remove(this);
+		
+		if(components.isIndexWithinBounds(componentTypeIndex)){
+			Component removeComponent = components.get(componentTypeIndex);
+	
+			if (removeComponent != null && removeInternal(componentClass)) {
+				if (componentOperationHandler != null) {
+					componentOperationHandler.remove(this);
+				}
+				else {
+					notifyComponentRemoved();
+				}
 			}
-			else {
-				notifyComponentRemoved();
-			}
+	
+			return removeComponent;
 		}
-
-		return removeComponent;
+		
+		return null;
 	}
 
 	/** Removes all the {@link Component}'s from the Entity. */
