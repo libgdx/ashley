@@ -109,6 +109,21 @@ public class EntityTests {
 		assertFalse(am.has(entity));
 		assertFalse(bm.has(entity));
 	}
+	
+	@Test
+	public void removeUnexistingComponent () throws Exception {
+		// ensure remove unexisting component work with
+		// new component type at default bag limits (64)
+		Entity entity = new Entity();
+		
+		ComponentClassFactory cl = new ComponentClassFactory();
+		
+		for(int i=0 ; i<65 ; i++){
+			Class<? extends Component> type = cl.createComponentType("Component" + i);
+			entity.remove(type);
+			entity.add(type.newInstance());
+		}
+	}	
 
 	@Test
 	public void addAndRemoveAllComponents () {
