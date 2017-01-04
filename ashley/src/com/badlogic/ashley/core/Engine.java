@@ -89,6 +89,14 @@ public class Engine {
 		boolean delayed = updating || familyManager.notifying();
 		entityManager.removeEntity(entity, delayed);
 	}
+	
+	/**
+	 * Removes all entities of the given {@link Family}.
+	 */
+	public void removeAllEntities(Family family) {
+		boolean delayed = updating || familyManager.notifying();
+		entityManager.removeAllEntities(getEntitiesFor(family), delayed);
+	}
 
 	/**
 	 * Removes all entities registered with this Engine.

@@ -739,6 +739,22 @@ public class EngineTests {
 		assertEquals(1, listenerB.removedCount);
 
 		engine.addEntityListener(listenerB);
+
+		engine.addEntity(entity1);
+		engine.addEntity(entity2);
+
+		assertEquals(3, listenerA.addedCount);
+		assertEquals(3, listenerB.addedCount);
+		
+		engine.removeAllEntities(familyA);
+
+		assertEquals(3, listenerA.removedCount);
+		assertEquals(2, listenerB.removedCount);
+		
+		engine.removeAllEntities(familyB);
+
+		assertEquals(3, listenerA.removedCount);
+		assertEquals(3, listenerB.removedCount);
 	}
 
 	@Test
