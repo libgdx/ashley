@@ -55,20 +55,29 @@ class EntityManager {
 	}
 	
 	public void removeAllEntities() {
-		removeAllEntities(false);
+		removeAllEntities(immutableEntities);
 	}
 	
 	public void removeAllEntities(boolean delayed) {
+		removeAllEntities(immutableEntities, delayed);
+	}
+	
+	public void removeAllEntities(ImmutableArray<Entity> entities) {
+		removeAllEntities(entities, false);
+	}
+
+	public void removeAllEntities(ImmutableArray<Entity> entities, boolean delayed) {
 		if (delayed) {
 			for(Entity entity: entities) {
 				entity.scheduledForRemoval = true;
 			}
 			EntityOperation operation = entityOperationPool.obtain();
 			operation.type = EntityOperation.Type.RemoveAll;
+			operation.entities = entities;
 			pendingOperations.add(operation);
 		}
 		else {
-			while(entities.size > 0) {
+			while(entities.size() > 0) {
 				removeEntity(entities.first(), false);
 			}
 		}
@@ -86,8 +95,8 @@ class EntityManager {
 				case Add: addEntityInternal(operation.entity); break;
 				case Remove: removeEntityInternal(operation.entity); break;
 				case RemoveAll:
-					while(entities.size > 0) {
-						removeEntityInternal(entities.first());
+					while(operation.entities.size() > 0) {
+						removeEntityInternal(operation.entities.first());
 					}
 					break;
 				default:
@@ -132,6 +141,7 @@ class EntityManager {
 
 		public Type type;
 		public Entity entity;
+		public ImmutableArray<Entity> entities;
 
 		@Override
 		public void reset() {
