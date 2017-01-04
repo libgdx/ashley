@@ -219,27 +219,39 @@ public class Engine {
 	 * @param deltaTime The time passed since the last frame.
 	 */
 	public void update(float deltaTime){
+		update(deltaTime, Integer.MIN_VALUE, Integer.MAX_VALUE);
+	}
+
+	/**
+	 * Updates all the systems with priorities in the given range
+	 * @param deltaTime The time passed since the last frame.
+	 * @param minRange The lowest priority to update, inclusive
+	 * @param maxRange The highest priority to update, inclusive
+	 */
+	public void update(float deltaTime, int minRange, int maxRange){
 		if (updating) {
 			throw new IllegalStateException("Cannot call update() on an Engine that is already updating.");
 		}
-		
+
 		updating = true;
 		ImmutableArray<EntitySystem> systems = systemManager.getSystems();
 		try {
 			for (int i = 0; i < systems.size(); ++i) {
 				EntitySystem system = systems.get(i);
-				
-				if (system.checkProcessing()) {
-					system.update(deltaTime);
+
+				if(system.priority >= minRange && system.priority <= maxRange) {
+					if (system.checkProcessing()) {
+						system.update(deltaTime);
+					}
 				}
-	
+
 				componentOperationHandler.processOperations();
 				entityManager.processPendingOperations();
 			}
 		}
 		finally {
 			updating = false;
-		}	
+		}
 	}
 	
 	protected void addEntityInternal(Entity entity) {
