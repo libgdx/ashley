@@ -35,6 +35,10 @@ class ComponentOperationHandler {
 		}
 	}
 	
+	public boolean hasOperationsToProcess() {
+		return operations.size > 0;
+	}
+	
 	public void processOperations() {
 		for (int i = 0; i < operations.size; ++i) {
 			ComponentOperation operation = operations.get(i);

@@ -225,8 +225,10 @@ public class Engine {
 					system.update(deltaTime);
 				}
 	
-				componentOperationHandler.processOperations();
-				entityManager.processPendingOperations();
+				while(componentOperationHandler.hasOperationsToProcess() || entityManager.hasPendingOperations()) {
+					componentOperationHandler.processOperations();
+					entityManager.processPendingOperations();
+				}
 			}
 		}
 		finally {
