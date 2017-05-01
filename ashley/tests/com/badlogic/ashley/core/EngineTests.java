@@ -676,6 +676,92 @@ public class EngineTests {
 	}
 
 	@Test
+	public void cascadeOperationsInListenersWhileUpdating() {
+		
+		// This test case mix both add/remove component and add/remove entities
+		// in listeners.
+		// Listeners trigger each other recursively to test cascade operations :
+		
+		// CREATION PHASE :
+		// first listener will add a component which trigger the second,
+		// second listener will create an entity which trigger the first one,
+		// and so on.
+		
+		// DESTRUCTION PHASE :
+		// first listener will remove component which trigger the second,
+		// second listener will remove the entity which trigger the first one,
+		// and so on.
+		
+		final int numEntities = 20;
+		final Engine engine = new Engine();
+		ComponentAddedListener addedListener = new ComponentAddedListener(numEntities);
+		ComponentRemovedListener removedListener = new ComponentRemovedListener(numEntities);
+		
+		final Array<Entity> entities = new Array<Entity>();
+		
+		engine.addEntityListener(Family.all(ComponentA.class).get(), new EntityListener() {
+			@Override
+			public void entityRemoved(Entity entity) {
+				engine.removeEntity(entity);
+			}
+			@Override
+			public void entityAdded(Entity entity) {
+				if(entities.size < numEntities){
+					Entity e = new Entity();
+					engine.addEntity(e);
+				}
+			}
+		});
+		engine.addEntityListener(new EntityListener() {
+			@Override
+			public void entityRemoved(Entity entity) {
+				entities.removeValue(entity, true);
+				if(entities.size > 0){
+					entities.peek().remove(ComponentA.class);
+				}
+			}
+			@Override
+			public void entityAdded(Entity entity) {
+				entities.add(entity);
+				entity.add(new ComponentA());
+			}
+		});
+		
+		engine.addEntityListener(Family.all(ComponentA.class).get(), addedListener);
+		engine.addEntityListener(Family.all(ComponentA.class).get(), removedListener);
+		
+		// this system will just create an entity which will trigger
+		// listeners cascade creations (up to 20)
+		EntitySystem addSystem = new EntitySystem() {
+			@Override
+			public void update(float deltaTime) {
+				getEngine().addEntity(new Entity());
+			}
+		};
+		
+		engine.addSystem(addSystem);
+		engine.update(deltaTime);
+		engine.removeSystem(addSystem);
+		addedListener.checkEntityListenerNonUpdate();
+		removedListener.checkEntityListenerUpdate();
+		
+		// this system will just remove an entity which will trigger
+		// listeners cascade deletion (up to 0)
+		EntitySystem removeSystem = new EntitySystem() {
+			@Override
+			public void update(float deltaTime) {
+				getEngine().removeEntity(entities.peek());
+			}
+		};
+		
+		engine.addSystem(removeSystem);
+		engine.update(deltaTime);
+		engine.removeSystem(removeSystem);
+		addedListener.checkEntityListenerUpdate();
+		removedListener.checkEntityListenerNonUpdate();
+	}
+
+	@Test
 	public void familyListener () {
 		Engine engine = new Engine();
 

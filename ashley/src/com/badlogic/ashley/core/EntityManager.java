@@ -87,6 +87,10 @@ class EntityManager {
 		return immutableEntities;
 	}
 	
+	public boolean hasPendingOperations() {
+		return pendingOperations.size > 0;
+	}
+	
 	public void processPendingOperations() {
 		for (int i = 0; i < pendingOperations.size; ++i) {
 			EntityOperation operation = pendingOperations.get(i); 
