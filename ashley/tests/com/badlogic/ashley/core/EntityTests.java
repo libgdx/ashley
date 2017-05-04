@@ -61,7 +61,7 @@ public class EntityTests {
 		assertEquals(componentA, entity.addAndReturn(componentA));
 		assertEquals(componentB, entity.addAndReturn(componentB));
 
-		assertEquals(2, entity.getComponents().size());
+		assertEquals(0, entity.getComponents().size());
 	}
 
 	@Test
