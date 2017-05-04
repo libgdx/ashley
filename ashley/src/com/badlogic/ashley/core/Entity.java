@@ -73,6 +73,20 @@ public class Entity {
 		
 		return this;
 	}
+	
+	/**
+	 * Adds all given {@link Component}s to this Entity. See {@link Entity#add(Component)}.<p>
+	 * Please note that this will introduce some overhead due to varargs, which will allocate memory and generate work for the
+	 * garbage collector. To avoid this use {@link Entity#add(Component)} instead.
+	 * @param components The Components to add.
+	 * @return This Entity for chaining.
+	 */
+	public Entity add (Component... components) {
+		for (Component component : components) {
+			add(component);
+		}
+		return this;
+	}
 
 	/**
 	 * Adds a {@link Component} to this Entity. If a {@link Component} of the same type already exists, it'll be replaced.
