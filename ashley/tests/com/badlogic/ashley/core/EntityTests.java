@@ -225,4 +225,60 @@ public class EntityTests {
 		assertTrue(retA == compA);
 		assertTrue(retB == compB);
 	}
+
+	@Test
+	public void toggleComponentByClass () {
+		ComponentA compA = new ComponentA();
+		ComponentB compB = new ComponentB();
+
+		Entity entity = new Entity();
+		entity.add(compA).add(compB).toggle(compB.getClass());
+
+		assertTrue(entity.hasComponent(ComponentType.getFor(ComponentA.class)));
+		assertFalse(entity.hasComponent(ComponentType.getFor(ComponentB.class)));
+		assertNotNull(entity.getComponent(ComponentB.class));
+
+		entity.toggle(compB.getClass());
+
+		assertTrue(entity.hasComponent(ComponentType.getFor(ComponentB.class)));
+	}
+
+	@Test
+	public void toggleComponentByClassNotInEntity () {
+		ComponentA compA = new ComponentA();
+
+		Entity entity = new Entity();
+		entity.add(compA).toggle(ComponentB.class);
+
+		assertTrue(entity.hasComponent(ComponentType.getFor(ComponentA.class)));
+		assertFalse(entity.hasComponent(ComponentType.getFor(ComponentB.class)));
+		assertNull(entity.getComponent(ComponentB.class));
+	}
+
+	@Test
+	public void disableComponentByClass () {
+		ComponentA compA = new ComponentA();
+		ComponentB compB = new ComponentB();
+
+		Entity entity = new Entity();
+		entity.add(compA).add(compB).disable(compB.getClass());
+
+		assertTrue(entity.hasComponent(ComponentType.getFor(ComponentA.class)));
+		assertFalse(entity.hasComponent(ComponentType.getFor(ComponentB.class)));
+		assertNotNull(entity.getComponent(ComponentB.class));
+	}
+
+	@Test
+	public void enableComponentByClass () {
+		ComponentA compA = new ComponentA();
+		ComponentB compB = new ComponentB();
+
+		Entity entity = new Entity();
+		entity.add(compA).add(compB).disable(compB.getClass()).enable(compB.getClass());
+
+		assertTrue(entity.hasComponent(ComponentType.getFor(ComponentA.class)));
+		assertTrue(entity.hasComponent(ComponentType.getFor(ComponentB.class)));
+		assertNotNull(entity.getComponent(ComponentB.class));
+	}
+
 }
