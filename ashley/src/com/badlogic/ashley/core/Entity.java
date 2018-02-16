@@ -78,7 +78,7 @@ public class Entity {
 	 * Adds a {@link Component} to this Entity. If a {@link Component} of the same type already exists, it'll be replaced.
 	 * @return The Component for direct component manipulation (e.g. PooledComponent)
 	 */
-	public Component addAndReturn(Component component) {
+	public <T extends Component> T addAndReturn(T component) {
 		add(component);
 		return component;
 	}
