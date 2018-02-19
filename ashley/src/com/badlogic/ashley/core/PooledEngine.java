@@ -107,6 +107,16 @@ public class PooledEngine extends Engine {
 		}
 
 		@Override
+		Component removeInternal(Class<? extends Component> componentClass) {
+			Component removed = super.removeInternal(componentClass);
+			if (removed != null) {
+				componentPools.free(removed);
+			}
+
+			return removed;
+		}
+
+		@Override
 		public void reset () {
 			removeAll();
 			flags = 0;

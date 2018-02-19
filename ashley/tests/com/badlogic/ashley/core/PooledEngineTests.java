@@ -14,8 +14,18 @@ import com.badlogic.gdx.utils.Pool.Poolable;
 public class PooledEngineTests {
 	private float deltaTime = 0.16f;
 
+	private final ComponentMapper<PoolableComponent> poolableMapper = ComponentMapper.getFor(PoolableComponent.class);
+
 	public static class ComponentA implements Component {
 		public ComponentA(){}
+	}
+
+	public static class PoolableComponent implements Component, Poolable {
+		boolean reset = true;
+		@Override
+		public void reset() {
+			reset = true;
+		}
 	}
 
 	public static class PositionComponent implements Component {
@@ -243,5 +253,26 @@ public class PooledEngineTests {
 		ComponentA componentA = engine.createComponent(ComponentA.class);
 
 		assertNotNull(componentA);
+	}
+
+	@Test
+	public void addSameComponentShouldResetAndReturnOldComponentToPool () {
+		PooledEngine engine = new PooledEngine();
+
+		PoolableComponent component1 = engine.createComponent(PoolableComponent.class);
+		component1.reset = false;
+		PoolableComponent component2 = engine.createComponent(PoolableComponent.class);
+		component2.reset = false;
+
+		Entity entity = engine.createEntity();
+		entity.add(component1);
+		entity.add(component2);
+
+		assertEquals(1, entity.getComponents().size());
+		assertTrue(poolableMapper.has(entity));
+		assertNotEquals(component1, poolableMapper.get(entity));
+		assertEquals(component2, poolableMapper.get(entity));
+
+		assertTrue(component1.reset);
 	}
 }
