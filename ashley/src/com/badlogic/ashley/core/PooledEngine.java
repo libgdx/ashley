@@ -96,17 +96,6 @@ public class PooledEngine extends Engine {
 
 	private class PooledEntity extends Entity implements Poolable {
 		@Override
-		public Component remove (Class<? extends Component> componentClass) {
-			Component component = super.remove(componentClass);
-
-			if (component != null) {
-				componentPools.free(component);
-			}
-
-			return component;
-		}
-
-		@Override
 		Component removeInternal(Class<? extends Component> componentClass) {
 			Component removed = super.removeInternal(componentClass);
 			if (removed != null) {

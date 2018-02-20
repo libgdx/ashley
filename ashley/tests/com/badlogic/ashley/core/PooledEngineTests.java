@@ -275,4 +275,21 @@ public class PooledEngineTests {
 
 		assertTrue(component1.reset);
 	}
+
+	@Test
+	public void removeComponentReturnsItToThePoolExactlyOnce() {
+		PooledEngine engine = new PooledEngine();
+
+		PoolableComponent removedComponent = engine.createComponent(PoolableComponent.class);
+
+		Entity entity = engine.createEntity();
+		entity.add(removedComponent);
+
+		entity.remove(PoolableComponent.class);
+
+		PoolableComponent newComponent1 = engine.createComponent(PoolableComponent.class);
+		PoolableComponent newComponent2 = engine.createComponent(PoolableComponent.class);
+
+		assertNotEquals(newComponent1, newComponent2);
+	}
 }
