@@ -39,6 +39,12 @@ class SystemManager {
 			listener.systemRemoved(system);
 		}
 	}
+
+	public void removeAllSystems() {
+		while(systems.size > 0) {
+			removeSystem(systems.first());
+		}
+	}
 	
 	@SuppressWarnings("unchecked")
 	public <T extends EntitySystem> T getSystem(Class<T> systemType) {
