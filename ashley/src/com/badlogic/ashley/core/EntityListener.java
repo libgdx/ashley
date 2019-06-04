@@ -16,6 +16,8 @@
 
 package com.badlogic.ashley.core;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * Gets notified of {@link Entity} related events.
  * @author David Saltares
@@ -26,12 +28,12 @@ public interface EntityListener {
 	 * {@link Engine#addEntityListener(EntityListener)} and {@link Engine#addEntityListener(Family, EntityListener)}
 	 * @param entity
 	 */
-	public void entityAdded (Entity entity);
+	public void entityAdded (@NotNull Entity entity);
 
 	/**
 	 * Called whenever an {@link Entity} is removed from {@link Engine} or a specific {@link Family} See
 	 * {@link Engine#addEntityListener(EntityListener)} and {@link Engine#addEntityListener(Family, EntityListener)}
 	 * @param entity
 	 */
-	public void entityRemoved (Entity entity);
+	public void entityRemoved (@NotNull Entity entity);
 }

@@ -1,12 +1,12 @@
 package com.badlogic.ashley.core;
 
-import static org.junit.Assert.*;
-
-import org.junit.Test;
-
 import com.badlogic.ashley.core.ComponentOperationHandler.BooleanInformer;
 import com.badlogic.ashley.signals.Listener;
 import com.badlogic.ashley.signals.Signal;
+import org.junit.Test;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class ComponentOperationHandlerTests {
 

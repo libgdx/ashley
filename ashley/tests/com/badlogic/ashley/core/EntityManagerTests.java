@@ -1,11 +1,12 @@
 package com.badlogic.ashley.core;
 
-import static org.junit.Assert.*;
-
-import org.junit.Test;
-
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.utils.Array;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class EntityManagerTests {
 

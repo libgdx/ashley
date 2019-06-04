@@ -23,6 +23,8 @@ import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.utils.Array;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Comparator;
 
 /**
@@ -99,13 +101,13 @@ public abstract class SortedIteratingSystem extends EntitySystem implements Enti
 	}
 
 	@Override
-	public void entityAdded (Entity entity) {
+	public void entityAdded (@NotNull Entity entity) {
 		sortedEntities.add(entity);
 		shouldSort = true;
 	}
 
 	@Override
-	public void entityRemoved (Entity entity) {
+	public void entityRemoved (@NotNull Entity entity) {
 		sortedEntities.removeValue(entity, true);
 		shouldSort = true;
 	}
@@ -139,5 +141,5 @@ public abstract class SortedIteratingSystem extends EntitySystem implements Enti
 	 * @param entity The current Entity being processed
 	 * @param deltaTime The delta time between the last and current frame
 	 */
-	protected abstract void processEntity (Entity entity, float deltaTime);
+	protected abstract void processEntity (@NotNull Entity entity, float deltaTime);
 }

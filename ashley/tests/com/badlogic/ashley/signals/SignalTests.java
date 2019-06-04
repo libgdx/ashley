@@ -16,13 +16,11 @@
 
 package com.badlogic.ashley.signals;
 
-import static org.junit.Assert.*;
-
+import com.badlogic.gdx.utils.Array;
 import org.junit.Test;
 
-import com.badlogic.ashley.signals.Listener;
-import com.badlogic.ashley.signals.Signal;
-import com.badlogic.gdx.utils.Array;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class SignalTests {
 

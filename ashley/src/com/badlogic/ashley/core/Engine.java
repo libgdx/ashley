@@ -23,6 +23,7 @@ import com.badlogic.ashley.signals.Signal;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.badlogic.gdx.utils.reflect.ReflectionException;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * The heart of the Entity framework. It is responsible for keeping track of {@link Entity} and
@@ -269,7 +270,7 @@ public class Engine {
 	
 	private class ComponentListener implements Listener<Entity> {
 		@Override
-		public void receive(Signal<Entity> signal, Entity object) {
+		public void receive(@NotNull Signal<Entity> signal, @NotNull Entity object) {
 			familyManager.updateFamilyMembership(object);
 		}
 	}
@@ -288,12 +289,12 @@ public class Engine {
 	
 	private class EngineEntityListener implements EntityListener {
 		@Override
-		public void entityAdded (Entity entity) {
+		public void entityAdded (@NotNull Entity entity) {
 			addEntityInternal(entity);
 		}
 
 		@Override
-		public void entityRemoved (Entity entity) {
+		public void entityRemoved (@NotNull Entity entity) {
 			removeEntityInternal(entity);
 		}
 	}
