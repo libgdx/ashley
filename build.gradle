@@ -2,7 +2,7 @@
 subprojects {
     apply plugin: "eclipse"
     apply plugin: "idea"
-    apply plugin: "java"
+    apply plugin: "java-library"
 
     repositories {
         mavenLocal()
@@ -32,25 +32,25 @@ project(":ashley") {
     apply from : '../publish.gradle'
 
     dependencies {
-        compile "com.badlogicgames.gdx:gdx:$gdxVersion"
-        testCompile "junit:junit:$jUnitVersion"
-        testCompile "org.mockito:mockito-core:$mockitoVersion"
+        api "com.badlogicgames.gdx:gdx:$gdxVersion"
+        testImplementation "junit:junit:$jUnitVersion"
+        testImplementation "org.mockito:mockito-core:$mockitoVersion"
     }
 }
 
 project(":tests") {
     dependencies {
-        compile project(":ashley")
-        compile "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
-        compile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+        implementation project(":ashley")
+        implementation "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
+        implementation "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
     }
 }
 
 project(":benchmarks") {
     dependencies {
-        compile project(":ashley")
-        compile "junit:junit:$jUnitVersion"
-        compile fileTree(dir: new File(projectDir, "libs"), include: "*.jar")
+        implementation project(":ashley")
+        implementation "junit:junit:$jUnitVersion"
+        implementation fileTree(dir: new File(projectDir, "libs"), include: "*.jar")
     }
 }
 
