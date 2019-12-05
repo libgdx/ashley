@@ -83,11 +83,35 @@ public class Engine {
 	}
 
 	/**
+	 * Adds multiples entities to this Engine. This will throw an
+	 * IllegalArgumentException if the given entity was already registered with an
+	 * engine.
+	 */
+	public void addEntities(Entity... entities) {
+		int entitiesLength = entities.length;
+		boolean delayed = updating || familyManager.notifying();
+		for (int i = 0; i < entitiesLength; i++) {
+			entityManager.addEntity(entities[i], delayed);
+		}
+	}
+	
+	/**
 	 * Removes an entity from this Engine.
 	 */
 	public void removeEntity(Entity entity){
 		boolean delayed = updating || familyManager.notifying();
 		entityManager.removeEntity(entity, delayed);
+	}
+	
+	/**
+	 * remove multiple entity from this Engine.
+	 */
+	public void removeEntities(Entity... entities) {
+		int entitiesLength = entities.length;
+		boolean delayed = updating || familyManager.notifying();
+		for (int i = 0; i < entitiesLength; i++) {
+			entityManager.removeEntity(entities[i], delayed);
+		}
 	}
 	
 	/**
@@ -143,10 +167,32 @@ public class Engine {
 	}
 
 	/**
+	 * Adds multiple {@link EntitySystem} to this Engine. see
+	 * {@link #addSystem(EntitySystem)}
+	 */
+	public void addSystems(EntitySystem... systems) {
+		int systemsLenght = systems.length;
+		for (int i = 0; i < systemsLenght; i++) {
+			this.addSystem(systems[i]);
+		}
+	}
+	
+	/**
 	 * Removes the {@link EntitySystem} from this Engine.
 	 */
 	public void removeSystem(EntitySystem system){
 		systemManager.removeSystem(system);
+	}
+	
+	/**
+	 * Removes multiple {@link EntitySystem} to this Engine. see
+	 * {@link #removeSystem(EntitySystem)}
+	 */
+	public void removeSystems(EntitySystem... systems) {
+		int systemsLenght = systems.length;
+		for (int i = 0; i < systemsLenght; i++) {
+			this.removeSystem(systems[i]);
+		}
 	}
 
 	/**
