@@ -70,7 +70,7 @@ public class ImmutableArray<T> implements Iterable<T> {
 		return array.toArray();
 	}
 
-	public <V> V[] toArray (Class<?> type) {
+	public <V> V[] toArray (Class<V> type) {
 		return array.toArray(type);
 	}
 	
