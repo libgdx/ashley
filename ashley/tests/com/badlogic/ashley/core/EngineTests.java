@@ -391,10 +391,7 @@ public class EngineTests {
 		entity4.add(new ComponentB());
 		entity4.add(new ComponentC());
 
-		engine.addEntity(entity1);
-		engine.addEntity(entity2);
-		engine.addEntity(entity3);
-		engine.addEntity(entity4);
+		engine.addEntities(entity1, entity2, entity3, entity4);
 
 		assertEquals(3, familyEntities.size());
 		assertTrue(familyEntities.contains(entity1, true));
