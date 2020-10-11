@@ -95,7 +95,7 @@ public class Entity {
 		if(components.isIndexWithinBounds(componentTypeIndex)){
 			Component removeComponent = components.get(componentTypeIndex);
 	
-			if (removeComponent != null && removeInternal(componentClass)) {
+			if (removeComponent != null && removeInternal(componentClass) != null) {
 				if (componentOperationHandler != null) {
 					componentOperationHandler.remove(this);
 				}
@@ -194,9 +194,9 @@ public class Entity {
 
 	/**
 	 * @param componentClass
-	 * @return whether or not a component with the specified class was found and removed.
+	 * @return the component if the specified class was found and removed. Otherwise, null
 	 */
-	boolean removeInternal (Class<? extends Component> componentClass) {
+	Component removeInternal (Class<? extends Component> componentClass) {
 		ComponentType componentType = ComponentType.getFor(componentClass);
 		int componentTypeIndex = componentType.getIndex();
 		Component removeComponent = components.get(componentTypeIndex);
@@ -206,10 +206,10 @@ public class Entity {
 			componentsArray.removeValue(removeComponent, true);
 			componentBits.clear(componentTypeIndex);
 			
-			return true;
+			return removeComponent;
 		}
-		
-		return false;
+
+		return null;
 	}
 	
 	void notifyComponentAdded() {

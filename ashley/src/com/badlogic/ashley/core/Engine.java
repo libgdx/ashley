@@ -150,6 +150,13 @@ public class Engine {
 	}
 
 	/**
+	 * Removes all systems from this Engine.
+	 */
+	public void removeAllSystems(){
+		systemManager.removeAllSystems();
+	}
+
+	/**
 	 * Quick {@link EntitySystem} retrieval.
 	 */
 	@SuppressWarnings("unchecked")

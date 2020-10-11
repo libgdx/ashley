@@ -109,6 +109,15 @@ public class SystemManagerTests {
 		assertNull(manager.getSystem(EntitySystemMockB.class));
 		assertEquals(1, systemA.removedCalls);
 		assertEquals(1, systemB.removedCalls);
+
+		manager.addSystem(systemA);
+		manager.addSystem(systemB);
+		manager.removeAllSystems();
+
+		assertNull(manager.getSystem(EntitySystemMockA.class));
+		assertNull(manager.getSystem(EntitySystemMockB.class));
+		assertEquals(2, systemA.removedCalls);
+		assertEquals(2, systemB.removedCalls);
 	}
 
 	@Test

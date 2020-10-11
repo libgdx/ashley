@@ -233,6 +233,15 @@ public class EngineTests {
 		assertNull(engine.getSystem(EntitySystemMockB.class));
 		assertEquals(1, systemA.removedCalls);
 		assertEquals(1, systemB.removedCalls);
+
+		engine.addSystem(systemA);
+		engine.addSystem(systemB);
+		engine.removeAllSystems();
+
+		assertNull(engine.getSystem(EntitySystemMockA.class));
+		assertNull(engine.getSystem(EntitySystemMockB.class));
+		assertEquals(2, systemA.removedCalls);
+		assertEquals(2, systemB.removedCalls);
 	}
 
 	@Test
