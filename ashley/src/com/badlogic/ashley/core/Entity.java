@@ -78,7 +78,7 @@ public class Entity {
 	 * Adds a {@link Component} to this Entity. If a {@link Component} of the same type already exists, it'll be replaced.
 	 * @return The Component for direct component manipulation (e.g. PooledComponent)
 	 */
-	public Component addAndReturn(Component component) {
+	public <T extends Component> T addAndReturn(T component) {
 		add(component);
 		return component;
 	}
@@ -86,9 +86,9 @@ public class Entity {
 	/**
 	 * Removes the {@link Component} of the specified type. Since there is only ever one component of one type, we don't need an
 	 * instance reference.
-	 * @return The removed {@link Component}, or null if the Entity did no contain such a component.
+	 * @return The removed {@link Component}, or null if the Entity did not contain such a component.
 	 */
-	public Component remove (Class<? extends Component> componentClass) {
+	public <T extends Component> T remove (Class<T> componentClass) {
 		ComponentType componentType = ComponentType.getFor(componentClass);
 		int componentTypeIndex = componentType.getIndex();
 		
@@ -104,7 +104,7 @@ public class Entity {
 				}
 			}
 	
-			return removeComponent;
+			return (T) removeComponent;
 		}
 		
 		return null;

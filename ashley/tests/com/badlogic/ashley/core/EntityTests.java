@@ -65,6 +65,12 @@ public class EntityTests {
 	}
 
 	@Test
+	public void addAndReturnComponentGeneric () {
+		Entity entity = new Entity();
+		ComponentA componentA = entity.addAndReturn(new ComponentA());
+	}
+
+	@Test
 	public void noComponents () {
 		Entity entity = new Entity();
 
