@@ -171,8 +171,8 @@ public class Engine {
 		return systemManager.getSystems();
 	}
 
-	/**
-	 * Returns immutable collection of entities for the specified {@link Family}. Will return the same instance every time.
+	/** Returns immutable collection of entities for the specified {@link Family}. 
+	 * Returns the same instance every time for the same Family.
 	 */
 	public ImmutableArray<Entity> getEntitiesFor(Family family){
 		return familyManager.getEntitiesFor(family);
