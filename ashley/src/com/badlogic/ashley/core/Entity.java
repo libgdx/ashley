@@ -224,4 +224,9 @@ public class Entity {
 	public boolean isScheduledForRemoval () {
 		return scheduledForRemoval;
 	}
+
+	/** @return true if the entity is being removed */
+	public boolean isRemoving() {
+		return removing;
+	}
 }
