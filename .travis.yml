@@ -1,2 +1,0 @@
-language: java
-script: ./gradlew clean ashley:test

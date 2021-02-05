@@ -15,11 +15,11 @@ def isReleaseBuild
 def sonatypeRepositoryUrl
 
 //set build variables based on build type (release, continuous integration, development)
-if(hasProperty("release")) {
+if(hasProperty("RELEASE")) {
     isReleaseBuild = true
     sonatypeRepositoryUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"                             
     println "Performing release build"
-} else if (hasProperty("snapshot")) {
+} else if (hasProperty("SNAPSHOT")) {
     isCiBuild = true
     version += "-SNAPSHOT"
     sonatypeRepositoryUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
@@ -27,6 +27,14 @@ if(hasProperty("release")) {
 } else {
     isDevBuild = true
     println "Performing local build"
+}
+
+getRepositoryUsername = {
+    return project.hasProperty('NEXUS_USERNAME') ? NEXUS_USERNAME : "$System.env.NEXUS_USERNAME"
+}
+
+getRepositoryPassword = {
+    return project.hasProperty('NEXUS_PASSWORD') ? NEXUS_PASSWORD : "$System.env.NEXUS_PASSWORD"
 }
 
 repositories {
@@ -71,7 +79,7 @@ uploadArchives {
                 }
 
                 repository(url: sonatypeRepositoryUrl) {
-                  authentication(userName: sonatypeUsername, password: sonatypePassword)
+                    authentication(userName: getRepositoryUsername(), password: getRepositoryPassword())
                 }
 
                 pom.version = version

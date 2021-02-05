@@ -10,7 +10,8 @@ Ashley is awesome, if you don't believe it, check out some [games](https://githu
 
 Ashley lives under the [Libgdx](https://github.com/libgdx) family but it does not force you to use that specific framework if you do not wish to do so.
 
-[![Build Status](https://travis-ci.org/libgdx/ashley.svg?branch=master)](https://travis-ci.org/libgdx/ashley)
+[![Sonatype Nexus (Releases)](https://img.shields.io/nexus/r/com.badlogicgames.ashley/ashley?nexusVersion=2&server=https%3A%2F%2Foss.sonatype.org&label=release)](https://search.maven.org/artifact/com.badlogicgames.ashley/ashley)
+[![Sonatype Nexus (Snapshots)](https://img.shields.io/nexus/s/com.badlogicgames.ashley/ashley?server=https%3A%2F%2Foss.sonatype.org&label=snapshot)](https://oss.sonatype.org/#nexus-search;gav~com.badlogicgames.ashley~ashley)
 
 ### Get started
 
