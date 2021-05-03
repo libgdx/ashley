@@ -14,7 +14,8 @@ subprojects {
 
 ext {
     projectGroup = "ashley"
-    gdxVersion = "1.9.9"
+    annotationsVersion = "16.0.2"
+    gdxVersion = "1.9.10"
     jUnitVersion = "4.12"
     mockitoVersion = "1.10.19"
 }
@@ -33,6 +34,7 @@ project(":ashley") {
 
     dependencies {
         api "com.badlogicgames.gdx:gdx:$gdxVersion"
+        compileOnly "org.jetbrains:annotations:$annotationsVersion"
         testImplementation "junit:junit:$jUnitVersion"
         testImplementation "org.mockito:mockito-core:$mockitoVersion"
     }

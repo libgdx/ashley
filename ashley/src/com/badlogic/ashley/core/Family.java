@@ -18,6 +18,7 @@ package com.badlogic.ashley.core;
 
 import com.badlogic.gdx.utils.Bits;
 import com.badlogic.gdx.utils.ObjectMap;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Represents a group of {@link Component}s. It is used to describe what {@link Entity} objects an {@link EntitySystem} should
@@ -74,7 +75,7 @@ public class Family {
 	 * @return A Builder singleton instance to get a family
 	 */
 	@SafeVarargs
-	public static final Builder all (Class<? extends Component>... componentTypes) {
+    public static final Builder all(@NotNull Class<? extends Component>... componentTypes) {
 		return builder.reset().all(componentTypes);
 	}
 
@@ -83,7 +84,7 @@ public class Family {
 	 * @return A Builder singleton instance to get a family
 	 */
 	@SafeVarargs
-	public static final Builder one (Class<? extends Component>... componentTypes) {
+    public static final Builder one(@NotNull Class<? extends Component>... componentTypes) {
 		return builder.reset().one(componentTypes);
 	}
 
@@ -92,7 +93,7 @@ public class Family {
 	 * @return A Builder singleton instance to get a family
 	 */
 	@SafeVarargs
-	public static final Builder exclude (Class<? extends Component>... componentTypes) {
+    public static final Builder exclude(@NotNull Class<? extends Component>... componentTypes) {
 		return builder.reset().exclude(componentTypes);
 	}
 
