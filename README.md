@@ -1,5 +1,11 @@
 ![](http://i.imgur.com/w8oAC73.png?1)
 
+[![GitHub Actions build status](https://img.shields.io/github/workflow/status/libgdx/ashley/Compile%20and%20publish%20snapshot)](https://github.com/libgdx/ashley/actions/workflows/publish_snapshot.yml)
+
+[![Sonatype Nexus (Releases)](https://img.shields.io/nexus/r/com.badlogicgames.ashley/ashley?nexusVersion=2&server=https%3A%2F%2Foss.sonatype.org&label=release)](https://search.maven.org/artifact/com.badlogicgames.ashley/ashley)
+[![Sonatype Nexus (Snapshots)](https://img.shields.io/nexus/s/com.badlogicgames.ashley/ashley?server=https%3A%2F%2Foss.sonatype.org&label=snapshot)](https://oss.sonatype.org/#nexus-search;gav~com.badlogicgames.ashley~ashley)
+
+
 A tiny entity framework written in Java. It's inspired by frameworks like
 [Ash](http://www.ashframework.org/) (hence the name) and
 [Artemis](http://gamadu.com/artemis/). Ashley tries to be a high-performance
@@ -10,8 +16,7 @@ Ashley is awesome, if you don't believe it, check out some [games](https://githu
 
 Ashley lives under the [Libgdx](https://github.com/libgdx) family but it does not force you to use that specific framework if you do not wish to do so.
 
-[![Sonatype Nexus (Releases)](https://img.shields.io/nexus/r/com.badlogicgames.ashley/ashley?nexusVersion=2&server=https%3A%2F%2Foss.sonatype.org&label=release)](https://search.maven.org/artifact/com.badlogicgames.ashley/ashley)
-[![Sonatype Nexus (Snapshots)](https://img.shields.io/nexus/s/com.badlogicgames.ashley/ashley?server=https%3A%2F%2Foss.sonatype.org&label=snapshot)](https://oss.sonatype.org/#nexus-search;gav~com.badlogicgames.ashley~ashley)
+Libgdx Discord : [![Discord Chat](https://img.shields.io/discord/348229412858101762?logo=discord)](https://libgdx.com/community/discord/)
 
 ### Get started
 
@@ -23,7 +28,7 @@ Ashley lives under the [Libgdx](https://github.com/libgdx) family but it does no
 
 ### News and community
 
-Stay up to date in Ashley matters by following [@d_saltares](https://twitter.com/d_saltares) and reading [saltares.com](http://saltares.com). Check the [libgdx](http://www.badlogicgames.com/) blog as well for additional updates.
+Stay up to date in Ashley matters by following [@d_saltares](https://twitter.com/d_saltares) and reading [saltares.com](http://saltares.com). Check the [libgdx](https://libgdx.com/) blog as well for additional updates.
 
 ### Report issues
 
