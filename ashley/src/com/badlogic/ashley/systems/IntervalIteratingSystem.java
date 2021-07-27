@@ -56,9 +56,11 @@ public abstract class IntervalIteratingSystem extends IntervalSystem {
 
 	@Override
 	protected void updateInterval () {
+		startProcessing();
 		for (int i = 0; i < entities.size(); ++i) {
 			processEntity(entities.get(i));
 		}
+		endProcessing();
 	}
 
 	/**
@@ -80,4 +82,16 @@ public abstract class IntervalIteratingSystem extends IntervalSystem {
 	 * @param entity
 	 */
 	protected abstract void processEntity (Entity entity);
+
+	/**
+	 * This method is called once on every update call of the EntitySystem, before entity processing begins. Override this method to
+	 * implement your specific startup conditions.
+	 */
+	public void startProcessing() {}
+
+	/**
+	 * This method is called once on every update call of the EntitySystem after entity processing is complete. Override this method to
+	 * implement your specific end conditions.
+	 */
+	public void endProcessing() {}
 }

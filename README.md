@@ -14,9 +14,9 @@ and transparent to use.
 
 Ashley is awesome, if you don't believe it, check out some [games](https://github.com/libgdx/ashley/wiki/Games-made-with-Ashley) made with it!
 
-Ashley lives under the [Libgdx](https://github.com/libgdx) family but it does not force you to use that specific framework if you do not wish to do so.
+Ashley lives under the [libGDX](https://github.com/libgdx) family but it does not force you to use that specific framework if you do not wish to do so.
 
-Libgdx Discord : [![Discord Chat](https://img.shields.io/discord/348229412858101762?logo=discord)](https://libgdx.com/community/discord/)
+libGDX Discord : [![Discord Chat](https://img.shields.io/discord/348229412858101762?logo=discord)](https://libgdx.com/community/discord/)
 
 ### Get started
 
@@ -28,7 +28,7 @@ Libgdx Discord : [![Discord Chat](https://img.shields.io/discord/348229412858101
 
 ### News and community
 
-Stay up to date in Ashley matters by following [@d_saltares](https://twitter.com/d_saltares) and reading [saltares.com](http://saltares.com). Check the [libgdx](https://libgdx.com/) blog as well for additional updates.
+Stay up to date in Ashley matters by following [@d_saltares](https://twitter.com/d_saltares) and reading [saltares.com](http://saltares.com). Check the [libGDX](https://libgdx.com/) blog as well for additional updates.
 
 ### Report issues
 

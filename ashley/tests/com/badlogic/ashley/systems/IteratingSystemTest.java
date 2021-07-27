@@ -42,14 +42,26 @@ public class IteratingSystemTest {
 
 	private static class IteratingSystemMock extends IteratingSystem {
 		public int numUpdates;
+		public int numStartProcessing;
+		public int numEndProcessing;
 
 		public IteratingSystemMock (Family family) {
 			super(family);
 		}
 
 		@Override
+		public void startProcessing() {
+			++numStartProcessing;
+		}
+
+		@Override
 		public void processEntity (Entity entity, float deltaTime) {
 			++numUpdates;
+		}
+
+		@Override
+		public void endProcessing() {
+			++numEndProcessing;
 		}
 	}
 
@@ -220,4 +232,22 @@ public class IteratingSystemTest {
 			assertEquals(1, sm.get(e).updates);
 		}
 	}
+
+	@Test
+	public void processingUtilityFunctions() {
+		final Engine engine = new Engine();
+
+		final IteratingSystemMock system = new IteratingSystemMock(Family.all().get());
+
+		engine.addSystem(system);
+
+		engine.update(deltaTime);
+		assertEquals(1, system.numStartProcessing);
+		assertEquals(1, system.numEndProcessing);
+
+		engine.update(deltaTime);
+		assertEquals(2, system.numStartProcessing);
+		assertEquals(2, system.numEndProcessing);
+	}
+
 }

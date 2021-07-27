@@ -1,5 +1,5 @@
 apply plugin: "java"
-sourceCompatibility = 1.6
+sourceCompatibility = 1.7
 
 eclipse.project {
     name = "ecs-benchmarks"

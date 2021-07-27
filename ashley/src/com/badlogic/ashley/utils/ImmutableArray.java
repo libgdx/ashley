@@ -30,6 +30,10 @@ public class ImmutableArray<T> implements Iterable<T> {
 	private final Array<T> array;
 	private ArrayIterable<T> iterable;
 
+	public ImmutableArray() {
+		this(new Array<T>());
+	}
+
 	public ImmutableArray (Array<T> array) {
 		this.array = array;
 	}

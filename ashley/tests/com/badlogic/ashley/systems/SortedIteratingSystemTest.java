@@ -42,6 +42,8 @@ public class SortedIteratingSystemTest {
 
 	private static class SortedIteratingSystemMock extends SortedIteratingSystem {
 		public LinkedList<String> expectedNames = new LinkedList<String>();
+		public int numStartProcessing;
+		public int numEndProcessing;
 
 		public SortedIteratingSystemMock (Family family) {
 			super(family, comparator);
@@ -54,11 +56,21 @@ public class SortedIteratingSystemTest {
 		}
 
 		@Override
+		public void startProcessing() {
+			++numStartProcessing;
+		}
+
+		@Override
 		public void processEntity (Entity entity, float deltaTime) {
 			OrderComponent component = orderMapper.get(entity);
 			assertNotNull(component);
 			assertFalse(expectedNames.isEmpty());
 			assertEquals(expectedNames.poll(), component.name);
+		}
+
+		@Override
+		public void endProcessing() {
+			++numEndProcessing;
 		}
 	}
 
@@ -280,6 +292,23 @@ public class SortedIteratingSystemTest {
 		system.expectedNames.addLast("B");
 		system.expectedNames.addLast("A");
 		engine.update(0);
+	}
+
+	@Test
+	public void processingUtilityFunctions() {
+		final Engine engine = new Engine();
+
+		final SortedIteratingSystemMock system = new SortedIteratingSystemMock(Family.all().get());
+
+		engine.addSystem(system);
+
+		engine.update(deltaTime);
+		assertEquals(1, system.numStartProcessing);
+		assertEquals(1, system.numEndProcessing);
+
+		engine.update(deltaTime);
+		assertEquals(2, system.numStartProcessing);
+		assertEquals(2, system.numEndProcessing);
 	}
 
 	private static class OrderComparator implements Comparator<Entity> {
