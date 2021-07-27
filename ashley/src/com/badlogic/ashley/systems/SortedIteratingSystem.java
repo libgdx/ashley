@@ -147,11 +147,11 @@ public abstract class SortedIteratingSystem extends EntitySystem implements Enti
 	 * This method is called once on every update call of the EntitySystem, before entity processing begins. Override this method to
 	 * implement your specific startup conditions.
 	 */
-	public abstract void startProcessing();
+	public void startProcessing() {}
 
 	/**
 	 * This method is called once on every update call of the EntitySystem after entity processing is complete. Override this method to
 	 * implement your specific end conditions.
 	 */
-	public abstract void endProcessing();
+	public void endProcessing() {}
 }
