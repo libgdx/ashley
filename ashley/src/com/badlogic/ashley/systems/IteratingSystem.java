@@ -62,9 +62,11 @@ public abstract class IteratingSystem extends EntitySystem {
 
 	@Override
 	public void update (float deltaTime) {
+		startProcessing();
 		for (int i = 0; i < entities.size(); ++i) {
 			processEntity(entities.get(i), deltaTime);
 		}
+		endProcessing();
 	}
 
 	/**
@@ -88,4 +90,16 @@ public abstract class IteratingSystem extends EntitySystem {
 	 * @param deltaTime The delta time between the last and current frame
 	 */
 	protected abstract void processEntity (Entity entity, float deltaTime);
+
+	/**
+	 * This method is called once on every update call of the EntitySystem, before entity processing begins. Override this method to
+	 * implement your specific startup conditions.
+	 */
+	public void startProcessing() {}
+
+	/**
+	 * This method is called once on every update call of the EntitySystem after entity processing is complete. Override this method to
+	 * implement your specific end conditions.
+	 */
+	public void endProcessing() {}
 }
