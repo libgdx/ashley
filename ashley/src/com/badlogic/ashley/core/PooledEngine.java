@@ -126,6 +126,15 @@ public class PooledEngine extends Engine {
 		protected PooledEntity newObject () {
 			return new PooledEntity();
 		}
+
+		/**
+		 * Forwarding this call ensures {@link Poolable} {@link Component} instances are returned to their respective
+		 * {@link ComponentPools}s even if the {@link EntityPool} is full.
+		 */
+		@Override
+		protected void discard(PooledEntity pooledEntity) {
+			pooledEntity.reset();
+		}
 	}
 
 	private class ComponentPools {
