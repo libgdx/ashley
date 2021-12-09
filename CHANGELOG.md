@@ -1,5 +1,10 @@
 ## Changelog
 
+### Ashley 1.7.4
+
+* **Bug fix**: Poolable Component returned to their ComponentPools even if EntityPool is full. Issue #302.
+* **Update**: Uses libgdx 1.10.0. Commit afa68fc165119a2c79c1709c642e6b620a973ecc.
+
 ### Ashley 1.7.3
 
 * **API addition***: Adds 'createComponent()' method to `Engine` class. Commit 07fc2ba6bcd9996c472c651b56b57b32fd8fd3a7.
