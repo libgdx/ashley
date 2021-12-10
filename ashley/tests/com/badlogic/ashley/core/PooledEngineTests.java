@@ -1,15 +1,14 @@
 
 package com.badlogic.ashley.core;
 
-import static org.junit.Assert.*;
-
-import org.junit.Test;
-
 import com.badlogic.ashley.signals.Listener;
 import com.badlogic.ashley.signals.Signal;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool.Poolable;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 public class PooledEngineTests {
 	private float deltaTime = 0.16f;
@@ -292,4 +291,71 @@ public class PooledEngineTests {
 
 		assertNotEquals(newComponent1, newComponent2);
 	}
+
+	/**
+	 * Returning the first Entity instance will fill up the EntityPool, returning the second Entity instance will
+	 * result in it being discarded - reset() should still be called on it's components and they should be returned to
+	 * their ComponentPools.
+	 */
+	@Test
+	public void poolableComponentsResetIfEntityPoolFull() {
+		// State
+
+		final PooledEngine pooledEngine = new PooledEngine(1, 1, 10, 100);
+
+		final PoolableComponent poolableComponent = pooledEngine.createComponent(PoolableComponent.class);
+		poolableComponent.reset = false;
+		final Entity entity = pooledEngine.createEntity();
+		entity.add(poolableComponent);
+		pooledEngine.addEntity(entity);
+
+		final PoolableComponent secondPoolableComponent = pooledEngine.createComponent(PoolableComponent.class);
+		secondPoolableComponent.reset = false;
+		final Entity secondEntity = pooledEngine.createEntity();
+		secondEntity.add(secondPoolableComponent);
+		pooledEngine.addEntity(secondEntity);
+
+		// Test
+
+		pooledEngine.removeEntity(entity);
+		pooledEngine.removeEntity(secondEntity);
+
+		// Assert
+
+		assertTrue("The first Component should have had reset() called naturally as the Entity was returned to the EntityPool.", poolableComponent.reset);
+		assertTrue("The second Component should have had reset() called via EntityPool.discard() as the Entity was thrown away due to the EntityPool being full.", secondPoolableComponent.reset);
+	}
+
+	/**
+	 * Removing the first Entity will result in the ComponentPool being full, when the second Entity is removed it's
+	 * Poolable Component instance should be reset() even though it's ComponentPool is full and it will be discarded.
+	 */
+	@Test
+	public void componentsAllResetIfComponentPoolFull() {
+		// State
+
+		final PooledEngine pooledEngine = new PooledEngine(10, 100, 1, 1);
+
+		final PoolableComponent poolableComponent = pooledEngine.createComponent(PoolableComponent.class);
+		poolableComponent.reset = false;
+		final Entity entity = pooledEngine.createEntity();
+		entity.add(poolableComponent);
+		pooledEngine.addEntity(entity);
+
+		final PoolableComponent secondPoolableComponent = pooledEngine.createComponent(PoolableComponent.class);
+		secondPoolableComponent.reset = false;
+		final Entity secondEntity = pooledEngine.createEntity();
+		secondEntity.add(secondPoolableComponent);
+		pooledEngine.addEntity(secondEntity);
+
+		// Test
+
+		pooledEngine.removeAllEntities();
+
+		// Assert
+
+		assertTrue("The first Component should have had reset() called naturally as it was returned to it's ComponentPool.", poolableComponent.reset);
+		assertTrue("The second Component should have had reset() called via ComponentPool.discard() as the Component was thrown away due to the ComponentPool being full.", secondPoolableComponent.reset);
+	}
+
 }
