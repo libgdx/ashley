@@ -5,6 +5,7 @@
 * **Bug fix**: Poolable Component returned to their ComponentPools even if EntityPool is full. Issue #302.
 * **Update**: Uses libgdx 1.10.0. Commit afa68fc165119a2c79c1709c642e6b620a973ecc.
 * **Bug fix**: Poolable Component instances always have their reset() method called, even if their ComponentPool is full.
+* **Internals**: ComponentPool expects Components to be instances of Component.
 
 ### Ashley 1.7.4
 
