@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2014 See AUTHORS file.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,11 +16,8 @@
 
 package com.badlogic.ashley.core;
 
-import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.ObjectMap;
-import com.badlogic.gdx.utils.Pool;
+import com.badlogic.gdx.utils.*;
 import com.badlogic.gdx.utils.Pool.Poolable;
-import com.badlogic.gdx.utils.ReflectionPool;
 
 /**
  * Supports {@link Entity} and {@link Component} pooling. This improves performance in environments where creating/deleting
@@ -138,21 +135,21 @@ public class PooledEngine extends Engine {
 	}
 
 	private class ComponentPools {
-		private ObjectMap<Class<?>, ReflectionPool> pools;
+		private ObjectMap<Class<?>, ComponentPool> pools;
 		private int initialSize;
 		private int maxSize;
 
 		public ComponentPools (int initialSize, int maxSize) {
-			this.pools = new ObjectMap<Class<?>, ReflectionPool>();
+			this.pools = new ObjectMap<Class<?>, ComponentPool>();
 			this.initialSize = initialSize;
 			this.maxSize = maxSize;
 		}
 
-		public <T> T obtain (Class<T> type) {
-			ReflectionPool pool = pools.get(type);
+		public <T extends Component> T obtain (Class<T> type) {
+			ComponentPool pool = pools.get(type);
 
 			if (pool == null) {
-				pool = new ReflectionPool(type, initialSize, maxSize);
+				pool = new ComponentPool(type, initialSize, maxSize);
 				pools.put(type, pool);
 			}
 
@@ -164,7 +161,7 @@ public class PooledEngine extends Engine {
 				throw new IllegalArgumentException("object cannot be null.");
 			}
 
-			ReflectionPool pool = pools.get(object.getClass());
+			ComponentPool pool = pools.get(object.getClass());
 
 			if (pool == null) {
 				return; // Ignore freeing an object that was never retained.
@@ -189,4 +186,23 @@ public class PooledEngine extends Engine {
 			}
 		}
 	}
+
+	private static class ComponentPool<T extends Component> extends ReflectionPool<T> {
+
+		public ComponentPool(Class<T> type, int initialCapacity, int max) {
+			super(type, initialCapacity, max);
+		}
+
+		/**
+		 * Forwarding this call ensures {@link Poolable} {@link Component} instances have their reset method called,
+		 * even if the {@link ComponentPool} is full.
+		 */
+		@Override
+		protected void discard(T component) {
+			if (component instanceof Poolable) {
+				((Poolable) component).reset();
+			}
+		}
+	}
+
 }
