@@ -67,6 +67,21 @@ public class FamilyTests {
 	}
 
 	@Test
+	public void recallOperationTest () {
+		Family family = Family.one(ComponentA.class).one(ComponentB.class).get();
+
+		Entity entity = new Entity();
+		assertFalse(family.matches(entity));
+
+		entity.add(new ComponentA());
+		assertTrue(family.matches(entity));
+
+		entity.remove(ComponentA.class);
+		entity.add(new ComponentB());
+		assertTrue(family.matches(entity));
+	}
+
+	@Test
 	public void validFamily () {
 		assertNotNull(Family.all().get());
 		assertNotNull(Family.all(ComponentA.class).get());
@@ -298,6 +313,33 @@ public class FamilyTests {
 		assertFalse(family1.matches(entity));
 		assertTrue(family2.matches(entity));
 	}
+
+	@Test
+	public void familyConcat() {
+		Family family1 = Family.one(ComponentA.class).exclude(ComponentD.class, ComponentE.class).get();
+		Family family2 = Family.one(ComponentF.class).concat(family1).get();
+
+		Entity entity = new Entity(); //empty
+		assertFalse(family1.matches(entity));
+		assertFalse(family2.matches(entity));
+
+		entity.add(new ComponentA());//family one match so second match
+		assertTrue(family1.matches(entity));
+		assertTrue(family2.matches(entity));
+
+		entity.add(new ComponentF());
+		assertTrue(family1.matches(entity));
+		assertTrue(family2.matches(entity));
+
+		entity.remove(ComponentA.class);
+		assertFalse(family1.matches(entity));
+		assertTrue(family2.matches(entity));//match cause componentF
+
+		entity.add(new ComponentD());//no match, D is excluded by Family1
+		assertFalse(family1.matches(entity));
+		assertFalse(family2.matches(entity));
+	}
+
 
 	@Test
 	public void matchWithPooledEngine () {
