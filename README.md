@@ -22,7 +22,7 @@ libGDX Discord : [![Discord Chat](https://img.shields.io/discord/348229412858101
 
 * [Use Ashley in your project](https://github.com/libgdx/ashley/wiki/Getting-started-with-Ashley)
 * [Read the wiki](https://github.com/libgdx/ashley/wiki)
-* [Refer to the javadocs](http://libgdx.badlogicgames.com/ashley/docs/)
+* [Refer to the javadocs](https://javadoc.io/doc/com.badlogicgames.ashley/ashley)
 * [Read the examples](https://github.com/libgdx/ashley/tree/master/tests)
 
 
