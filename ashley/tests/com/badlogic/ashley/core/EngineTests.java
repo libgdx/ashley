@@ -972,4 +972,24 @@ public class EngineTests {
 		ComponentC componentC = engine.createComponent(ComponentC.class);
 		assertNull(componentC);
 	}
+
+	public class RemoveAddAndRemoveEntitySystem extends EntitySystem {
+
+		@Override
+		public void update(float deltaTime) {
+			Entity entity = new Entity();
+			getEngine().removeEntity(entity);
+			getEngine().addEntity(entity);
+			getEngine().removeEntity(entity);
+		}
+	}
+
+	@Test
+	public void removeEntityBeforeAddingAndWhileEngineIsUpdating() {
+		// Test for issue #306.
+		Engine engine = new Engine();
+		engine.addSystem(new RemoveAddAndRemoveEntitySystem());
+		engine.update(deltaTime);
+		assertEquals(0, engine.getEntities().size());
+	}
 }

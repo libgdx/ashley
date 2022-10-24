@@ -23,6 +23,7 @@ class EntityManager {
 	}
 	
 	public void addEntity(Entity entity, boolean delayed){
+		entity.scheduledForRemoval = false;
 		if (delayed) {
 			EntityOperation operation = entityOperationPool.obtain();
 			operation.entity = entity;
