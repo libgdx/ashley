@@ -21,10 +21,10 @@ class SystemManager {
 	
 	public void addSystem(EntitySystem system){
 		Class<? extends EntitySystem> systemType = system.getClass();		
-		EntitySystem oldSytem = getSystem(systemType);
+		EntitySystem oldSystem = getSystem(systemType);
 		
-		if (oldSytem != null) {
-			removeSystem(oldSytem);
+		if (oldSystem != null) {
+			removeSystem(oldSystem);
 		}
 		
 		systems.add(system);
