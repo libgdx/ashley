@@ -156,14 +156,14 @@ public class Family {
 		 * @return A Builder singleton instance to get a family
 		 */
         @SafeVarargs
-        public final Builder concat (Family... families) {
-            for(Family family : families){
-                one.or(family.one);
+		public final Builder concat (Family... families) {
+			for (Family family : families) {
+				one.or(family.one);
 				all.or(family.all);
 				exclude.or(family.exclude);
-            }
-            return this;
-        }
+			}
+			return this;
+		}
 
 		/** @return A family for the configured component types */
 		public Family get () {
