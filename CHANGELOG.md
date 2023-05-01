@@ -4,6 +4,8 @@
 
 * **Bug fix**: Poolable Component returned to their ComponentPools even if EntityPool is full. Issue #302.
 * **Update**: Uses libgdx 1.10.0. Commit afa68fc165119a2c79c1709c642e6b620a973ecc.
+* **API addition***: Adds 'concat()' method to `Family`, you can create family from a family class. Issue #267
+* **API modification***: FamilyBuilder one/all/exclude can be chain multiple times.(Before doing Family.one(ComponentA.class).one(ComponentB.class) remove ComponentA)
 
 ### Ashley 1.7.4
 

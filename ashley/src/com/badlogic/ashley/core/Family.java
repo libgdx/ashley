@@ -96,13 +96,18 @@ public class Family {
 		return builder.reset().exclude(componentTypes);
 	}
 
+    @SafeVarargs
+    public static final Builder concat (Family... families) {
+        return builder.reset().concat(families);
+    }
+
 	public static class Builder {
-		private Bits all = zeroBits;
-		private Bits one = zeroBits;
-		private Bits exclude = zeroBits;
+		private Bits all;
+		private Bits one ;
+		private Bits exclude;
 
 		Builder() {
-			
+			reset();
 		}
 		
 		/**
@@ -110,9 +115,9 @@ public class Family {
 		 * @return A Builder singleton instance to get a family
 		 */
 		public Builder reset () {
-			all = zeroBits;
-			one = zeroBits;
-			exclude = zeroBits;
+			all = new Bits();
+			one = new Bits();
+			exclude = new Bits();
 			return this;
 		}
 
@@ -122,7 +127,7 @@ public class Family {
 		 */
 		@SafeVarargs
 		public final Builder all (Class<? extends Component>... componentTypes) {
-			all = ComponentType.getBitsFor(componentTypes);
+			all.or(ComponentType.getBitsFor(componentTypes));
 			return this;
 		}
 
@@ -132,7 +137,7 @@ public class Family {
 		 */
 		@SafeVarargs
 		public final Builder one (Class<? extends Component>... componentTypes) {
-			one = ComponentType.getBitsFor(componentTypes);
+			one.or(ComponentType.getBitsFor(componentTypes));
 			return this;
 		}
 
@@ -142,7 +147,21 @@ public class Family {
 		 */
 		@SafeVarargs
 		public final Builder exclude (Class<? extends Component>... componentTypes) {
-			exclude = ComponentType.getBitsFor(componentTypes);
+			exclude.or(ComponentType.getBitsFor(componentTypes));
+			return this;
+		}
+
+		/**
+		 * @param families are concat with Family in builder (one, all and exclude)
+		 * @return A Builder singleton instance to get a family
+		 */
+        @SafeVarargs
+		public final Builder concat (Family... families) {
+			for (Family family : families) {
+				one.or(family.one);
+				all.or(family.all);
+				exclude.or(family.exclude);
+			}
 			return this;
 		}
 
