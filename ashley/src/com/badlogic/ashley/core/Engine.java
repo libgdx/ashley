@@ -139,21 +139,21 @@ public class Engine {
 	 * the new one will replace the old one.
 	 */
 	public void addSystem(EntitySystem system){
-		systemManager.addSystem(system);
+		systemManager.addSystem(system, updating);
 	}
 
 	/**
 	 * Removes the {@link EntitySystem} from this Engine.
 	 */
 	public void removeSystem(EntitySystem system){
-		systemManager.removeSystem(system);
+		systemManager.removeSystem(system, updating);
 	}
 
 	/**
 	 * Removes all systems from this Engine.
 	 */
 	public void removeAllSystems(){
-		systemManager.removeAllSystems();
+		systemManager.removeAllSystems(updating);
 	}
 
 	/**
@@ -248,6 +248,7 @@ public class Engine {
 		}
 		finally {
 			updating = false;
+			systemManager.processPendingOperations();
 		}	
 	}
 	

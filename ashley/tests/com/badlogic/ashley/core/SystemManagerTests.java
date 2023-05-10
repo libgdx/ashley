@@ -94,25 +94,25 @@ public class SystemManagerTests {
 		assertNull(manager.getSystem(EntitySystemMockA.class));
 		assertNull(manager.getSystem(EntitySystemMockB.class));
 
-		manager.addSystem(systemA);
-		manager.addSystem(systemB);
+		manager.addSystem(systemA, false);
+		manager.addSystem(systemB, false);
 
 		assertNotNull(manager.getSystem(EntitySystemMockA.class));
 		assertNotNull(manager.getSystem(EntitySystemMockB.class));
 		assertEquals(1, systemA.addedCalls);
 		assertEquals(1, systemB.addedCalls);
 
-		manager.removeSystem(systemA);
-		manager.removeSystem(systemB);
+		manager.removeSystem(systemA, false);
+		manager.removeSystem(systemB, false);
 
 		assertNull(manager.getSystem(EntitySystemMockA.class));
 		assertNull(manager.getSystem(EntitySystemMockB.class));
 		assertEquals(1, systemA.removedCalls);
 		assertEquals(1, systemB.removedCalls);
 
-		manager.addSystem(systemA);
-		manager.addSystem(systemB);
-		manager.removeAllSystems();
+		manager.addSystem(systemA, false);
+		manager.addSystem(systemB, false);
+		manager.removeAllSystems(false);
 
 		assertNull(manager.getSystem(EntitySystemMockA.class));
 		assertNull(manager.getSystem(EntitySystemMockB.class));
@@ -129,14 +129,14 @@ public class SystemManagerTests {
 
 		assertEquals(0, manager.getSystems().size());
 
-		manager.addSystem(systemA);
-		manager.addSystem(systemB);
+		manager.addSystem(systemA, false);
+		manager.addSystem(systemB, false);
 
 		assertEquals(2, manager.getSystems().size());
 		assertEquals(2, systemSpy.addedCount);
 		
-		manager.removeSystem(systemA);
-		manager.removeSystem(systemB);
+		manager.removeSystem(systemA, false);
+		manager.removeSystem(systemB, false);
 		
 		assertEquals(0, manager.getSystems().size());
 		assertEquals(2, systemSpy.addedCount);
@@ -152,13 +152,13 @@ public class SystemManagerTests {
 
 		assertEquals(0, manager.getSystems().size());
 
-		manager.addSystem(system1);
+		manager.addSystem(system1, false);
 		
 		assertEquals(1, manager.getSystems().size());
 		assertEquals(system1, manager.getSystem(EntitySystemMockA.class));
 		assertEquals(1, systemSpy.addedCount);
 		
-		manager.addSystem(system2);
+		manager.addSystem(system2, false);
 
 		assertEquals(1, manager.getSystems().size());
 		assertEquals(system2, manager.getSystem(EntitySystemMockA.class));
@@ -178,8 +178,8 @@ public class SystemManagerTests {
 		system1.priority = 2;
 		system2.priority = 1;
 
-		manager.addSystem(system1);
-		manager.addSystem(system2);
+		manager.addSystem(system1, false);
+		manager.addSystem(system2, false);
 
 		ImmutableArray<EntitySystem> systems = manager.getSystems();
 		assertEquals(system2, systems.get(0));
