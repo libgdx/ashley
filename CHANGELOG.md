@@ -1,7 +1,7 @@
 ## Changelog
 
 ### Ashley 1.8.0
-
+* **Bug fix**: Allow add and remove system during iteration, operations are compute at end of update loop Issue #310.
 * **Bug fix**: Poolable Component returned to their ComponentPools even if EntityPool is full. Issue #302.
 * **Update**: Uses libgdx 1.10.0. Commit afa68fc165119a2c79c1709c642e6b620a973ecc.
 
