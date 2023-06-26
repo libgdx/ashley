@@ -234,21 +234,23 @@ public class Engine {
 		ImmutableArray<EntitySystem> systems = systemManager.getSystems();
 		try {
 			for (int i = 0; i < systems.size(); ++i) {
-				EntitySystem system = systems.get(i);
-				
-				if (system.checkProcessing()) {
-					system.update(deltaTime);
-				}
-	
-				while(componentOperationHandler.hasOperationsToProcess() || entityManager.hasPendingOperations()) {
-					componentOperationHandler.processOperations();
-					entityManager.processPendingOperations();
-				}
+				updateSystem(systems.get(i))
 			}
 		}
 		finally {
 			updating = false;
 		}	
+	}
+
+	protected void updateSystem(EntitySystem system) {
+		if (system.checkProcessing()) {
+			system.update(deltaTime);
+		}
+		
+		while(componentOperationHandler.hasOperationsToProcess() || entityManager.hasPendingOperations()) {
+			componentOperationHandler.processOperations();
+			entityManager.processPendingOperations();
+		}
 	}
 	
 	protected void addEntityInternal(Entity entity) {
