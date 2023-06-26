@@ -12,6 +12,19 @@ subprojects {
     }
 }
 
+group 'com.badlogicgames.ashley'
+version '1.7.5'
+
+jar {
+    manifest {
+        attributes 'Implementation-Title': 'ashley',
+                    'Implementation-Version': version
+    }
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
 ext {
     projectGroup = "ashley"
     gdxVersion = "1.10.0"
